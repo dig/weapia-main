@@ -10,8 +10,8 @@ public class Constants {
 
     public static final String FAILED_LOAD_DATA = ChatColor.RED + "Failed to load data for your profile.";
 
-    public static final String TAB_TOP = "\n" + ChatColor.GREEN + ""  + ChatColor.BOLD + "MINEVASION\n";
-    public static final String TAB_BOTTOM = "\n" + ChatColor.WHITE + "Join the VIP Club\n    and get glossy perks    \n" + ChatColor.DARK_GREEN + "/view\n";
+    public static final String TAB_TOP = "\n" + ChatColor.AQUA + ""  + ChatColor.BOLD + "WEAPIA\n";
+    public static final String TAB_BOTTOM = "\n" + ChatColor.WHITE + "Join the VIP Club\n    and get glossy perks    \n" + ChatColor.DARK_AQUA + "/view\n";
 
     public static final String INTERACTION_COOLDOWN = ChatColor.RED + "Please wait before doing that again.";
 

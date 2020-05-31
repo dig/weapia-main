@@ -56,31 +56,31 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
 
     @Override
     public void enable() {
-        Element darkGreenGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
+        Element darkAquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
                 .name(ChatColor.WHITE + " ")
-                .durability(13)
+                .durability(11)
                 .make());
-        Element greenGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
+        Element aquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
                 .name(ChatColor.WHITE + " ")
-                .durability(5)
+                .durability(3)
                 .make());
 
         Page lobbyMainMenu = Page.builder()
                 .id("lobby-main-menu")
-                .title("Minevasion \u2996 Lobbies")
+                .title("Weapia \u2996 Lobbies")
                 .size(54)
-                .putElement(0, darkGreenGlassPane)
-                .putElement(1, greenGlassPane)
-                .putElement(7, greenGlassPane)
-                .putElement(8, darkGreenGlassPane)
-                .putElement(9, greenGlassPane)
-                .putElement(17, greenGlassPane)
-                .putElement(36, greenGlassPane)
-                .putElement(44, greenGlassPane)
-                .putElement(45, darkGreenGlassPane)
-                .putElement(46, greenGlassPane)
-                .putElement(52, greenGlassPane)
-                .putElement(53, darkGreenGlassPane)
+                .putElement(0, darkAquaGlassPane)
+                .putElement(1, aquaGlassPane)
+                .putElement(7, aquaGlassPane)
+                .putElement(8, darkAquaGlassPane)
+                .putElement(9, aquaGlassPane)
+                .putElement(17, aquaGlassPane)
+                .putElement(36, aquaGlassPane)
+                .putElement(44, aquaGlassPane)
+                .putElement(45, darkAquaGlassPane)
+                .putElement(46, aquaGlassPane)
+                .putElement(52, aquaGlassPane)
+                .putElement(53, darkAquaGlassPane)
                 .build();
 
         container.add(lobbyMainMenu);

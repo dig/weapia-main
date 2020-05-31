@@ -49,7 +49,7 @@ public class LobbyPlayer extends CorePlayer {
 
             //--- Scoreboard
             Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
-            String title = ChatColor.GREEN + "Lobby #"
+            String title = ChatColor.AQUA + "Lobby #"
                     + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
 
             scoreboardWrapper = new ScoreboardWrapper(title, scoreboardManager);
@@ -67,7 +67,7 @@ public class LobbyPlayer extends CorePlayer {
             scoreboardWrapper.add("PlayValue", ChatColor.GOLD + " 5 days", 2);
             scoreboardWrapper.add("Spacer4", ChatColor.WHITE + " ", 1);
 
-            scoreboardWrapper.add("URL", ChatColor.GREEN + "minevasion.com", 0);
+            scoreboardWrapper.add("URL", ChatColor.GRAY + "play.weapia.com", 0);
 
             scoreboardWrapper.add(player);
         }
@@ -87,7 +87,7 @@ public class LobbyPlayer extends CorePlayer {
 
     public void onServerUpdate() {
         Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
-        String title = ChatColor.GREEN + "Lobby #"
+        String title = ChatColor.AQUA + "Lobby #"
                 + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
 
         scoreboardWrapper.setTitle(title);

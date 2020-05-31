@@ -1,0 +1,3 @@
+name: Lobby
+main: net.sunken.lobby.Lobby
+version: 1.0

@@ -1,0 +1,4 @@
+name: Void
+main: com.minevasion.world.Void
+version: 1.0
+load: startup

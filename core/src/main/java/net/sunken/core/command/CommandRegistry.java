@@ -14,16 +14,12 @@ import net.sunken.core.Constants;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 @Log
 @Singleton
@@ -91,7 +87,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
             CommandMap commandMap = commandMapOptional.get();
 
             try {
-                final Field knownCommands = commandMap.getClass().getDeclaredField("knownCommands");
+                final Field knownCommands = commandMap.getClass().getField("knownCommands");
                 knownCommands.setAccessible(true);
 
                 Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.get(commandMap);
@@ -113,7 +109,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
             CommandMap commandMap = commandMapOptional.get();
 
             try {
-                final Field knownCommands = commandMap.getClass().getDeclaredField("knownCommands");
+                final Field knownCommands = commandMap.getClass().getField("knownCommands");
                 knownCommands.setAccessible(true);
 
                 Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.get(commandMap);

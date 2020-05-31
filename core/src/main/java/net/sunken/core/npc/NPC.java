@@ -57,7 +57,7 @@ public class NPC extends EntityPlayer {
         getBukkitEntity().setGameMode(GameMode.CREATIVE);
         getBukkitEntity().setRemoveWhenFarAway(false);
 
-        getDataWatcher().set(new DataWatcherObject<>(13, DataWatcherRegistry.a), (byte) 127);
+        getDataWatcher().set(new DataWatcherObject<>(16, DataWatcherRegistry.a), (byte) 127);
     }
 
     public NPC(@NonNull List<String> displayName, @NonNull Location location, @NonNull String texture, @NonNull String signature, @NonNull BukkitSyncExecutor bukkitSyncExecutor, HologramFactory hologramFactory) {

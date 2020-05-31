@@ -55,7 +55,7 @@ public class Server {
     @Getter
     public enum Type {
         BUNGEE ("bungee", false),
-        LOBBY ("lobby", "respects/mv-infrastructure:lobby", "respects/mv-infrastructure-dev:lobby", true),
+        LOBBY ("lobby", "respects/wep-infrastructure:lobby", "respects/wep-infrastructure-dev:lobby", true),
         INSTANCE ("instance");
 
         private String prefix;

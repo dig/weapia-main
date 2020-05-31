@@ -18,8 +18,6 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.event.Listener;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;

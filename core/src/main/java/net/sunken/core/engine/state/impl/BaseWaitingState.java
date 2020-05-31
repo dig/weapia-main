@@ -210,22 +210,22 @@ public abstract class BaseWaitingState extends EventGameState {
 
             if (timeDiff >= 10000 && timeDiff <= 11000) {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_LOBBY_SECONDS, 10));
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 2F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             } else if (timeDiff <= 5000 && playerManager.getOnlinePlayers().size() >= waitingConfiguration.getRequiredPlayers() && pluginInform.getServer().getState() == net.sunken.common.server.Server.State.OPEN) {
                 pluginInform.setState(net.sunken.common.server.Server.State.CLOSED);
                 log.info("State set to CLOSED.");
             } else if (timeDiff >= 3000 && timeDiff <= 4000) {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_LOBBY_SECONDS, 3));
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 2F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             } else if (timeDiff >= 2000 && timeDiff < 3000) {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_LOBBY_SECONDS, 2));
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 2F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             } else if (timeDiff >= 1000 && timeDiff < 2000) {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_LOBBY_SECONDS, 1));
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 2F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             } else if (timeDiff >= 0 && timeDiff < 1000 && playerManager.getOnlinePlayers().size() >= waitingConfiguration.getRequiredPlayers()) {
                 Bukkit.broadcastMessage(Constants.COUNTDOWN_STARTING);
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 0F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 0F));
             }
         }
 

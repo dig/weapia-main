@@ -48,16 +48,16 @@ public abstract class BasePreGameState extends EventGameState {
 
             if (timeDiff >= 10000 && timeDiff <= 11000) {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_GAME_SECONDS, 10));
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 2F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             } else if (timeDiff >= 3000 && timeDiff <= 4000) {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_GAME_SECONDS, 3));
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 2F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             } else if (timeDiff >= 2000 && timeDiff < 3000) {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_GAME_SECONDS, 2));
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 2F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             } else if (timeDiff >= 1000 && timeDiff < 2000) {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_GAME_SECONDS, 1));
-                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_PLING, 0.5F, 2F));
+                Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             }
         }
 

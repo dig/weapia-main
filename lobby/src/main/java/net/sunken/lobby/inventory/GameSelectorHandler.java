@@ -57,13 +57,11 @@ public class GameSelectorHandler implements Facet, Enableable, Listener, SunkenL
 
     @Override
     public void enable() {
-        Element darkAquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
+        Element darkAquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.BLUE_STAINED_GLASS_PANE)
                 .name(ChatColor.WHITE + " ")
-                .durability(11)
                 .make());
-        Element aquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
+        Element aquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.LIGHT_BLUE_STAINED_GLASS_PANE)
                 .name(ChatColor.WHITE + " ")
-                .durability(3)
                 .make());
 
         Page compassMainMenu = Page.builder()

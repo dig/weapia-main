@@ -4,7 +4,7 @@
 
 //--- Configuration for all projects including sub projects
 allprojects {
-    group = 'com.minevasion'
+    group = 'com.weapia'
     version = '1.0-SNAPSHOT'
 }
 

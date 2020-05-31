@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.java.Log;
-import net.minecraft.server.v1_12_R1.*;
+import net.minecraft.server.v1_15_R1.*;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.hologram.Hologram;
 import net.sunken.core.hologram.HologramFactory;
@@ -13,9 +13,9 @@ import net.sunken.core.util.MojangUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -25,7 +25,7 @@ import java.util.*;
 public class NPC extends EntityPlayer {
 
     @Getter
-    private String displayName;
+    private String displayPluginName;
     @Getter
     private boolean shownToAll;
     @Getter
@@ -45,7 +45,7 @@ public class NPC extends EntityPlayer {
                 MojangUtil.toGameProfile(displayName, texture, signature),
                 new PlayerInteractManager(((CraftWorld) location.getWorld()).getHandle()));
 
-        this.displayName = displayName;
+        this.displayPluginName = displayName;
         this.shownToAll = false;
         this.viewers = new ArrayList<>();
         this.hologram = null;
@@ -109,51 +109,6 @@ public class NPC extends EntityPlayer {
         hideAll();
         getBukkitEntity().remove();
         if (hologram != null) hologram.remove();
-    }
-
-    public void lookAt(@NonNull Location point) {
-        if (this.getBukkitEntity().getWorld() != point.getWorld()) {
-            return;
-        }
-
-        final Location npcLoc = ((LivingEntity) this.getBukkitEntity()).getEyeLocation();
-        final double xDiff = point.getX() - npcLoc.getX();
-        final double yDiff = point.getY() - npcLoc.getY();
-        final double zDiff = point.getZ() - npcLoc.getZ();
-        final double DistanceXZ = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
-        final double DistanceY = Math.sqrt(DistanceXZ * DistanceXZ + yDiff * yDiff);
-        double newYaw = Math.acos(xDiff / DistanceXZ) * 180 / Math.PI;
-
-        final double newPitch = Math.acos(yDiff / DistanceY) * 180 / Math.PI - 90;
-        if (zDiff < 0.0) {
-            newYaw = newYaw + Math.abs(180 - newYaw) * 2;
-        }
-
-        this.yaw = (float) (newYaw - 90);
-        this.pitch = (float) newPitch;
-        this.aP = (float) (newYaw - 90);
-
-        updateHeadRotation();
-    }
-
-    private void updateHeadRotation() {
-        PacketPlayOutEntityHeadRotation packetPlayOutEntityHeadRotation = new PacketPlayOutEntityHeadRotation(this, (byte) ((this.yaw * 256.0F) / 360.0F));
-        viewers.forEach(viewerUuid -> sendPacket(viewerUuid, packetPlayOutEntityHeadRotation));
-    }
-
-    private void sendPacket(@NonNull UUID uuid, @NonNull Packet packet) {
-        Optional<? extends Player> playerOptional = Bukkit.getOnlinePlayers().stream()
-                .filter(player -> player.getUniqueId().equals(uuid))
-                .findFirst();
-
-        if (playerOptional.isPresent()) {
-            Player player = playerOptional.get();
-            PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-
-            connection.sendPacket(packet);
-        } else {
-            log.severe(String.format("NPC: Attempting to send packet to non existent UUID. (%s)", uuid));
-        }
     }
 
     public enum Type {

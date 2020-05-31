@@ -1,10 +1,10 @@
 package net.sunken.core.util;
 
 import lombok.NonNull;
-import net.minecraft.server.v1_12_R1.IChatBaseComponent;
-import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerListHeaderFooter;
-import net.minecraft.server.v1_12_R1.PlayerConnection;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import net.minecraft.server.v1_15_R1.IChatBaseComponent;
+import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerListHeaderFooter;
+import net.minecraft.server.v1_15_R1.PlayerConnection;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;

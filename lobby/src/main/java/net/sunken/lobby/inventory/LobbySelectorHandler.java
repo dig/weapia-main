@@ -56,13 +56,11 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
 
     @Override
     public void enable() {
-        Element darkAquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
+        Element darkAquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.BLUE_STAINED_GLASS_PANE)
                 .name(ChatColor.WHITE + " ")
-                .durability(11)
                 .make());
-        Element aquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
+        Element aquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.LIGHT_BLUE_STAINED_GLASS_PANE)
                 .name(ChatColor.WHITE + " ")
-                .durability(3)
                 .make());
 
         Page lobbyMainMenu = Page.builder()
@@ -122,7 +120,7 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
 
         if (event.getServer().getType() == Server.Type.LOBBY) {
             lobbyMainMenu.getElements().values().stream()
-                    .filter(element -> element.getItem().getType() == Material.BED)
+                    .filter(element -> element.getItem().getType() == Material.GRAY_BED)
                     .filter(element -> new NBTItem(element.getItem()).hasKey("serverId"))
                     .forEach(element -> {
                         ItemStack item = element.getItem();

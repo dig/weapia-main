@@ -18,6 +18,8 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.event.Listener;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -56,11 +58,11 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
         //--- TODO: remove from commandMap
     }
 
-    private Optional<CommandMap> findCommandMap() {
+    private Optional<SimpleCommandMap> findSimpleCommandMap() {
         try {
             Field bukkitCommandMap = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
             bukkitCommandMap.setAccessible(true);
-            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getPluginManager());
+            SimpleCommandMap commandMap = (SimpleCommandMap) bukkitCommandMap.get(Bukkit.getPluginManager());
 
             return Optional.of(commandMap);
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
@@ -71,10 +73,10 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void registerCommand(String fallback, BukkitCommand command) {
-        Optional<CommandMap> commandMapOptional = findCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = findSimpleCommandMap();
 
         if (commandMapOptional.isPresent()) {
-            CommandMap commandMap = commandMapOptional.get();
+            SimpleCommandMap commandMap = commandMapOptional.get();
             commandMap.register(fallback, command);
         } else {
             log.severe("Unable to find commandMap via reflection.");
@@ -82,14 +84,13 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void unregisterCommand(@NonNull String name) {
-        Optional<CommandMap> commandMapOptional = findCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = findSimpleCommandMap();
 
         if (commandMapOptional.isPresent()) {
-            CommandMap commandMap = commandMapOptional.get();
+            SimpleCommandMap commandMap = commandMapOptional.get();
 
             try {
-                Class<SimpleCommandMap> simpleCommandMap = (Class<SimpleCommandMap>) commandMap.getClass();
-                final Field knownCommands = simpleCommandMap.getDeclaredField("knownCommands");
+                final Field knownCommands = commandMap.getClass().getDeclaredField("knownCommands");
                 knownCommands.setAccessible(true);
 
                 Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.get(commandMap);
@@ -105,14 +106,13 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void unregisterAllCommands() {
-        Optional<CommandMap> commandMapOptional = findCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = findSimpleCommandMap();
 
         if (commandMapOptional.isPresent()) {
             CommandMap commandMap = commandMapOptional.get();
 
             try {
-                Class<SimpleCommandMap> simpleCommandMap = (Class<SimpleCommandMap>) commandMap.getClass();
-                final Field knownCommands = simpleCommandMap.getDeclaredField("knownCommands");
+                final Field knownCommands = commandMap.getClass().getDeclaredField("knownCommands");
                 knownCommands.setAccessible(true);
 
                 Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.get(commandMap);

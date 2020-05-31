@@ -107,7 +107,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
         Optional<SimpleCommandMap> commandMapOptional = findSimpleCommandMap();
 
         if (commandMapOptional.isPresent()) {
-            CommandMap commandMap = commandMapOptional.get();
+            SimpleCommandMap commandMap = commandMapOptional.get();
 
             try {
                 final Field knownCommands = commandMap.getClass().getDeclaredField("knownCommands");

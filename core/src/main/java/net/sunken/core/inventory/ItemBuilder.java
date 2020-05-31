@@ -1,6 +1,6 @@
 package net.sunken.core.inventory;
 
-import net.sunken.core.util.nbt.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

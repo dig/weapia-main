@@ -1,8 +1,8 @@
 package net.sunken.core.inventory.element;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.Getter;
 import net.sunken.core.Constants;
-import net.sunken.core.util.nbt.NBTItem;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;

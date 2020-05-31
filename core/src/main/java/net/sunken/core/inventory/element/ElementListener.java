@@ -1,11 +1,11 @@
 package net.sunken.core.inventory.element;
 
 import com.google.inject.Inject;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.extern.java.Log;
 import net.sunken.common.inject.Facet;
 import net.sunken.core.Constants;
 import net.sunken.core.inventory.runnable.UIRunnableContext;
-import net.sunken.core.util.nbt.NBTItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

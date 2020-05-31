@@ -1,6 +1,7 @@
 package net.sunken.lobby.inventory;
 
 import com.google.inject.Inject;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.common.event.ListensToEvent;
 import net.sunken.common.event.SunkenListener;
@@ -22,7 +23,6 @@ import net.sunken.core.inventory.PageContainer;
 import net.sunken.core.inventory.element.Action;
 import net.sunken.core.inventory.element.Element;
 import net.sunken.core.inventory.element.ElementFactory;
-import net.sunken.core.util.nbt.NBTItem;
 import net.sunken.lobby.config.ItemConfiguration;
 import net.sunken.lobby.config.UIConfiguration;
 import org.bukkit.ChatColor;

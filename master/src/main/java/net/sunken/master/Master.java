@@ -4,14 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import lombok.Getter;
 import net.sunken.common.database.RedisConnection;
-import net.sunken.common.server.Game;
-import net.sunken.common.server.Server;
 import net.sunken.master.inject.MasterFacetLoader;
-import net.sunken.master.kube.Kube;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class Master {
 

@@ -54,7 +54,9 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     public void unregister(BaseCommand baseCommand) {
         registeredCommands.remove(baseCommand);
 
-        //--- TODO: remove from commandMap
+        Class<? extends BaseCommand> clazz = baseCommand.getClass();
+        Command commandAnnotation = clazz.getAnnotation(Command.class);
+        unregisterCommand(commandAnnotation.aliases()[0]);
     }
 
     private Optional<SimpleCommandMap> findSimpleCommandMap() {
@@ -111,8 +113,6 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
             try {
                 final Method knownCommands = commandMap.getClass().getDeclaredMethod("getKnownCommands");
                 knownCommands.setAccessible(true);
-                // final Field knownCommands = commandMap.getClass().getDeclaredField("knownCommands");
-                // knownCommands.setAccessible(true);
 
                 Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.invoke(commandMap);
                 cmds.keySet().removeIf(label -> !Constants.WHITELISTED_DEFAULT_COMMANDS.contains(label));

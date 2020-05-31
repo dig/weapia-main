@@ -61,9 +61,9 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
 
     private Optional<CommandMap> findCommandMap() {
         try {
-            Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            Field bukkitCommandMap = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
             bukkitCommandMap.setAccessible(true);
-            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
+            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getPluginManager());
 
             return Optional.of(commandMap);
         } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {

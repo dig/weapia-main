@@ -24,7 +24,6 @@ public class LobbyPlayer extends CorePlayer {
 
     public LobbyPlayer(UUID uuid, String username, PluginInform pluginInform, ScoreboardManager scoreboardManager) {
         super(uuid, username, scoreboardManager);
-
         this.pluginInform = pluginInform;
     }
 
@@ -40,11 +39,11 @@ public class LobbyPlayer extends CorePlayer {
 
     @Override
     public void setup() {
-        Optional<? extends Player> playerOptional = toPlayer();
+        super.setup();
 
+        Optional<? extends Player> playerOptional = toPlayer();
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
-
             player.getInventory().clear();
 
             //--- Scoreboard
@@ -53,26 +52,16 @@ public class LobbyPlayer extends CorePlayer {
                     + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
 
             scoreboardWrapper = new ScoreboardWrapper(title, scoreboardManager);
-            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 10);
+            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 4);
 
-            scoreboardWrapper.add("CreditsTitle", ChatColor.WHITE + " \u2996 Credits", 9);
-            scoreboardWrapper.add("CreditsValue", ChatColor.LIGHT_PURPLE + " 0", 8);
-            scoreboardWrapper.add("Spacer2", ChatColor.WHITE + " ", 7);
-
-            scoreboardWrapper.add("RankTitle", ChatColor.WHITE + " \u2996 Rank", 6);
-            scoreboardWrapper.add("RankValue", ColourUtil.fromColourCode(rank.getColourCode()) + " " + rank.getFriendlyName(), 5);
-            scoreboardWrapper.add("Spacer3", ChatColor.WHITE + " ", 4);
-
-            scoreboardWrapper.add("PlayTitle", ChatColor.WHITE + " \u2996 Play Streak", 3);
-            scoreboardWrapper.add("PlayValue", ChatColor.GOLD + " 5 days", 2);
-            scoreboardWrapper.add("Spacer4", ChatColor.WHITE + " ", 1);
+            scoreboardWrapper.add("RankTitle", ChatColor.WHITE + "Rank", 3);
+            scoreboardWrapper.add("RankValue", ColourUtil.fromColourCode(rank.getColourCode()) + " " + rank.getFriendlyName(), 2);
+            scoreboardWrapper.add("Spacer3", ChatColor.WHITE + " ", 1);
 
             scoreboardWrapper.add("URL", ChatColor.GRAY + "play.weapia.com", 0);
 
             scoreboardWrapper.add(player);
         }
-
-        super.setup();
     }
 
     @Override
@@ -85,7 +74,7 @@ public class LobbyPlayer extends CorePlayer {
         return scoreboardWrapper;
     }
 
-    public void onServerUpdate() {
+    public void updateScoreboard() {
         Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
         String title = ChatColor.AQUA + "Lobby #"
                 + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");

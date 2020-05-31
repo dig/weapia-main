@@ -65,7 +65,7 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
 
         Page lobbyMainMenu = Page.builder()
                 .id("lobby-main-menu")
-                .title("Weapia \u2996 Lobbies")
+                .title("Weapia > Lobbies")
                 .size(54)
                 .putElement(0, darkAquaGlassPane)
                 .putElement(1, aquaGlassPane)

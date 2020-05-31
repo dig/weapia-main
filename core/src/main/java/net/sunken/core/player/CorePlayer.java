@@ -38,7 +38,6 @@ public abstract class CorePlayer extends AbstractPlayer {
     @Override
     public void setup() {
         Optional<? extends Player> playerOptional = toPlayer();
-
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
 

@@ -66,7 +66,7 @@ public class GameSelectorHandler implements Facet, Enableable, Listener, SunkenL
 
         Page compassMainMenu = Page.builder()
                 .id("compass-main-menu")
-                .title("Weapia \u2996 Choose Game")
+                .title("Weapia > Choose Game")
                 .size(54)
                 .putElement(0, darkAquaGlassPane)
                 .putElement(1, aquaGlassPane)

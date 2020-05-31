@@ -21,7 +21,7 @@ public class ServerUpdatedListener implements Facet, SunkenListener {
     @ListensToEvent
     public void onServerUpdated(ServerUpdatedEvent event) {
         if (event.getServer().getType() == Server.Type.BUNGEE)
-            bukkitSyncExecutor.execute(() -> playerManager.getOnlinePlayers().forEach(abstractPlayer -> ((LobbyPlayer) abstractPlayer).onServerUpdate()));
+            bukkitSyncExecutor.execute(() -> playerManager.getOnlinePlayers().forEach(abstractPlayer -> ((LobbyPlayer) abstractPlayer).updateScoreboard()));
     }
 
 }

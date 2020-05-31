@@ -18,11 +18,11 @@ public class TabListUtil {
         PacketPlayOutPlayerListHeaderFooter headerPacket = new PacketPlayOutPlayerListHeaderFooter();
 
         try {
-            Field a = headerPacket.getClass().getDeclaredField("a");
+            Field a = headerPacket.getClass().getDeclaredField("header");
             a.setAccessible(true);
             a.set(headerPacket, tabTitle);
 
-            Field b = headerPacket.getClass().getDeclaredField("b");
+            Field b = headerPacket.getClass().getDeclaredField("footer");
             b.setAccessible(true);
             b.set(headerPacket, tabFoot);
         } catch (Exception e) {

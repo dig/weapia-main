@@ -1,6 +1,5 @@
 package net.sunken.core.team.impl;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.NonNull;
 import net.sunken.core.engine.state.impl.BaseTeamState;
@@ -28,7 +27,7 @@ public abstract class Team {
         this(colour, null);
     }
 
-    public void addMember(@NotNull UUID uuid) {
+    public void addMember(@NonNull UUID uuid) {
         if (members.add(uuid)) {
             this.state.onJoin(uuid);
         }

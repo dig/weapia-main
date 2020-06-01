@@ -9,7 +9,7 @@ public enum Game {
 
     NONE ("None", 80, null, null),
 
-    ICE_RUNNER_SOLO ("Ice Runner (Solo)", 4, "respects/wep-infrastructure:ice-runner-solo", "respects/wep-infrastructure-dev:ice-runner-solo");
+    ICE_RUNNER_SOLO ("Ice Runner (Solo)", 4, "respects/wep-infrastructure:icerunner-solo", "respects/wep-infrastructure-dev:icerunner-solo");
 
     private String friendlyName;
     private int maxPlayers;

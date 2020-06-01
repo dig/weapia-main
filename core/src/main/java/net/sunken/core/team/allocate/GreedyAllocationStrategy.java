@@ -12,9 +12,9 @@ public class GreedyAllocationStrategy implements AllocationStrategy {
     @Override
     public Allocation allocate(Set<AbstractPlayer> players, Set<Team> teams) {
         Set<Team> resultantTeams = new HashSet<>();
-        Queue<Team> teamsLeft = new LinkedList<>(teams);
         Queue<AbstractPlayer> unallocatedPlayers = new LinkedList<>(players);
 
+        Queue<Team> teamsLeft = new LinkedList<>(teams);
         while (!teamsLeft.isEmpty() && !unallocatedPlayers.isEmpty()) {
             Team team = teamsLeft.poll();
 

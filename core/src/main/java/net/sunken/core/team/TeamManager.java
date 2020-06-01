@@ -1,23 +1,22 @@
 package net.sunken.core.team;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import lombok.*;
-import lombok.extern.java.Log;
-import net.sunken.common.config.InjectConfig;
-import net.sunken.common.inject.Enableable;
-import net.sunken.common.inject.Facet;
-import net.sunken.common.player.module.PlayerManager;
+import lombok.extern.java.*;
+import net.sunken.common.config.*;
+import net.sunken.common.inject.*;
+import net.sunken.common.player.module.*;
 import net.sunken.core.team.allocate.*;
-import net.sunken.core.team.config.TeamConfiguration;
-import net.sunken.core.team.impl.Team;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import net.sunken.core.team.config.*;
+import net.sunken.core.team.impl.*;
+import org.bukkit.entity.*;
+import org.bukkit.event.*;
+import org.bukkit.event.player.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 @Log
 @Singleton
@@ -25,6 +24,9 @@ public class TeamManager implements Facet, Enableable, Listener {
 
     @Inject @InjectConfig
     private TeamConfiguration teamConfiguration;
+    @Setter
+    private Function<TeamSingleConfiguration, Team> teamConfigMapper;
+
     @Inject
     private PlayerManager playerManager;
 
@@ -44,6 +46,16 @@ public class TeamManager implements Facet, Enableable, Listener {
     @Override
     public void disable() {
         teamsList.clear();
+    }
+
+    public void allocateTeams() {
+        if (allocationStrategy != null && teamConfigMapper != null) {
+            Set<Team> teams = teamConfiguration.getTeamsAvailable().stream()
+                    .map(teamConfigMapper)
+                    .collect(Collectors.toSet());
+
+            allocationStrategy.allocate(playerManager.getOnlinePlayers(), teams);
+        }
     }
 
     public Optional<Team> getByMemberUUID(@NonNull UUID uuid) {

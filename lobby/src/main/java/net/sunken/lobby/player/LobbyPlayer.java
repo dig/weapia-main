@@ -54,7 +54,7 @@ public class LobbyPlayer extends CorePlayer {
                     + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
 
             scoreboardWrapper = new ScoreboardWrapper(title, scoreboardManager);
-            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 3);
+            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 4);
 
             scoreboardWrapper.add("RankTitle", ChatColor.WHITE + "Rank " + ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 3);
             scoreboardWrapper.add("PlayersTitle", ChatColor.WHITE + "Players " + ChatColor.GOLD + serverManager.getTotalPlayersOnline(), 2);

@@ -7,8 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Game {
 
-    NONE ("None", 80, null, null);
-    // EXAMPLE_GAME ("Example Game", 12, "respects/wep-infrastructure:examplegame", "respects/wep-infrastructure-dev:examplegame");
+    NONE ("None", 80, null, null),
+
+    ICE_RUNNER_SOLO ("Ice Runner (Solo)", 4, "respects/wep-infrastructure:ice-runner-solo", "respects/wep-infrastructure-dev:ice-runner-solo");
 
     private String friendlyName;
     private int maxPlayers;

@@ -31,22 +31,22 @@ public abstract class Team {
 
     public void addMember(@NonNull UUID uuid) {
         if (members.add(uuid)) {
-            this.state.onJoin(uuid);
+            this.state.onJoin(this, uuid);
         }
     }
 
     public void removeMember(@NonNull UUID uuid) {
         if (members.remove(uuid)) {
-            this.state.onQuit(uuid);
+            this.state.onQuit(this, uuid);
         }
     }
 
     public void setState(BaseTeamState newState) {
         if (state != null) {
-            state.stop(newState);
+            state.stop(this, newState);
         }
 
-        newState.start(state);
+        newState.start(this, state);
         state = newState;
     }
 

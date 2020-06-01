@@ -54,7 +54,8 @@ public class TeamManager implements Facet, Enableable, Listener {
                     .map(teamConfigMapper)
                     .collect(Collectors.toSet());
 
-            allocationStrategy.allocate(playerManager.getOnlinePlayers(), teams);
+            Allocation allocation = allocationStrategy.allocate(playerManager.getOnlinePlayers(), teams);
+            teamsList = allocation.getResultantTeams();
         }
     }
 

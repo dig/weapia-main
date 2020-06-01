@@ -32,6 +32,7 @@ public class TeamManager implements Facet, Enableable, Listener {
 
     @Setter
     private AllocationStrategy allocationStrategy;
+    @Getter
     private Set<Team> teamsList;
 
     public TeamManager() {

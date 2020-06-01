@@ -29,6 +29,6 @@ public class GreedyAllocationStrategy implements AllocationStrategy {
             }
         }
 
-        return new Allocation(resultantTeams, new HashSet<>(unallocatedPlayers));
+        return new Allocation(resultantTeams, new HashSet<>()); // empty set as there will never be unallocated players
     }
 }

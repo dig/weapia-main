@@ -42,19 +42,6 @@ public abstract class BaseState {
     //--- Called on state stop, before switching.
     public abstract void stop(BaseGameState next);
 
-    public boolean setState(@NonNull UUID uuid, @NonNull BasePlayerState newState) {
-        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
-
-        if (abstractPlayerOptional.isPresent()) {
-            CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
-            corePlayer.setState(newState);
-
-            return true;
-        }
-
-        return false;
-    }
-
     public long getPlayingCount() {
         return playerManager.getOnlinePlayers().stream()
                 .map(abstractPlayer -> (CorePlayer) abstractPlayer)

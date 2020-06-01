@@ -2,7 +2,7 @@ package net.sunken.core.team;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.sun.istack.internal.NotNull;
+import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Enableable;
@@ -46,7 +46,7 @@ public class TeamManager implements Facet, Enableable, Listener {
         teamsList.clear();
     }
 
-    public Optional<Team> getByMemberUUID(@NotNull UUID uuid) {
+    public Optional<Team> getByMemberUUID(@NonNull UUID uuid) {
         return teamsList.stream()
                 .filter(team -> team.getMembers().contains(uuid))
                 .findFirst();

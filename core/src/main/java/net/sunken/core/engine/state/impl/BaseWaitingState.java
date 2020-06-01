@@ -91,7 +91,7 @@ public abstract class BaseWaitingState extends EventGameState {
             scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 10);
 
             scoreboardWrapper.add("MapTitle", ChatColor.WHITE + "Map", 9);
-            scoreboardWrapper.add("MapValue", ChatColor.GOLD + world.getFriendlyName(), 8);
+            scoreboardWrapper.add("MapValue", ChatColor.GOLD + " " + world.getFriendlyName(), 8);
             scoreboardWrapper.add("Spacer2", ChatColor.WHITE + " ", 7);
 
             ChatColor playersColour = ChatColor.GREEN;
@@ -102,12 +102,12 @@ public abstract class BaseWaitingState extends EventGameState {
             }
 
             scoreboardWrapper.add("PlayersTitle", ChatColor.WHITE + "Players", 6);
-            scoreboardWrapper.add("PlayersValue", playersColour + "" + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers(), 5);
+            scoreboardWrapper.add("PlayersValue", playersColour + " " + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers(), 5);
             scoreboardWrapper.add("Spacer3", ChatColor.WHITE + " ", 4);
 
             long timeDiff = startTimeMillis - System.currentTimeMillis();
             scoreboardWrapper.add("StartingTitle", ChatColor.WHITE + "Starting in", 3);
-            scoreboardWrapper.add("StartingValue", ChatColor.LIGHT_PURPLE + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 2);
+            scoreboardWrapper.add("StartingValue", ChatColor.LIGHT_PURPLE + " " + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 2);
             scoreboardWrapper.add("Spacer4", ChatColor.WHITE + " ", 1);
 
             scoreboardWrapper.add("URL", ChatColor.GRAY + "play.weapia.com", 0);

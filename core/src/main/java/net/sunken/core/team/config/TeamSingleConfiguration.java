@@ -13,5 +13,7 @@ public class TeamSingleConfiguration {
     private ChatColor colour;
     @Setting
     private String displayName;
+    @Setting
+    private int maxPlayers;
 
 }

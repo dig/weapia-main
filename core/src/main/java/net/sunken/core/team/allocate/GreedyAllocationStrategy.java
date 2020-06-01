@@ -9,12 +9,6 @@ import java.util.*;
 @Log
 public class GreedyAllocationStrategy implements AllocationStrategy {
 
-    private final int playersPerTeam;
-
-    public GreedyAllocationStrategy(int playersPerTeam) {
-        this.playersPerTeam = playersPerTeam;
-    }
-
     @Override
     public Allocation allocate(Set<AbstractPlayer> players, Set<Team> teams) {
         Set<Team> resultantTeams = new HashSet<>();
@@ -24,7 +18,7 @@ public class GreedyAllocationStrategy implements AllocationStrategy {
         while (!teamsLeft.isEmpty() && !unallocatedPlayers.isEmpty()) {
             Team team = teamsLeft.poll();
 
-            while (team.getMembers().size() < playersPerTeam && !unallocatedPlayers.isEmpty()) {
+            while (team.getMembers().size() < team.getMaxPlayers() && !unallocatedPlayers.isEmpty()) {
                 UUID uuid = unallocatedPlayers.poll().getUuid();
                 team.addMember(uuid);
                 log.info(String.format("TeamManager: Assigning %s to team colour %s.", uuid.toString(), team.getColour().toString()));

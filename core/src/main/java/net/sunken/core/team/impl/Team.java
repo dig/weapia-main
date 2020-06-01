@@ -1,30 +1,32 @@
 package net.sunken.core.team.impl;
 
-import lombok.Getter;
-import lombok.NonNull;
-import net.sunken.core.engine.state.impl.BaseTeamState;
-import org.bukkit.ChatColor;
+import lombok.*;
+import net.sunken.core.engine.state.impl.*;
+import org.bukkit.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 public abstract class Team {
 
     @Getter
     protected ChatColor colour;
     @Getter
+    protected int maxPlayers;
+    @Getter
     protected Set<UUID> members;
     @Getter
     protected BaseTeamState state;
 
-    public Team(@NonNull ChatColor colour, BaseTeamState state) {
+    public Team(@NonNull ChatColor colour, int maxPlayers, BaseTeamState state) {
         this.colour = colour;
-        this.members  = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        this.maxPlayers = maxPlayers;
+        this.members = Collections.newSetFromMap(new ConcurrentHashMap<>());
         this.setState(state);
     }
 
-    public Team(@NonNull ChatColor colour) {
-        this(colour, null);
+    public Team(@NonNull ChatColor colour, int maxPlayers) {
+        this(colour, maxPlayers, null);
     }
 
     public void addMember(@NonNull UUID uuid) {

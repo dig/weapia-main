@@ -14,7 +14,4 @@ public class TeamConfiguration {
     @Setting
     private List<TeamSingleConfiguration> teamsAvailable;
 
-    @Setting
-    private int playersPerTeam;
-
 }

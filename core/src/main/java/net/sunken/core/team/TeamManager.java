@@ -38,7 +38,7 @@ public class TeamManager implements Facet, Enableable, Listener {
 
     @Override
     public void enable() {
-        allocationStrategy = new GreedyAllocationStrategy(teamConfiguration.getPlayersPerTeam());
+        allocationStrategy = new GreedyAllocationStrategy();
     }
 
     @Override

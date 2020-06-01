@@ -1,10 +1,21 @@
 package net.sunken.core.engine.state.impl;
 
+import com.google.inject.Inject;
+import net.sunken.common.player.AbstractPlayer;
+import net.sunken.common.player.module.PlayerManager;
+import net.sunken.core.scoreboard.ScoreboardManager;
 import net.sunken.core.team.impl.Team;
+import org.bukkit.ChatColor;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public abstract class BaseTeamState {
+
+    @Inject
+    private ScoreboardManager scoreboardManager;
+    @Inject
+    private PlayerManager playerManager;
 
     //--- Called on state start.
     public abstract void start(Team team, BaseTeamState previous);
@@ -13,9 +24,13 @@ public abstract class BaseTeamState {
     public abstract void stop(Team team, BaseTeamState next);
 
     //--- Called when a player joins the team.
-    public abstract void onJoin(Team team, UUID uuid);
+    public void onJoin(Team team, UUID uuid) {
+        scoreboardManager.changePlayerName(uuid, "[" + team.getDisplayName() + "]", "", team.getColour());
+    }
 
     //--- Called when a player leaves the team.
-    public abstract void onQuit(Team team, UUID uuid);
+    public void onQuit(Team team, UUID uuid) {
+        scoreboardManager.changePlayerName(uuid, "", "", ChatColor.WHITE);
+    }
 
 }

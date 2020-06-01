@@ -12,21 +12,24 @@ public abstract class Team {
     @Getter
     protected ChatColor colour;
     @Getter
+    protected String displayName;
+    @Getter
     protected int maxPlayers;
     @Getter
     protected Set<UUID> members;
     @Getter
     protected BaseTeamState state;
 
-    public Team(@NonNull ChatColor colour, int maxPlayers, BaseTeamState state) {
+    public Team(@NonNull ChatColor colour, @NonNull String displayName, int maxPlayers, BaseTeamState state) {
         this.colour = colour;
+        this.displayName = displayName;
         this.maxPlayers = maxPlayers;
         this.members = Collections.newSetFromMap(new ConcurrentHashMap<>());
         this.setState(state);
     }
 
-    public Team(@NonNull ChatColor colour, int maxPlayers) {
-        this(colour, maxPlayers, null);
+    public Team(@NonNull ChatColor colour, @NonNull String displayName, int maxPlayers) {
+        this(colour, displayName, maxPlayers, null);
     }
 
     public void addMember(@NonNull UUID uuid) {

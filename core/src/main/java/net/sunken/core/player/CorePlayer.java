@@ -47,11 +47,11 @@ public abstract class CorePlayer extends AbstractPlayer {
             switch (rank) {
                 case PLAYER:
                     player.setPlayerListName(ColourUtil.fromColourCode(rank.getColourCode()) + player.getName());
-                    scoreboardManager.changePlayerName(player, ColourUtil.fromColourCode(rank.getColourCode()) + "", "");
+                    scoreboardManager.changePlayerName(this.uuid, "", "", ColourUtil.fromColourCode(rank.getColourCode()));
                     break;
                 default:
                     player.setPlayerListName(ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + player.getName());
-                    scoreboardManager.changePlayerName(player, ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "");
+                    scoreboardManager.changePlayerName(this.uuid, ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ColourUtil.fromColourCode(rank.getColourCode()));
             }
         }
     }

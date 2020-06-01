@@ -19,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -131,13 +132,25 @@ public class EngineManager implements Facet, Listener {
             //--- Take damage
             if (event.getEntity() instanceof Player) {
                 Player target = (Player) event.getEntity();
-                event.setCancelled(!eventGameState.canTakeDamage(target, event.getDamager(), event.getCause()));
+                event.setCancelled(!eventGameState.canTakeEntityDamage(target, event.getDamager(), event.getCause()));
             }
 
             //--- Deal damage
             if (event.getDamager() instanceof Player) {
                 Player instigator = (Player) event.getDamager();
-                event.setCancelled(!eventGameState.canDealDamage(instigator, event.getEntity(), event.getCause()));
+                event.setCancelled(!eventGameState.canDealEntityDamage(instigator, event.getEntity(), event.getCause()));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (currentGameState != null && currentGameState instanceof EventGameState) {
+            EventGameState eventGameState = (EventGameState) currentGameState;
+
+            if (event.getEntity() instanceof Player) {
+                Player player = (Player) event.getEntity();
+                event.setCancelled(!eventGameState.canTakeDamage(player, event.getFinalDamage(), event.getDamage()));
             }
         }
     }

@@ -144,12 +144,17 @@ public abstract class BaseWaitingState extends EventGameState {
     }
 
     @Override
-    public boolean canTakeDamage(Player target, Entity instigator, EntityDamageEvent.DamageCause damageCause) {
+    public boolean canTakeEntityDamage(Player target, Entity instigator, EntityDamageEvent.DamageCause damageCause) {
         return false;
     }
 
     @Override
-    public boolean canDealDamage(Player instigator, Entity target, EntityDamageEvent.DamageCause damageCause) {
+    public boolean canDealEntityDamage(Player instigator, Entity target, EntityDamageEvent.DamageCause damageCause) {
+        return false;
+    }
+
+    @Override
+    public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
         return false;
     }
 

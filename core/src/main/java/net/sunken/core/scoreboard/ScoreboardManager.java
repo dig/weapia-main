@@ -25,15 +25,15 @@ public class ScoreboardManager implements Facet {
     @Inject
     private PlayerManager playerManager;
 
-    private Map<UUID, ScoreboardDetail> playerNames;
+    private Map<String, ScoreboardDetail> playerNames;
 
     public ScoreboardManager() {
         playerNames = new HashMap<>();
     }
 
-    public void changePlayerName(@NonNull UUID uuid, @NonNull String prefix, @NonNull String suffix, @NonNull ChatColor colour) {
+    public void changePlayerName(@NonNull String name, @NonNull String prefix, @NonNull String suffix, @NonNull ChatColor colour) {
         ScoreboardDetail scoreboardDetail = new ScoreboardDetail(prefix, suffix, colour);
-        playerNames.put(uuid, scoreboardDetail);
+        playerNames.put(name, scoreboardDetail);
         playerManager.getOnlinePlayers().forEach(abstractPlayer -> {
             if (abstractPlayer instanceof CorePlayer) {
                 CorePlayer corePlayer = (CorePlayer) abstractPlayer;
@@ -41,23 +41,23 @@ public class ScoreboardManager implements Facet {
 
                 if (scoreboardWrapper != null) {
                     Scoreboard scoreboard = scoreboardWrapper.getScoreboard();
-                    registerTeam(scoreboard, uuid, scoreboardDetail);
+                    registerTeam(scoreboard, name, scoreboardDetail);
                 }
             }
         });
     }
 
     public void load(@NonNull Scoreboard scoreboard) {
-        for (UUID uuid : playerNames.keySet()) {
-            ScoreboardDetail scoreboardDetail = playerNames.get(uuid);
-            registerTeam(scoreboard, uuid, scoreboardDetail);
+        for (String name : playerNames.keySet()) {
+            ScoreboardDetail scoreboardDetail = playerNames.get(name);
+            registerTeam(scoreboard, name, scoreboardDetail);
         }
     }
 
-    private void registerTeam(@NonNull Scoreboard scoreboard, @NonNull UUID uuid, @NonNull ScoreboardDetail scoreboardDetail) {
-        Team team = scoreboard.getTeam(uuid.toString());
+    private void registerTeam(@NonNull Scoreboard scoreboard, @NonNull String name, @NonNull ScoreboardDetail scoreboardDetail) {
+        Team team = scoreboard.getTeam(name);
         if (team == null)
-            team = scoreboard.registerNewTeam(uuid.toString());
+            team = scoreboard.registerNewTeam(name);
 
         team.setPrefix(scoreboardDetail.getPrefix());
         team.setSuffix(scoreboardDetail.getSuffix());
@@ -66,16 +66,15 @@ public class ScoreboardManager implements Facet {
         team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
         team.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, Team.OptionStatus.NEVER);
 
-        team.addEntry(uuid.toString());
+        team.addEntry(name);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        if (playerNames.containsKey(player.getUniqueId())) {
-            playerNames.remove(player.getUniqueId());
-
+        if (playerNames.containsKey(player.getName())) {
+            playerNames.remove(player.getName());
             playerManager.getOnlinePlayers().forEach(abstractPlayer -> {
                 if (abstractPlayer instanceof CorePlayer) {
                     CorePlayer corePlayer = (CorePlayer) abstractPlayer;
@@ -83,7 +82,7 @@ public class ScoreboardManager implements Facet {
 
                     if (scoreboardWrapper != null) {
                         Scoreboard scoreboard = scoreboardWrapper.getScoreboard();
-                        Team team = scoreboard.getTeam(player.getUniqueId().toString());
+                        Team team = scoreboard.getTeam(player.getName());
 
                         if (team != null)
                             team.unregister();

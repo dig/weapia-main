@@ -37,24 +37,34 @@ public abstract class CorePlayer extends AbstractPlayer {
 
     @Override
     public void setup() {
+        setTabList();
+        setNametagAndTabList();
+    }
+
+    public void setTabList() {
         Optional<? extends Player> playerOptional = toPlayer();
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
-
             TabListUtil.send(player, ChatColor.translateAlternateColorCodes('&', Constants.TAB_TOP), ChatColor.translateAlternateColorCodes('&', Constants.TAB_BOTTOM));
+        }
+    }
 
-            //--- Player list & nametag
+    public void setNametagAndTabList() {
+        Optional<? extends Player> playerOptional = toPlayer();
+        if (playerOptional.isPresent()) {
+            Player player = playerOptional.get();
             switch (rank) {
                 case PLAYER:
                     player.setPlayerListName(ColourUtil.fromColourCode(rank.getColourCode()) + player.getName());
-                    scoreboardManager.changePlayerName(this.uuid, "", "", ColourUtil.fromColourCode(rank.getColourCode()));
+                    scoreboardManager.changePlayerName(this.username, "", "", ColourUtil.fromColourCode(rank.getColourCode()));
                     break;
                 default:
                     player.setPlayerListName(ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + player.getName());
-                    scoreboardManager.changePlayerName(this.uuid, ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ColourUtil.fromColourCode(rank.getColourCode()));
+                    scoreboardManager.changePlayerName(this.username, ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ColourUtil.fromColourCode(rank.getColourCode()));
             }
         }
     }
+
 
     @Override
     public void destroy() { scoreboardWrapper.getEntries().values().forEach(scoreboardEntry -> scoreboardEntry.remove()); }

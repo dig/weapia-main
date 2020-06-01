@@ -3,9 +3,11 @@ package net.sunken.core.engine.state.impl;
 import com.google.inject.Inject;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.module.PlayerManager;
+import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.ScoreboardManager;
 import net.sunken.core.team.impl.Team;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -25,12 +27,27 @@ public abstract class BaseTeamState {
 
     //--- Called when a player joins the team.
     public void onJoin(Team team, UUID uuid) {
-        scoreboardManager.changePlayerName(uuid, "[" + team.getDisplayName() + "]", "", team.getColour());
+        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
+        if (abstractPlayerOptional.isPresent()) {
+            CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
+
+            Optional<? extends Player> playerOptional = corePlayer.toPlayer();
+            if (playerOptional.isPresent()) {
+                Player player = playerOptional.get();
+                player.setPlayerListName(team.getColour() + "[" + team.getDisplayName() + "] " + player.getName());
+            }
+
+            scoreboardManager.changePlayerName(corePlayer.getUsername(), team.getColour() + "[" + team.getDisplayName() + "] ", "", team.getColour());
+        }
     }
 
     //--- Called when a player leaves the team.
     public void onQuit(Team team, UUID uuid) {
-        scoreboardManager.changePlayerName(uuid, "", "", ChatColor.WHITE);
+        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
+        if (abstractPlayerOptional.isPresent()) {
+            CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
+            corePlayer.setNametagAndTabList();
+        }
     }
 
 }

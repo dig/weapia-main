@@ -87,11 +87,11 @@ public abstract class BaseWaitingState extends EventGameState {
             Game game = pluginInform.getServer().getGame();
             net.sunken.common.server.World world = pluginInform.getServer().getWorld();
 
-            ScoreboardWrapper scoreboardWrapper = new ScoreboardWrapper(ChatColor.GREEN + game.getFriendlyName(), scoreboardManager);
+            ScoreboardWrapper scoreboardWrapper = new ScoreboardWrapper(ChatColor.AQUA + "" + ChatColor.BOLD + game.getFriendlyName(), scoreboardManager);
             scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 10);
 
-            scoreboardWrapper.add("MapTitle", ChatColor.WHITE + " \u2996 Map", 9);
-            scoreboardWrapper.add("MapValue", ChatColor.GOLD + " " + world.getFriendlyName(), 8);
+            scoreboardWrapper.add("MapTitle", ChatColor.WHITE + "Map", 9);
+            scoreboardWrapper.add("MapValue", ChatColor.GOLD + world.getFriendlyName(), 8);
             scoreboardWrapper.add("Spacer2", ChatColor.WHITE + " ", 7);
 
             ChatColor playersColour = ChatColor.GREEN;
@@ -101,16 +101,16 @@ public abstract class BaseWaitingState extends EventGameState {
                 playersColour = ChatColor.RED;
             }
 
-            scoreboardWrapper.add("PlayersTitle", ChatColor.WHITE + " \u2996 Players", 6);
-            scoreboardWrapper.add("PlayersValue", playersColour + " " + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers(), 5);
+            scoreboardWrapper.add("PlayersTitle", ChatColor.WHITE + "Players", 6);
+            scoreboardWrapper.add("PlayersValue", playersColour + "" + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers(), 5);
             scoreboardWrapper.add("Spacer3", ChatColor.WHITE + " ", 4);
 
             long timeDiff = startTimeMillis - System.currentTimeMillis();
-            scoreboardWrapper.add("StartingTitle", ChatColor.WHITE + " \u2996 Starting in", 3);
-            scoreboardWrapper.add("StartingValue", ChatColor.LIGHT_PURPLE + " " + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 2);
+            scoreboardWrapper.add("StartingTitle", ChatColor.WHITE + "Starting in", 3);
+            scoreboardWrapper.add("StartingValue", ChatColor.LIGHT_PURPLE + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 2);
             scoreboardWrapper.add("Spacer4", ChatColor.WHITE + " ", 1);
 
-            scoreboardWrapper.add("URL", ChatColor.GREEN + "minevasion.com", 0);
+            scoreboardWrapper.add("URL", ChatColor.GRAY + "play.weapia.com", 0);
 
             scoreboardWrapper.add(player);
             corePlayer.setScoreboardWrapper(scoreboardWrapper);

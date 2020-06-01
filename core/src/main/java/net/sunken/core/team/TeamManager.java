@@ -8,7 +8,7 @@ import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.player.module.PlayerManager;
-import net.sunken.core.team.assign.*;
+import net.sunken.core.team.allocate.*;
 import net.sunken.core.team.config.TeamConfiguration;
 import net.sunken.core.team.impl.Team;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public class TeamManager implements Facet, Enableable, Listener {
 
     @Override
     public void enable() {
-        allocationStrategy = new GreedyAllocationStrategy(teamConfiguration);
+        allocationStrategy = new GreedyAllocationStrategy(teamConfiguration.getPlayersPerTeam());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package net.sunken.core.team.assign;
+package net.sunken.core.team.allocate;
 
 import net.sunken.common.player.*;
 import net.sunken.core.team.impl.*;
@@ -7,5 +7,5 @@ import java.util.*;
 
 public interface AllocationStrategy {
 
-    Set<Team> assign(Set<AbstractPlayer> players, Set<Team> teams);
+    Allocation allocate(Set<AbstractPlayer> players, Set<Team> teams);
 }

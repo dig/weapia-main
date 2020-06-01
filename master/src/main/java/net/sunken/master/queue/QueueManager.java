@@ -8,10 +8,7 @@ import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
-import net.sunken.common.player.packet.PlayerProxyMessagePacket;
-import net.sunken.common.player.packet.PlayerRequestServerPacket;
-import net.sunken.common.player.packet.PlayerSaveStatePacket;
-import net.sunken.common.player.packet.PlayerSendToServerPacket;
+import net.sunken.common.player.packet.*;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
@@ -23,6 +20,7 @@ import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
 import net.sunken.master.queue.handler.PlayerRequestServerHandler;
 import net.sunken.common.server.module.ServerManager;
+import net.sunken.master.queue.handler.PlayerRequestServerIDHandler;
 import net.sunken.master.queue.handler.PlayerSaveStateHandler;
 import net.sunken.master.queue.handler.ServerDisconnectedHandler;
 import net.sunken.master.queue.impl.IQueue;
@@ -46,6 +44,8 @@ public class QueueManager implements Facet, Enableable {
     private PlayerSaveStateHandler playerSaveStateHandler;
     @Inject
     private ServerDisconnectedHandler serverDisconnectedHandler;
+    @Inject
+    private PlayerRequestServerIDHandler playerRequestServerIDHandler;
 
     @Inject
     private QueueRunnable queueRunnable;
@@ -74,6 +74,7 @@ public class QueueManager implements Facet, Enableable {
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
         packetHandlerRegistry.registerHandler(ServerDisconnectedPacket.class, serverDisconnectedHandler);
+        packetHandlerRegistry.registerHandler(PlayerRequestServerIDPacket.class, playerRequestServerIDHandler);
 
         //--- Queue thread
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(queueRunnable, 200L, 200L, TimeUnit.MILLISECONDS);

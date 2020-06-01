@@ -70,4 +70,6 @@ public class Constants {
     public static final String COMMAND_CREATESERVER_INVALID = ChatColor.RED + "Invalid type/game supplied.";
     public static final String COMMAND_CREATESERVER_SUCCESS = ChatColor.GREEN + "Requested server to be made.";
 
+    public static final String COMMAND_GOTOSERVER_SUCCESS = ChatColor.GREEN + "Requesting master to send you to %s.";
+
 }

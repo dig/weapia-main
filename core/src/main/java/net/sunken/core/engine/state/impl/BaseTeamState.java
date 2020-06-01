@@ -1,24 +1,53 @@
 package net.sunken.core.engine.state.impl;
 
+import com.google.inject.Inject;
+import net.sunken.common.player.AbstractPlayer;
+import net.sunken.common.player.module.PlayerManager;
+import net.sunken.core.player.CorePlayer;
+import net.sunken.core.scoreboard.ScoreboardManager;
 import net.sunken.core.team.impl.Team;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public abstract class BaseTeamState {
 
-    protected Team team;
-    public BaseTeamState(Team team) { this.team = team; }
+    @Inject
+    private ScoreboardManager scoreboardManager;
+    @Inject
+    private PlayerManager playerManager;
 
     //--- Called on state start.
-    public abstract void start(BaseTeamState previous);
+    public abstract void start(Team team, BaseTeamState previous);
 
     //--- Called on state stop, before switching.
-    public abstract void stop(BaseTeamState next);
+    public abstract void stop(Team team, BaseTeamState next);
 
     //--- Called when a player joins the team.
-    public abstract void onJoin(UUID uuid);
+    public void onJoin(Team team, UUID uuid) {
+        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
+        if (abstractPlayerOptional.isPresent()) {
+            CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
+
+            Optional<? extends Player> playerOptional = corePlayer.toPlayer();
+            if (playerOptional.isPresent()) {
+                Player player = playerOptional.get();
+                player.setPlayerListName(team.getColour() + "[" + team.getDisplayName() + "] " + player.getName());
+            }
+
+            scoreboardManager.changePlayerName(corePlayer.getUsername(), team.getColour() + "[" + team.getDisplayName() + "] ", "", team.getColour());
+        }
+    }
 
     //--- Called when a player leaves the team.
-    public abstract void onQuit(UUID uuid);
+    public void onQuit(Team team, UUID uuid) {
+        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
+        if (abstractPlayerOptional.isPresent()) {
+            CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
+            corePlayer.setNametagAndTabList();
+        }
+    }
 
 }

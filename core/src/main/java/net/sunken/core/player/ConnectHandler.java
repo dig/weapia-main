@@ -84,6 +84,9 @@ public class ConnectHandler implements Facet, Listener {
             case "c83bc38d-11ae-4973-9d7c-5c77d6dcfb86":
                 abstractPlayer.setRank(Rank.OWNER);
                 break;
+            case "5190d5d8-0792-4ea0-a1da-d28d4d3af97a":
+                abstractPlayer.setRank(Rank.DEVELOPER);
+                break;
         }
 
         if (loadState) pendingConnection.put(abstractPlayer.getUuid(), abstractPlayer);

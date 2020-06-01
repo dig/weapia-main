@@ -17,7 +17,7 @@ public class LobbyPlayerFactory {
     private ScoreboardManager scoreboardManager;
 
     public LobbyPlayer createPlayer(UUID uuid, String username) {
-        return new LobbyPlayer(uuid, username, pluginInform, scoreboardManager);
+        return new LobbyPlayer(uuid, username, serverManager, pluginInform, scoreboardManager);
     }
 
 }

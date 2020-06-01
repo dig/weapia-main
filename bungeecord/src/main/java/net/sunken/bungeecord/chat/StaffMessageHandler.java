@@ -32,7 +32,7 @@ public class StaffMessageHandler extends PacketHandler<StaffMessagePacket> imple
                     BungeePlayer bungeePlayer = (BungeePlayer) player;
                     ProxiedPlayer proxiedPlayer = bungeePlayer.toProxiedPlayer().get();
 
-                    proxiedPlayer.sendMessage(TextComponent.fromLegacyText(ChatColor.DARK_GREEN + "[" + ColourUtil.fromColourCode(sender.getRank().getColourCode()) + sender.getDisplayName() + ChatColor.DARK_GREEN + "] " + ChatColor.GREEN + packet.getMessage()));
+                    proxiedPlayer.sendMessage(TextComponent.fromLegacyText(ChatColor.DARK_AQUA + "[" + ColourUtil.fromColourCode(sender.getRank().getColourCode()) + sender.getDisplayName() + ChatColor.DARK_AQUA + "] " + ChatColor.AQUA + packet.getMessage()));
                 });
     }
 

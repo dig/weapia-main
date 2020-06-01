@@ -19,11 +19,13 @@ import java.util.UUID;
 @Log
 public class LobbyPlayer extends CorePlayer {
 
+    private ServerManager serverManager;
     private PluginInform pluginInform;
     private ScoreboardWrapper scoreboardWrapper;
 
-    public LobbyPlayer(UUID uuid, String username, PluginInform pluginInform, ScoreboardManager scoreboardManager) {
+    public LobbyPlayer(UUID uuid, String username, ServerManager serverManager, PluginInform pluginInform, ScoreboardManager scoreboardManager) {
         super(uuid, username, scoreboardManager);
+        this.serverManager = serverManager;
         this.pluginInform = pluginInform;
     }
 
@@ -48,16 +50,16 @@ public class LobbyPlayer extends CorePlayer {
 
             //--- Scoreboard
             Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
-            String title = ChatColor.AQUA + "Lobby #"
+            String title = ChatColor.AQUA + "" + ChatColor.BOLD + "Lobby #"
                     + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
 
             scoreboardWrapper = new ScoreboardWrapper(title, scoreboardManager);
-            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 4);
+            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 3);
 
-            scoreboardWrapper.add("RankTitle", ChatColor.WHITE + "Rank", 3);
-            scoreboardWrapper.add("RankValue", ColourUtil.fromColourCode(rank.getColourCode()) + " " + rank.getFriendlyName(), 2);
+            scoreboardWrapper.add("RankTitle", ChatColor.WHITE + "Rank " + ColourUtil.fromColourCode(rank.getColourCode()) + " " + rank.getFriendlyName(), 3);
+            scoreboardWrapper.add("PlayersTitle", ChatColor.WHITE + "Players " + ChatColor.GOLD + serverManager.getTotalPlayersOnline(), 2);
+
             scoreboardWrapper.add("Spacer3", ChatColor.WHITE + " ", 1);
-
             scoreboardWrapper.add("URL", ChatColor.GRAY + "play.weapia.com", 0);
 
             scoreboardWrapper.add(player);
@@ -76,11 +78,10 @@ public class LobbyPlayer extends CorePlayer {
 
     public void updateScoreboard() {
         Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
-        String title = ChatColor.AQUA + "Lobby #"
+        String title = ChatColor.AQUA + "" + ChatColor.BOLD + "Lobby #"
                 + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
-
         scoreboardWrapper.setTitle(title);
+        scoreboardWrapper.getEntry("PlayersTitle").update(ChatColor.WHITE + "Players " + ChatColor.GOLD + serverManager.getTotalPlayersOnline());
     }
-
 
 }

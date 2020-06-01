@@ -26,7 +26,7 @@ public class BuyCommand extends BungeeCommand {
         TextComponent clickableLink = new TextComponent("[VIEW]");
         clickableLink.setColor(ChatColor.GREEN);
         clickableLink.setBold(true);
-        clickableLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://store.minevasion.com"));
+        clickableLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://store.weapia.com"));
         commandSender.sendMessage(clickableLink);
 
         commandSender.sendMessage(new TextComponent(" "));

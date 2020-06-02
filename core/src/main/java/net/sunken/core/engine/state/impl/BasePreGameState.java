@@ -2,10 +2,7 @@ package net.sunken.core.engine.state.impl;
 
 import net.sunken.common.server.Game;
 import net.sunken.core.Constants;
-import net.sunken.core.engine.state.PlayerSpectatorState;
 import net.sunken.core.player.CorePlayer;
-import net.sunken.core.scoreboard.ScoreboardEntry;
-import net.sunken.core.scoreboard.ScoreboardWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -57,26 +54,6 @@ public abstract class BasePreGameState extends EventGameState {
                 Bukkit.broadcastMessage(String.format(Constants.COUNTDOWN_GAME_SECONDS, 1));
                 Bukkit.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.5F, 2F));
             }
-        }
-
-        //--- Scoreboard
-        if (tickCount % 20 == 0) {
-            long playingCount = getPlayingCount();
-            playerManager.getOnlinePlayers().forEach(abstractPlayer -> {
-                CorePlayer corePlayer = (CorePlayer) abstractPlayer;
-                ScoreboardWrapper scoreboardWrapper = corePlayer.getScoreboardWrapper();
-                Game game = pluginInform.getServer().getGame();
-
-                long timeDiff = (gameStartTimeMillis > System.currentTimeMillis() ? gameStartTimeMillis - System.currentTimeMillis() : 0);
-
-                //--- Players
-                ScoreboardEntry playersEntry = scoreboardWrapper.getEntry("PlayersValue");
-                if (playersEntry != null) playersEntry.update(ChatColor.GREEN + " " + playingCount + "/" + game.getMaxPlayers());
-
-                //--- Time
-                ScoreboardEntry timeEntry = scoreboardWrapper.getEntry("TimeValue");
-                if (timeEntry != null) timeEntry.update(ChatColor.LIGHT_PURPLE + " " + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))));
-            });
         }
     }
 

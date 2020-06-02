@@ -4,9 +4,8 @@ import com.google.inject.Inject;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.core.player.CorePlayer;
-import net.sunken.core.scoreboard.ScoreboardManager;
+import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.team.impl.Team;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -15,7 +14,7 @@ import java.util.UUID;
 public abstract class BaseTeamState {
 
     @Inject
-    private ScoreboardManager scoreboardManager;
+    private ScoreboardRegistry scoreboardRegistry;
     @Inject
     private PlayerManager playerManager;
 
@@ -37,7 +36,7 @@ public abstract class BaseTeamState {
                 player.setPlayerListName(team.getColour() + "[" + team.getDisplayName() + "] " + player.getName());
             }
 
-            scoreboardManager.changePlayerName(corePlayer.getUsername(), team.getColour() + "[" + team.getDisplayName() + "] ", "", team.getColour());
+            scoreboardRegistry.changeName(corePlayer.getUsername(), team.getColour() + "[" + team.getDisplayName() + "] ", "", team.getColour());
         }
     }
 

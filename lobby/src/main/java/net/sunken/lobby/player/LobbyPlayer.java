@@ -5,10 +5,9 @@ import net.sunken.common.server.ServerHelper;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.core.PluginInform;
 import net.sunken.core.player.CorePlayer;
-import net.sunken.core.scoreboard.ScoreboardManager;
-import net.sunken.core.scoreboard.ScoreboardWrapper;
+import net.sunken.core.scoreboard.CustomScoreboard;
+import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.ColourUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -21,12 +20,13 @@ public class LobbyPlayer extends CorePlayer {
 
     private ServerManager serverManager;
     private PluginInform pluginInform;
-    private ScoreboardWrapper scoreboardWrapper;
+    private ScoreboardRegistry scoreboardRegistry;
 
-    public LobbyPlayer(UUID uuid, String username, ServerManager serverManager, PluginInform pluginInform, ScoreboardManager scoreboardManager) {
-        super(uuid, username, scoreboardManager);
+    public LobbyPlayer(UUID uuid, String username, ServerManager serverManager, PluginInform pluginInform, ScoreboardRegistry scoreboardRegistry) {
+        super(uuid, username);
         this.serverManager = serverManager;
         this.pluginInform = pluginInform;
+        this.scoreboardRegistry = scoreboardRegistry;
     }
 
     @Override
@@ -48,40 +48,26 @@ public class LobbyPlayer extends CorePlayer {
             Player player = playerOptional.get();
             player.getInventory().clear();
 
-            //--- Scoreboard
             Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
             String title = ChatColor.AQUA + "" + ChatColor.BOLD + "Lobby #"
                     + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
 
-            scoreboardWrapper = new ScoreboardWrapper(title, scoreboardManager);
-            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 4);
+            CustomScoreboard customScoreboard = new CustomScoreboard(title);
+            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 4);
 
-            scoreboardWrapper.add("RankTitle", ChatColor.WHITE + "Rank " + ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 3);
-            scoreboardWrapper.add("PlayersTitle", ChatColor.WHITE + "Players " + ChatColor.GOLD + serverManager.getTotalPlayersOnline(), 2);
+            customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank " + ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 3);
+            customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players " + ChatColor.GOLD + serverManager.getTotalPlayersOnline(), 2);
 
-            scoreboardWrapper.add("Spacer3", ChatColor.WHITE + "  ", 1);
-            scoreboardWrapper.add("URL", ChatColor.GRAY + "play.weapia.com", 0);
+            customScoreboard.createEntry("Spacer3", ChatColor.WHITE + "  ", 1);
+            customScoreboard.createEntry("URL", ChatColor.GRAY + "play.weapia.com", 0);
 
-            scoreboardWrapper.add(player);
+            customScoreboard.add(player);
+            scoreboardRegistry.register(player.getUniqueId().toString(), customScoreboard);
         }
     }
 
     @Override
     public void destroy() {
-        scoreboardWrapper.getEntries().values().forEach(scoreboardEntry -> scoreboardEntry.remove());
-    }
-
-    @Override
-    public ScoreboardWrapper getScoreboardWrapper() {
-        return scoreboardWrapper;
-    }
-
-    public void updateScoreboard() {
-        Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
-        String title = ChatColor.AQUA + "" + ChatColor.BOLD + "Lobby #"
-                + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
-        scoreboardWrapper.setTitle(title);
-        scoreboardWrapper.getEntry("PlayersTitle").update(ChatColor.WHITE + "Players " + ChatColor.GOLD + serverManager.getTotalPlayersOnline());
     }
 
 }

@@ -5,14 +5,12 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
 import net.sunken.common.server.Game;
 import net.sunken.core.Constants;
-import net.sunken.core.PluginInform;
 import net.sunken.core.engine.state.config.WaitingConfiguration;
 import net.sunken.core.player.CorePlayer;
-import net.sunken.core.scoreboard.ScoreboardManager;
-import net.sunken.core.scoreboard.ScoreboardWrapper;
+import net.sunken.core.scoreboard.CustomScoreboard;
+import net.sunken.core.scoreboard.ScoreboardRegistry;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -39,7 +37,7 @@ public abstract class BaseWaitingState extends EventGameState {
     @Inject @InjectConfig
     protected WaitingConfiguration waitingConfiguration;
     @Inject
-    private ScoreboardManager scoreboardManager;
+    protected ScoreboardRegistry scoreboardRegistry;
 
     protected BaseGameState nextState;
     protected long startTimeMillis;
@@ -60,8 +58,12 @@ public abstract class BaseWaitingState extends EventGameState {
         playerManager.getOnlinePlayers().forEach(abstractPlayer -> {
             CorePlayer corePlayer = (CorePlayer) abstractPlayer;
 
-            if (corePlayer.getScoreboardWrapper() != null)
-                corePlayer.getScoreboardWrapper().removeAllEntries();
+            Optional<CustomScoreboard> customScoreboardOptional = scoreboardRegistry.get(corePlayer.getUuid().toString());
+            if (customScoreboardOptional.isPresent()) {
+                CustomScoreboard customScoreboard = customScoreboardOptional.get();
+                customScoreboard.removeAllEntries();
+                scoreboardRegistry.unregister(corePlayer.getUuid().toString());
+            }
         });
 
         if (pluginInform.getServer().getState() == net.sunken.common.server.Server.State.OPEN)
@@ -72,27 +74,23 @@ public abstract class BaseWaitingState extends EventGameState {
     public void onJoin(Player player) {
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
 
-        //--- Base
         player.setGameMode(GameMode.ADVENTURE);
         player.teleport(waitingConfiguration.getLocationConfiguration().toLocation());
 
-        //--- Remove potion effects
         for (PotionEffect potionEffect : player.getActivePotionEffects())
             player.removePotionEffect(potionEffect.getType());
 
-        //--- Scoreboard
         if (abstractPlayerOptional.isPresent()) {
             CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
 
             Game game = pluginInform.getServer().getGame();
             net.sunken.common.server.World world = pluginInform.getServer().getWorld();
 
-            ScoreboardWrapper scoreboardWrapper = new ScoreboardWrapper(ChatColor.AQUA + "" + ChatColor.BOLD + game.getFriendlyName(), scoreboardManager);
-            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 10);
-
-            scoreboardWrapper.add("MapTitle", ChatColor.WHITE + "Map", 9);
-            scoreboardWrapper.add("MapValue", ChatColor.GOLD + " " + world.getFriendlyName(), 8);
-            scoreboardWrapper.add("Spacer2", ChatColor.WHITE + " ", 7);
+            CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + game.getFriendlyName());
+            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 10);
+            customScoreboard.createEntry("MapTitle", ChatColor.WHITE + "Map", 9);
+            customScoreboard.createEntry("MapValue", ChatColor.GOLD + " " + world.getFriendlyName(), 8);
+            customScoreboard.createEntry("Spacer2", ChatColor.WHITE + " ", 7);
 
             ChatColor playersColour = ChatColor.GREEN;
             if (playerManager.getOnlinePlayers().size() >= waitingConfiguration.getRequiredPlayers()) {
@@ -101,26 +99,27 @@ public abstract class BaseWaitingState extends EventGameState {
                 playersColour = ChatColor.RED;
             }
 
-            scoreboardWrapper.add("PlayersTitle", ChatColor.WHITE + "Players", 6);
-            scoreboardWrapper.add("PlayersValue", playersColour + " " + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers(), 5);
-            scoreboardWrapper.add("Spacer3", ChatColor.WHITE + " ", 4);
+            customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 6);
+            customScoreboard.createEntry("PlayersValue", playersColour + " " + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers(), 5);
+            customScoreboard.createEntry("Spacer3", ChatColor.WHITE + " ", 4);
 
             long timeDiff = startTimeMillis - System.currentTimeMillis();
-            scoreboardWrapper.add("StartingTitle", ChatColor.WHITE + "Starting in", 3);
-            scoreboardWrapper.add("StartingValue", ChatColor.LIGHT_PURPLE + " " + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 2);
-            scoreboardWrapper.add("Spacer4", ChatColor.WHITE + " ", 1);
+            customScoreboard.createEntry("StartingTitle", ChatColor.WHITE + "Starting in", 3);
+            customScoreboard.createEntry("StartingValue", ChatColor.LIGHT_PURPLE + " " + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 2);
+            customScoreboard.createEntry("Spacer4", ChatColor.WHITE + " ", 1);
 
-            scoreboardWrapper.add("URL", ChatColor.GRAY + "play.weapia.com", 0);
+            customScoreboard.createEntry("URL", ChatColor.GRAY + "play.weapia.com", 0);
 
-            scoreboardWrapper.add(player);
-            corePlayer.setScoreboardWrapper(scoreboardWrapper);
+            customScoreboard.add(player);
+            scoreboardRegistry.register(corePlayer.getUuid().toString(), customScoreboard);
         } else {
             log.severe(String.format("Player not present in local playerManager, huh? (%s)", player.getName()));
         }
     }
 
     @Override
-    public void onQuit(Player player) {}
+    public void onQuit(Player player) {
+    }
 
     @Override
     public void onDeath(PlayerDeathEvent event) {
@@ -243,9 +242,11 @@ public abstract class BaseWaitingState extends EventGameState {
                 CorePlayer corePlayer = (CorePlayer) abstractPlayer;
 
                 Game game = pluginInform.getServer().getGame();
-                ScoreboardWrapper scoreboardWrapper = corePlayer.getScoreboardWrapper();
+                Optional<CustomScoreboard> customScoreboardOptional = scoreboardRegistry.get(corePlayer.getUuid().toString());
 
-                if (scoreboardWrapper != null) {
+                if (customScoreboardOptional.isPresent()) {
+                    CustomScoreboard customScoreboard = customScoreboardOptional.get();
+
                     ChatColor playersColour = ChatColor.GREEN;
                     if (playerManager.getOnlinePlayers().size() >= waitingConfiguration.getRequiredPlayers()) {
                         playersColour = ChatColor.YELLOW;
@@ -253,9 +254,9 @@ public abstract class BaseWaitingState extends EventGameState {
                         playersColour = ChatColor.RED;
                     }
 
-                    if (scoreboardWrapper.getEntry("PlayersValue") != null) {
-                        scoreboardWrapper.getEntry("PlayersValue").update(playersColour + " " + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers());
-                        scoreboardWrapper.getEntry("StartingValue").update(((timeDiff <= (10 * 1000)) && ((timeDiff / 1000) % 2000 == 0) ? ChatColor.WHITE : ChatColor.LIGHT_PURPLE) + " " + timeFormat);
+                    if (customScoreboard.getEntry("PlayersValue") != null) {
+                        customScoreboard.getEntry("PlayersValue").update(playersColour + " " + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers());
+                        customScoreboard.getEntry("StartingValue").update(((timeDiff <= (10 * 1000)) && ((timeDiff / 1000) % 2000 == 0) ? ChatColor.WHITE : ChatColor.LIGHT_PURPLE) + " " + timeFormat);
                     }
                 }
             });

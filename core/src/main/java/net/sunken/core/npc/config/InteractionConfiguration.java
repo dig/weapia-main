@@ -1,7 +1,7 @@
 package net.sunken.core.npc.config;
 
 import lombok.Getter;
-import net.sunken.core.npc.NPC;
+import net.sunken.core.npc.interact.NPCInteractionType;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
@@ -12,7 +12,7 @@ import java.util.List;
 public class InteractionConfiguration {
 
     @Setting
-    private NPC.Type type;
+    private NPCInteractionType type;
 
     @Setting
     private List<String> values;

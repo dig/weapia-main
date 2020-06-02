@@ -14,7 +14,10 @@ import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.npc.NPC;
 import net.sunken.core.npc.NPCRegistry;
+import net.sunken.core.npc.config.InteractionConfiguration;
 import net.sunken.core.npc.config.NPCServerConfiguration;
+import net.sunken.core.npc.interact.MessageInteraction;
+import net.sunken.core.npc.interact.ServerInteraction;
 import net.sunken.core.util.*;
 import net.sunken.lobby.config.*;
 import net.sunken.lobby.player.LobbyPlayer;
@@ -40,6 +43,8 @@ import org.bukkit.event.world.StructureGrowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+
+import static net.sunken.core.npc.interact.NPCInteractionType.MESSAGE;
 
 @Log
 public class LobbyState extends EventGameState {
@@ -70,7 +75,21 @@ public class LobbyState extends EventGameState {
             NPC npc = npcRegistry.register(
                     npcConfiguration.getId(), displayNameFormatted, npcConfiguration.getLocationConfiguration().toLocation(),
                     npcConfiguration.getSkinConfiguration().getTexture(), npcConfiguration.getSkinConfiguration().getSignature());
-            npc.setInteraction(npcConfiguration.getInteractionConfiguration());
+
+            InteractionConfiguration interactionConfiguration = npcConfiguration.getInteractionConfiguration();
+            switch (interactionConfiguration.getType()) {
+                case MESSAGE:
+                    npc.setInteraction(new MessageInteraction(interactionConfiguration.getValues()));
+                    break;
+                case SERVER:
+                    npc.setInteraction(new ServerInteraction(
+                            Server.Type.valueOf(interactionConfiguration.getValues().get(0)),
+                            Game.valueOf(interactionConfiguration.getValues().get(1)),
+                            Boolean.valueOf(interactionConfiguration.getValues().get(2)),
+                            packetUtil
+                    ));
+                    break;
+            }
         });
     }
 

@@ -20,13 +20,11 @@ public class LobbyPlayer extends CorePlayer {
 
     private ServerManager serverManager;
     private PluginInform pluginInform;
-    private ScoreboardRegistry scoreboardRegistry;
 
     public LobbyPlayer(UUID uuid, String username, ServerManager serverManager, PluginInform pluginInform, ScoreboardRegistry scoreboardRegistry) {
-        super(uuid, username);
+        super(uuid, username, scoreboardRegistry);
         this.serverManager = serverManager;
         this.pluginInform = pluginInform;
-        this.scoreboardRegistry = scoreboardRegistry;
     }
 
     @Override

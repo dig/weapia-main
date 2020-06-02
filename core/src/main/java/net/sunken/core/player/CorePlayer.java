@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.core.Constants;
 import net.sunken.core.engine.state.impl.BasePlayerState;
+import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.ColourUtil;
 import net.sunken.core.util.TabListUtil;
 import org.bukkit.Bukkit;
@@ -15,12 +16,15 @@ import java.util.UUID;
 
 public abstract class CorePlayer extends AbstractPlayer {
 
+    protected ScoreboardRegistry scoreboardRegistry;
+
     @Getter
     protected BasePlayerState state;
 
-    public CorePlayer(UUID uuid, String username) {
+    public CorePlayer(UUID uuid, String username, ScoreboardRegistry scoreboardRegistry) {
         super(uuid, username);
         this.state = null;
+        this.scoreboardRegistry = scoreboardRegistry;
     }
 
     @Override
@@ -44,11 +48,11 @@ public abstract class CorePlayer extends AbstractPlayer {
             switch (rank) {
                 case PLAYER:
                     player.setPlayerListName(ColourUtil.fromColourCode(rank.getColourCode()) + player.getName());
-                    // scoreboardManager.changePlayerName(this.username, "", "", ColourUtil.fromColourCode(rank.getColourCode()));
+                    scoreboardRegistry.changeName(this.username, "", "", ColourUtil.fromColourCode(rank.getColourCode()));
                     break;
                 default:
                     player.setPlayerListName(ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + player.getName());
-                    // scoreboardManager.changePlayerName(this.username, ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ColourUtil.fromColourCode(rank.getColourCode()));
+                    scoreboardRegistry.changeName(this.username, ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ColourUtil.fromColourCode(rank.getColourCode()));
             }
         }
     }

@@ -13,7 +13,7 @@ import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.npc.NPC;
-import net.sunken.core.npc.NPCManager;
+import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.npc.config.NPCServerConfiguration;
 import net.sunken.core.util.*;
 import net.sunken.lobby.config.*;
@@ -51,7 +51,7 @@ public class LobbyState extends EventGameState {
     @Inject
     private LobbyPlayerFactory lobbyPlayerFactory;
     @Inject
-    private NPCManager npcManager;
+    private NPCRegistry npcRegistry;
     @Inject
     private ServerManager serverManager;
     @Inject
@@ -67,16 +67,16 @@ public class LobbyState extends EventGameState {
             for (String line : npcConfiguration.getDisplayName())
                 displayNameFormatted.add(line.replaceAll("%players", String.valueOf(count)));
 
-            NPC npc = npcManager.create(
+            NPC npc = npcRegistry.register(
                     npcConfiguration.getId(), displayNameFormatted, npcConfiguration.getLocationConfiguration().toLocation(),
-                    npcConfiguration.getSkinConfiguration().getTexture(), npcConfiguration.getSkinConfiguration().getSignature(), true);
+                    npcConfiguration.getSkinConfiguration().getTexture(), npcConfiguration.getSkinConfiguration().getSignature());
             npc.setInteraction(npcConfiguration.getInteractionConfiguration());
         });
     }
 
     @Override
     public void stop(BaseGameState next) {
-        lobbyConfiguration.getNpcConfigurations().forEach(npcConfiguration -> npcManager.remove(npcConfiguration.getId()));
+        lobbyConfiguration.getNpcConfigurations().forEach(npcConfiguration -> npcRegistry.unregister(npcConfiguration.getId()));
     }
 
     @Override
@@ -203,7 +203,7 @@ public class LobbyState extends EventGameState {
         if (server.getGame() != Game.NONE) {
             bukkitSyncExecutor.execute(() -> {
                 lobbyConfiguration.getNpcConfigurations().forEach(npcConfiguration -> {
-                    NPC npc = npcManager.get(npcConfiguration.getId());
+                    NPC npc = npcRegistry.get(npcConfiguration.getId());
 
                     NPCServerConfiguration serverConfiguration = npcConfiguration.getServerConfiguration();
                     long count = serverManager.getPlayersOnline(serverConfiguration.getType(), serverConfiguration.getGame());

@@ -3,20 +3,17 @@ package net.sunken.core;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import net.sunken.common.CommonModule;
-import net.sunken.common.command.impl.BaseCommandRegistry;
 import net.sunken.common.config.ConfigModule;
-import net.sunken.common.database.config.RedisConfiguration;
 import net.sunken.common.inject.PluginFacetBinder;
 import net.sunken.common.player.module.PlayerModule;
 import net.sunken.core.bar.module.BarModule;
 import net.sunken.core.command.CommandModule;
-import net.sunken.core.command.CommandRegistry;
 import net.sunken.core.config.InstanceConfiguration;
 import net.sunken.core.config.InstanceConfigurationSerializer;
 import net.sunken.core.hologram.HologramListener;
 import net.sunken.core.inventory.command.ExampleInvCommand;
 import net.sunken.core.inventory.element.ElementListener;
-import net.sunken.core.npc.NPCManager;
+import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.player.ChatHandler;
 import net.sunken.core.player.ConnectHandler;
 import net.sunken.core.player.DisconnectHandler;
@@ -43,7 +40,7 @@ public class CoreModule extends AbstractModule {
         pluginFacetBinder.addBinding(HologramListener.class);
 
         pluginFacetBinder.addBinding(PluginInform.class);
-        pluginFacetBinder.addBinding(NPCManager.class);
+        pluginFacetBinder.addBinding(NPCRegistry.class);
         pluginFacetBinder.addBinding(ElementListener.class);
         pluginFacetBinder.addBinding(ExampleInvCommand.class);
     }

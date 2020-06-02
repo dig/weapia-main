@@ -27,10 +27,6 @@ public class NPC extends EntityPlayer {
     @Getter
     private String displayPluginName;
     @Getter
-    private boolean shownToAll;
-    @Getter
-    private List<UUID> viewers;
-    @Getter
     private Hologram hologram;
 
     @Getter @Setter
@@ -46,8 +42,6 @@ public class NPC extends EntityPlayer {
                 new PlayerInteractManager(((CraftWorld) location.getWorld()).getHandle()));
 
         this.displayPluginName = displayName;
-        this.shownToAll = false;
-        this.viewers = new ArrayList<>();
         this.hologram = null;
 
         this.bukkitSyncExecutor = bukkitSyncExecutor;
@@ -68,45 +62,22 @@ public class NPC extends EntityPlayer {
     }
 
     public void show(@NonNull Player player) {
-        if (!viewers.contains(player.getUniqueId())) {
-            PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
 
-            connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, this));
-            connection.sendPacket(new PacketPlayOutNamedEntitySpawn(this));
-            connection.sendPacket(new PacketPlayOutEntityHeadRotation(this, (byte) ((this.yaw * 256.0F) / 360.0F)));
-            connection.sendPacket(new PacketPlayOutEntityMetadata(getId(), getDataWatcher(), true));
+        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, this));
+        connection.sendPacket(new PacketPlayOutNamedEntitySpawn(this));
+        connection.sendPacket(new PacketPlayOutEntityHeadRotation(this, (byte) ((this.yaw * 256.0F) / 360.0F)));
+        connection.sendPacket(new PacketPlayOutEntityMetadata(getId(), getDataWatcher(), true));
 
-            bukkitSyncExecutor.execute(() -> connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, this)), 6 * 20L);
-
-            viewers.add(player.getUniqueId());
-        } else {
-            log.severe("NPC: Cannot show entity to player, already spawned on their client.");
-        }
+        bukkitSyncExecutor.execute(() -> connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, this)), 6 * 20L);
     }
 
     public void hide(@NonNull Player player) {
-        if (viewers.contains(player.getUniqueId())) {
-            PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-            connection.sendPacket(new PacketPlayOutEntityDestroy(this.getId()));
-
-            viewers.remove(player.getUniqueId());
-        } else {
-            log.severe("NPC: Cannot hide entity from player, non existent.");
-        }
-    }
-
-    public void showAll() {
-        shownToAll = true;
-        Bukkit.getOnlinePlayers().forEach(player -> show(player));
-    }
-
-    public void hideAll() {
-        shownToAll = false;
-        Bukkit.getOnlinePlayers().forEach(player -> hide(player));
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+        connection.sendPacket(new PacketPlayOutEntityDestroy(this.getId()));
     }
 
     public void remove() {
-        hideAll();
         getBukkitEntity().remove();
         if (hologram != null) hologram.remove();
     }

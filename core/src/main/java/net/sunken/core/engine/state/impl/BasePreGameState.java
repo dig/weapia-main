@@ -26,13 +26,11 @@ public abstract class BasePreGameState extends EventGameState {
 
     @Override
     public void onJoin(Player player) {
-        setState(player.getUniqueId(), new PlayerSpectatorState(player));
     }
 
     @Override
     public void onDeath(PlayerDeathEvent event) {
         event.getDrops().clear();
-        setState(event.getEntity().getUniqueId(), new PlayerSpectatorState(event.getEntity()));
     }
 
     @Override

@@ -33,31 +33,26 @@ public class CustomScoreboardEntry {
         score = objective.getScore("score-" + id);
         team.addEntry("score-" + id);
 
+        updateTeam();
+    }
+
+    private void updateTeam() {
         if (name.length() <= 16) {
             team.setPrefix(name);
-        } else if (name.length() > 32) {
-            name = name.substring(32);
-        }
+        } else {
+            if (name.length() > 32) {
+                name = name.substring(32);
+            }
 
-        team.setPrefix(name.substring(0, 16));
-        team.setSuffix(name.substring(16));
+            team.setPrefix(name.substring(0, 16));
+            team.setSuffix(name.substring(16));
+        }
     }
 
     public void update(String newName) {
         if (newName.equals(name)) return;
-        if (newName.length() <= 16) {
-            team.setPrefix(newName);
-            team.setSuffix("");
-        } else {
-            if (newName.length() > 32) {
-                newName = newName.substring(32);
-            }
-
-            team.setPrefix(newName.substring(0, 16));
-            team.setSuffix(newName.substring(16));
-        }
-
         name = newName;
+        updateTeam();
     }
 
     public void remove() {

@@ -10,7 +10,7 @@ import net.sunken.core.Constants;
 import org.bukkit.entity.Player;
 
 @AllArgsConstructor
-public class ServerInteraction implements NPCInteraction {
+public class QueueInteraction implements NPCInteraction {
 
     private Server.Type type;
     private Game game;

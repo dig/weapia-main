@@ -17,7 +17,7 @@ import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.npc.config.InteractionConfiguration;
 import net.sunken.core.npc.config.NPCServerConfiguration;
 import net.sunken.core.npc.interact.MessageInteraction;
-import net.sunken.core.npc.interact.ServerInteraction;
+import net.sunken.core.npc.interact.QueueInteraction;
 import net.sunken.core.util.*;
 import net.sunken.lobby.config.*;
 import net.sunken.lobby.player.LobbyPlayer;
@@ -43,8 +43,6 @@ import org.bukkit.event.world.StructureGrowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-
-import static net.sunken.core.npc.interact.NPCInteractionType.MESSAGE;
 
 @Log
 public class LobbyState extends EventGameState {
@@ -81,8 +79,8 @@ public class LobbyState extends EventGameState {
                 case MESSAGE:
                     npc.setInteraction(new MessageInteraction(interactionConfiguration.getValues()));
                     break;
-                case SERVER:
-                    npc.setInteraction(new ServerInteraction(
+                case QUEUE:
+                    npc.setInteraction(new QueueInteraction(
                             Server.Type.valueOf(interactionConfiguration.getValues().get(0)),
                             Game.valueOf(interactionConfiguration.getValues().get(1)),
                             Boolean.valueOf(interactionConfiguration.getValues().get(2)),

@@ -32,7 +32,11 @@ public class ScoreboardRegistry {
     }
 
     public void unregister(@NonNull String key) {
-        scoreboardMap.remove(key);
+        if (scoreboardMap.containsKey(key)) {
+            CustomScoreboard customScoreboard = scoreboardMap.get(key);
+            customScoreboard.removeAllEntries();
+            scoreboardMap.remove(key);
+        }
     }
 
     public Optional<CustomScoreboard> get(@NonNull String key) {

@@ -55,17 +55,7 @@ public abstract class BaseWaitingState extends EventGameState {
 
     @Override
     public void stop(BaseGameState next) {
-        playerManager.getOnlinePlayers().forEach(abstractPlayer -> {
-            CorePlayer corePlayer = (CorePlayer) abstractPlayer;
-
-            Optional<CustomScoreboard> customScoreboardOptional = scoreboardRegistry.get(corePlayer.getUuid().toString());
-            if (customScoreboardOptional.isPresent()) {
-                CustomScoreboard customScoreboard = customScoreboardOptional.get();
-                customScoreboard.removeAllEntries();
-                scoreboardRegistry.unregister(corePlayer.getUuid().toString());
-            }
-        });
-
+        playerManager.getOnlinePlayers().forEach(abstractPlayer -> scoreboardRegistry.unregister(abstractPlayer.getUuid().toString()));
         if (pluginInform.getServer().getState() == net.sunken.common.server.Server.State.OPEN)
             pluginInform.setState(net.sunken.common.server.Server.State.CLOSED);
     }
@@ -119,6 +109,7 @@ public abstract class BaseWaitingState extends EventGameState {
 
     @Override
     public void onQuit(Player player) {
+        scoreboardRegistry.unregister(player.getUniqueId().toString());
     }
 
     @Override

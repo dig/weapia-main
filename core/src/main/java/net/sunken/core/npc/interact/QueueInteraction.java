@@ -20,7 +20,8 @@ public class QueueInteraction implements NPCInteraction {
 
     @Override
     public void onInteract(Player player, PacketPlayInUseEntity.EnumEntityUseAction enumEntityUseAction, EnumHand enumHand) {
-        if (enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK && enumHand == EnumHand.MAIN_HAND) {
+        if ((enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK || enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT)
+                && enumHand == EnumHand.MAIN_HAND) {
             player.sendMessage(String.format(Constants.SEND_TO_GAME, game.getFriendlyName()));
             packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), type, game, save));
         }

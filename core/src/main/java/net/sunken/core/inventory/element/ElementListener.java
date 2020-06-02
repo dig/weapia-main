@@ -6,6 +6,7 @@ import lombok.extern.java.Log;
 import net.sunken.common.inject.Facet;
 import net.sunken.core.Constants;
 import net.sunken.core.inventory.runnable.UIRunnableContext;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +27,7 @@ public class ElementListener implements Facet, Listener {
         Player player = (Player) event.getWhoClicked();
         ItemStack clicked = event.getCurrentItem();
 
-        if (clicked != null) {
+        if (clicked != null && clicked.getType() != Material.AIR) {
             NBTItem nbtItem = new NBTItem(clicked);
             if (nbtItem.getKeys().contains(Constants.ELEMENT_NBT_KEY)) {
                 String uuid = nbtItem.getString(Constants.ELEMENT_NBT_KEY);

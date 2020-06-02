@@ -77,10 +77,10 @@ public abstract class BaseWaitingState extends EventGameState {
             net.sunken.common.server.World world = pluginInform.getServer().getWorld();
 
             CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + game.getFriendlyName());
-            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 10);
+            customScoreboard.createEntry("Spacer1", ChatColor.RED + " ", 10);
             customScoreboard.createEntry("MapTitle", ChatColor.WHITE + "Map", 9);
             customScoreboard.createEntry("MapValue", ChatColor.GOLD + " " + world.getFriendlyName(), 8);
-            customScoreboard.createEntry("Spacer2", ChatColor.WHITE + " ", 7);
+            customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 7);
 
             ChatColor playersColour = ChatColor.GREEN;
             if (playerManager.getOnlinePlayers().size() >= waitingConfiguration.getRequiredPlayers()) {
@@ -96,7 +96,7 @@ public abstract class BaseWaitingState extends EventGameState {
             long timeDiff = startTimeMillis - System.currentTimeMillis();
             customScoreboard.createEntry("StartingTitle", ChatColor.WHITE + "Starting in", 3);
             customScoreboard.createEntry("StartingValue", ChatColor.LIGHT_PURPLE + " " + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 2);
-            customScoreboard.createEntry("Spacer4", ChatColor.WHITE + " ", 1);
+            customScoreboard.createEntry("Spacer4", ChatColor.GRAY + " ", 1);
 
             customScoreboard.createEntry("URL", ChatColor.GRAY + "play.weapia.com", 0);
 

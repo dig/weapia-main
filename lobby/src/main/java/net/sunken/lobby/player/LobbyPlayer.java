@@ -56,7 +56,7 @@ public class LobbyPlayer extends CorePlayer {
             customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank " + ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 3);
             customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players " + ChatColor.GOLD + serverManager.getTotalPlayersOnline(), 2);
 
-            customScoreboard.createEntry("Spacer3", ChatColor.WHITE + "  ", 1);
+            customScoreboard.createEntry("Spacer3", ChatColor.RED + " ", 1);
             customScoreboard.createEntry("URL", ChatColor.GRAY + "play.weapia.com", 0);
 
             customScoreboard.add(player);

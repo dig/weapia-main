@@ -35,7 +35,7 @@ public class ServerUpdatedListener implements Facet, SunkenListener {
                 Optional<CustomScoreboard> customScoreboardOptional = scoreboardRegistry.get(abstractPlayer.getUuid().toString());
                 if (customScoreboardOptional.isPresent()) {
                     CustomScoreboard customScoreboard = customScoreboardOptional.get();
-                    customScoreboard.getEntry("PlayersTitle").update(ChatColor.WHITE + "Players " + ChatColor.GOLD + serverManager.getTotalPlayersOnline());
+                    customScoreboard.getEntry("PlayersTitle").update(ChatColor.WHITE + "Players " + ChatColor.GREEN + serverManager.getTotalPlayersOnline());
                 }
             }));
         }

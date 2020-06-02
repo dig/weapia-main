@@ -13,11 +13,11 @@ import org.bukkit.scoreboard.Scoreboard;
 public class CustomScoreboard {
 
     @Getter
-    private BiMap<String, CustomScoreboardEntry> entries;
-    @Getter
     private Scoreboard scoreboard;
     @Getter
     private Objective objective;
+    @Getter
+    private BiMap<String, CustomScoreboardEntry> entries;
 
     public CustomScoreboard(String title) {
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();

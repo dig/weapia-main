@@ -29,9 +29,9 @@ public class CustomScoreboardEntry {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         Objective objective = customScoreboard.getObjective();
 
-        team = scoreboard.registerNewTeam("team-" + id);
-        score = objective.getScore("score-" + id);
-        team.addEntry("score-" + id);
+        team = scoreboard.registerNewTeam("team-" + id.substring(0, 11));
+        score = objective.getScore("score-" + id.substring(0, 11));
+        team.addEntry("score-" + id.substring(0, 11));
 
         updateTeam();
     }

@@ -99,7 +99,7 @@ public abstract class BaseWaitingState extends EventGameState {
             customScoreboard.createEntry("Spacer4", ChatColor.GRAY + " ", 2);
 
             customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
-            customScoreboard.createEntry("URL", ChatColor.YELLOW + "play.weapia.com", 0);
+            customScoreboard.createEntry("URL", ChatColor.AQUA + "play.weapia.c" + ChatColor.AQUA + "om", 0);
 
             customScoreboard.add(player);
             scoreboardRegistry.register(corePlayer.getUuid().toString(), customScoreboard);

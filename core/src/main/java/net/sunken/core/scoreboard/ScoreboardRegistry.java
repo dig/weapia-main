@@ -45,6 +45,7 @@ public class ScoreboardRegistry {
 
     public void changeName(@NonNull String playerName, @NonNull String prefix, @NonNull String suffix, @NonNull ChatColor colour) {
         CustomNameDetail customNameDetail = new CustomNameDetail(prefix, suffix, colour);
+        customNames.remove(playerName);
         customNames.put(playerName, customNameDetail);
         scoreboardMap.values().forEach(customScoreboard -> registerCustomName(customScoreboard, playerName, customNameDetail));
     }
@@ -55,6 +56,7 @@ public class ScoreboardRegistry {
         Team team = scoreboard.getTeam(playerName);
         if (team == null) {
             team = scoreboard.registerNewTeam(playerName);
+            team.addEntry(playerName);
         }
 
         team.setPrefix(customNameDetail.getPrefix());
@@ -63,8 +65,6 @@ public class ScoreboardRegistry {
 
         team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
         team.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, Team.OptionStatus.NEVER);
-
-        team.addEntry(playerName);
     }
 
 }

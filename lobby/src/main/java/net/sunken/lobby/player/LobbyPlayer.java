@@ -68,6 +68,7 @@ public class LobbyPlayer extends CorePlayer {
 
     @Override
     public void destroy() {
+        scoreboardRegistry.unregister(this.uuid.toString());
     }
 
 }

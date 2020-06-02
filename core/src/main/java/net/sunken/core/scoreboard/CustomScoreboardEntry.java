@@ -45,8 +45,6 @@ public class CustomScoreboardEntry {
 
     public void update(String newName) {
         if (newName.equals(name)) return;
-        name = newName;
-
         if (newName.length() <= 16) {
             team.setPrefix(newName);
             team.setSuffix("");
@@ -58,6 +56,8 @@ public class CustomScoreboardEntry {
             team.setPrefix(newName.substring(0, 16));
             team.setSuffix(newName.substring(16));
         }
+
+        name = newName;
     }
 
     public void remove() {

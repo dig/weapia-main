@@ -2,6 +2,7 @@ package net.sunken.core.npc.interact;
 
 import lombok.AllArgsConstructor;
 import net.minecraft.server.v1_15_R1.EnumHand;
+import net.minecraft.server.v1_15_R1.PacketPlayInUseEntity;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -13,8 +14,10 @@ public class MessageInteraction implements NPCInteraction {
     private List<String> message;
 
     @Override
-    public void onInteract(Player player, EnumHand enumHand) {
-        message.forEach(message -> player.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
+    public void onInteract(Player player, PacketPlayInUseEntity.EnumEntityUseAction enumEntityUseAction, EnumHand enumHand) {
+        if (enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK && enumHand == EnumHand.MAIN_HAND) {
+            message.forEach(message -> player.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
+        }
     }
 
 }

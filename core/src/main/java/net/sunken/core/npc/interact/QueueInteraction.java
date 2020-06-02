@@ -2,6 +2,7 @@ package net.sunken.core.npc.interact;
 
 import lombok.AllArgsConstructor;
 import net.minecraft.server.v1_15_R1.EnumHand;
+import net.minecraft.server.v1_15_R1.PacketPlayInUseEntity;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.PlayerRequestServerPacket;
 import net.sunken.common.server.Game;
@@ -18,9 +19,11 @@ public class QueueInteraction implements NPCInteraction {
     private PacketUtil packetUtil;
 
     @Override
-    public void onInteract(Player player, EnumHand enumHand) {
-        player.sendMessage(String.format(Constants.SEND_TO_GAME, game.getFriendlyName()));
-        packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), type, game, save));
+    public void onInteract(Player player, PacketPlayInUseEntity.EnumEntityUseAction enumEntityUseAction, EnumHand enumHand) {
+        if (enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK && enumHand == EnumHand.MAIN_HAND) {
+            player.sendMessage(String.format(Constants.SEND_TO_GAME, game.getFriendlyName()));
+            packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), type, game, save));
+        }
     }
 
 }

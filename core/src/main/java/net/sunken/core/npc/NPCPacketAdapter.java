@@ -41,7 +41,7 @@ public class NPCPacketAdapter extends PacketAdapter {
                 NPC npc = npcOptional.get();
                 NPCInteraction npcInteraction = npc.getInteraction();
                 if (npcInteraction != null) {
-                    npcInteraction.onInteract(event.getPlayer(), enumHand);
+                    npcInteraction.onInteract(event.getPlayer(), enumEntityUseAction, enumHand);
                 }
             }
         }

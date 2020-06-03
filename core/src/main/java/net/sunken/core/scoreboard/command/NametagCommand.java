@@ -41,7 +41,7 @@ public class NametagCommand extends BukkitCommand {
             } else if (args[0].equalsIgnoreCase("suffix")) {
                 suffix = ChatColor.translateAlternateColorCodes('&', args[1]);
             } else if (args[0].equalsIgnoreCase("colour")) {
-                colour = ChatColor.valueOf(args[0]);
+                colour = ChatColor.valueOf(args[1]);
             }
 
             scoreboardRegistry.changeName(abstractPlayer.getUsername(), prefix, suffix, colour);

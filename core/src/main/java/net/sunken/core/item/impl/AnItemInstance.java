@@ -13,7 +13,10 @@ public class AnItemInstance {
 
     public void save() {
         NBTItemExact nbtItem = new NBTItemExact(itemStack);
-        attributes.getAttributes().forEach(nbtItem::setObject);
+        attributes.getKeys().forEach(key -> {
+            Object value = attributes.get(key);
+            nbtItem.setObject(key, value);
+        });
     }
 
 }

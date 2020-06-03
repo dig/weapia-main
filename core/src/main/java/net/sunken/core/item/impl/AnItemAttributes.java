@@ -4,10 +4,10 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AnItemAttributes {
 
-    @Getter
     private final Map<String, Object> attributes = new HashMap<>();
 
     public String getString(String key) {
@@ -26,8 +26,16 @@ public class AnItemAttributes {
         return (double) attributes.get(key);
     }
 
+    public Object get(String key) {
+        return attributes.get(key);
+    }
+
     public void set(String key, Object value) {
         attributes.put(key, value);
+    }
+
+    public Set<String> getKeys() {
+        return attributes.keySet();
     }
 
 }

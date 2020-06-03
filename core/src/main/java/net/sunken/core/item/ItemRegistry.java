@@ -72,7 +72,7 @@ public class ItemRegistry implements Facet, Enableable {
         AnItem anItem = new AnItem(anItemConfiguration.getId(), itemBuilder, listener, anItemConfiguration.isStack());
         List<ItemAttributeConfiguration> attributeConfigurations = anItemConfiguration.getAttributes();
         if (attributeConfigurations != null) {
-            attributeConfigurations.forEach(itemAttributeConfiguration -> anItem.setAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+            attributeConfigurations.forEach(itemAttributeConfiguration -> anItem.getAttributes().set(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
         }
 
         register(anItem);

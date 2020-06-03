@@ -14,52 +14,24 @@ public class AnItem {
 
     @Getter
     private final String id;
-    private final Map<String, Object> attributes = new HashMap<>();
-    private final ItemBuilder itemBuilder;
-
     @Getter
-    private AnItemListener listener;
+    private final AnItemAttributes attributes;
+    @Getter
+    private final AnItemListener listener;
+    private final ItemBuilder itemBuilder;
 
     public AnItem(@NonNull String id, @NonNull ItemBuilder itemBuilder, AnItemListener listener, boolean stack) {
         this.id = id;
+        this.attributes = new AnItemAttributes();
         this.listener = listener;
-
-        if (!stack) {
-            this.itemBuilder = itemBuilder
-                    .addNBTString(Constants.ITEM_NBT_KEY, this.id)
-                    .addNBTString(Constants.ITEM_UUID_NBT_KEY, UUID.randomUUID().toString());
-        } else {
-            this.itemBuilder = itemBuilder
-                    .addNBTString(Constants.ITEM_NBT_KEY, this.id);
-        }
-    }
-
-    public void setAttribute(String key, Object value) {
-        attributes.put(key, value);
-    }
-
-    public String getAttributeAsString(String key) {
-        Object attribute = attributes.get(key);
-        return (String) attribute;
-    }
-
-    public int getAttributeAsInt(String key) {
-        Object attribute = attributes.get(key);
-        return (int) attribute;
-    }
-
-    public boolean getAttributeAsBoolean(String key) {
-        Object attribute = attributes.get(key);
-        return (boolean) attribute;
-    }
-
-    public double getAttributeAsDouble(String key) {
-        Object attribute = attributes.get(key);
-        return (double) attribute;
+        this.itemBuilder = itemBuilder
+                .addNBTString(Constants.ITEM_NBT_KEY, this.id);
     }
 
     public ItemStack toItemStack() {
-        return itemBuilder.make();
+        return itemBuilder
+                .addNBTString(Constants.ITEM_UUID_NBT_KEY, UUID.randomUUID().toString())
+                .make();
     }
 
 }

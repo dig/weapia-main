@@ -11,10 +11,10 @@ public class Constants {
 
     public static final ItemBuilder ITEM_GAME_SELECTOR = new ItemBuilder(Material.COMPASS)
             .name(ChatColor.GREEN + "Game Selector")
-            .lore(ChatColor.WHITE + "Select a gamemode to play.");
+            .lore(ChatColor.WHITE + "Choose which game to play!");
 
     public static final ItemBuilder ITEM_LOBBY_SELECTOR = new ItemBuilder(Material.BOOK)
             .name(ChatColor.YELLOW + "Lobby Selector")
-            .lore(ChatColor.WHITE + "Select a lobby to join.");
+            .lore(ChatColor.WHITE + "Hang out in a lobby of your choice!");
 
 }

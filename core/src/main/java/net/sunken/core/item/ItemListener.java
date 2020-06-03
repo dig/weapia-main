@@ -30,7 +30,9 @@ public class ItemListener implements Facet, Listener {
                 Optional<AnItem> anItemOptional = itemRegistry.getItem(configName);
                 if (anItemOptional.isPresent()) {
                     AnItem anItem = anItemOptional.get();
-                    anItem.onInventoryClick(event);
+                    if (anItem.getListener() != null) {
+                        anItem.getListener().onInventoryClick(event);
+                    }
                 }
             }
         }
@@ -46,7 +48,9 @@ public class ItemListener implements Facet, Listener {
                 Optional<AnItem> anItemOptional = itemRegistry.getItem(configName);
                 if (anItemOptional.isPresent()) {
                     AnItem anItem = anItemOptional.get();
-                    anItem.onInteract(event);
+                    if (anItem.getListener() != null) {
+                        anItem.getListener().onInteract(event);
+                    }
                 }
             }
         }

@@ -1,17 +1,20 @@
 package net.sunken.core.item;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import de.tr7zw.changeme.nbtapi.*;
 import lombok.extern.java.Log;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.core.Constants;
+import net.sunken.core.Core;
 import net.sunken.core.inventory.ItemBuilder;
 import net.sunken.core.item.config.AnItemConfiguration;
 import net.sunken.core.item.config.AnItemsConfiguration;
 import net.sunken.core.item.config.ItemAttributeConfiguration;
 import net.sunken.core.item.impl.AnItem;
+import net.sunken.core.item.impl.AnItemListener;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -19,6 +22,7 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.*;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +33,9 @@ import java.util.stream.Collectors;
 @Log
 @Singleton
 public class ItemRegistry implements Facet, Enableable {
+
+    @Inject
+    private JavaPlugin javaPlugin;
 
     /** ID -> AnItem */
     private final Map<String, AnItem> items = new HashMap<>();
@@ -54,24 +61,37 @@ public class ItemRegistry implements Facet, Enableable {
                 .name(ChatColor.translateAlternateColorCodes('&', anItemConfiguration.getDisplayName()))
                 .lores(anItemConfiguration.getLore().stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
 
-        try {
-            Class clazz = Class.forName(anItemConfiguration.getItemClass() != null ? anItemConfiguration.getItemClass() : "net.sunken.core.item.impl.BasicItem");
-            AnItem anItem = (AnItem) clazz.getDeclaredConstructor(String.class, ItemBuilder.class, boolean.class).newInstance(anItemConfiguration.getId(), itemBuilder, anItemConfiguration.isStack());
-
-            List<ItemAttributeConfiguration> attributeConfigurations = anItemConfiguration.getAttributes();
-            if (attributeConfigurations != null) {
-                attributeConfigurations.forEach(itemAttributeConfiguration -> anItem.addAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+        AnItemListener listener = null;
+        if (anItemConfiguration.getListener() != null) {
+            try {
+                Core core = (Core) javaPlugin;
+                Class cls = Class.forName(anItemConfiguration.getListener());
+                listener = (AnItemListener) core.getInjector().getInstance(cls);
+            } catch (ClassNotFoundException | ClassCastException e) {
+                log.info(String.format("Unable to register listener. (%s)", anItemConfiguration.getId()));
             }
-
-            register(anItem);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
-            log.info(String.format("Unable to register item. (%s)", anItemConfiguration.getId()));
         }
+
+        AnItem anItem = new AnItem(anItemConfiguration.getId(), itemBuilder, listener, anItemConfiguration.isStack());
+        List<ItemAttributeConfiguration> attributeConfigurations = anItemConfiguration.getAttributes();
+        if (attributeConfigurations != null) {
+            attributeConfigurations.forEach(itemAttributeConfiguration -> anItem.setAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+        }
+
+        register(anItem);
     }
 
     public Optional<AnItem> getItem(String id) {
         return Optional.ofNullable(items.get(id));
+    }
+    public Optional<AnItem> getItem(ItemStack itemStack) {
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (nbtItem.getKeys().contains(Constants.ITEM_NBT_KEY)) {
+            String configName = nbtItem.getString(Constants.ITEM_NBT_KEY);
+            return getItem(configName);
+        }
+
+        return Optional.empty();
     }
 
     @Override

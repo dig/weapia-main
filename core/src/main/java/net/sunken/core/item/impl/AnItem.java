@@ -10,15 +10,19 @@ import org.bukkit.inventory.*;
 
 import java.util.*;
 
-public abstract class AnItem {
+public class AnItem {
 
     @Getter
     private final String id;
     private final Map<String, Object> attributes = new HashMap<>();
     private final ItemBuilder itemBuilder;
 
-    public AnItem(String id, ItemBuilder itemBuilder, boolean stack) {
+    @Getter
+    private AnItemListener listener;
+
+    public AnItem(@NonNull String id, @NonNull ItemBuilder itemBuilder, AnItemListener listener, boolean stack) {
         this.id = id;
+        this.listener = listener;
 
         if (!stack) {
             this.itemBuilder = itemBuilder
@@ -30,7 +34,7 @@ public abstract class AnItem {
         }
     }
 
-    public void addAttribute(String key, Object value) {
+    public void setAttribute(String key, Object value) {
         attributes.put(key, value);
     }
 
@@ -57,9 +61,5 @@ public abstract class AnItem {
     public ItemStack toItemStack() {
         return itemBuilder.make();
     }
-
-    // events
-    public void onInventoryClick(InventoryClickEvent event) {}
-    public void onInteract(PlayerInteractEvent event) {}
 
 }

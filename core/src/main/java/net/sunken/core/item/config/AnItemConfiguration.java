@@ -32,6 +32,6 @@ public class AnItemConfiguration {
 
     @Setting
     @Nullable
-    private String itemClass;
+    private String listener;
 
 }

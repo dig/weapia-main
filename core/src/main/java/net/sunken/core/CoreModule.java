@@ -23,6 +23,7 @@ import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.player.ChatHandler;
 import net.sunken.core.player.ConnectHandler;
 import net.sunken.core.player.DisconnectHandler;
+import net.sunken.core.scoreboard.command.NametagCommand;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 import java.io.File;
@@ -49,6 +50,7 @@ public class CoreModule extends AbstractModule {
         pluginFacetBinder.addBinding(NPCRegistry.class);
         pluginFacetBinder.addBinding(ElementListener.class);
         pluginFacetBinder.addBinding(ExampleInvCommand.class);
+        pluginFacetBinder.addBinding(NametagCommand.class);
 
         pluginFacetBinder.addBinding(ItemRegistry.class);
         pluginFacetBinder.addBinding(ItemListener.class);

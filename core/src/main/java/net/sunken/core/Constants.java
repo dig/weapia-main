@@ -44,6 +44,8 @@ public class Constants {
     public static final String COMMAND_ITEM_TARGET_INVALID = ChatColor.RED + "Invalid target player.";
     public static final String COMMAND_GIVE_ITEM_SUCCESS = ChatColor.GREEN + "Added item to target player.";
 
+    public static final String COMMAND_NAMETAG_SUCCESS = ChatColor.GREEN + "Changed nametag.";
+
     public final static String GAME_PLAY_AGAIN = "[PLAY AGAIN]";
 
 }

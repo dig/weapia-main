@@ -1,6 +1,7 @@
 package net.sunken.core.scoreboard;
 
 import com.google.inject.Singleton;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import org.bukkit.ChatColor;
@@ -48,6 +49,10 @@ public class ScoreboardRegistry {
         customNames.remove(playerName);
         customNames.put(playerName, customNameDetail);
         scoreboardMap.values().forEach(customScoreboard -> registerCustomName(customScoreboard, playerName, customNameDetail));
+    }
+
+    public Optional<CustomNameDetail> getCustomName(@NonNull String playerName) {
+        return Optional.ofNullable(customNames.get(playerName));
     }
 
     private void registerCustomName(@NonNull CustomScoreboard customScoreboard, @NonNull String playerName, @NonNull CustomNameDetail customNameDetail) {

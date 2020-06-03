@@ -57,7 +57,7 @@ public class ItemRegistry implements Facet, Enableable {
     public void register(AnItemConfiguration anItemConfiguration) {
         ItemBuilder itemBuilder = new ItemBuilder(anItemConfiguration.getMaterial())
                 .name(ChatColor.translateAlternateColorCodes('&', anItemConfiguration.getDisplayName()))
-                .lores(anItemConfiguration.getLore().stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
+                .lores(anItemConfiguration.getLore() != null ? anItemConfiguration.getLore().stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()) : new ArrayList<>());
 
         AnItemListener listener = null;
         if (anItemConfiguration.getListener() != null) {

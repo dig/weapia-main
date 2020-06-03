@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -50,6 +51,26 @@ public class ItemListener implements Facet, Listener {
                     AnItem anItem = anItemOptional.get();
                     if (anItem.getListener() != null) {
                         anItem.getListener().onInteract(anItem, event);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onShootBow(EntityShootBowEvent event) {
+        if (event.getEntity() instanceof Player) {
+            ItemStack bow = event.getBow();
+            if (bow != null && bow.getType() == Material.BOW) {
+                NBTItem nbtItem = new NBTItem(bow);
+                if (nbtItem.getKeys().contains(Constants.ITEM_NBT_KEY)) {
+                    String configName = nbtItem.getString(Constants.ITEM_NBT_KEY);
+                    Optional<AnItem> anItemOptional = itemRegistry.getItem(configName);
+                    if (anItemOptional.isPresent()) {
+                        AnItem anItem = anItemOptional.get();
+                        if (anItem.getListener() != null) {
+                            anItem.getListener().onShootBow(anItem, event);
+                        }
                     }
                 }
             }

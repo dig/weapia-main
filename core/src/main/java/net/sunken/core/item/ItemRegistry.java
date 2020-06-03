@@ -55,7 +55,7 @@ public class ItemRegistry implements Facet, Enableable {
         try {
             Class clazz = Class.forName(itemConfiguration.getItemClass() != null ? itemConfiguration.getItemClass() : "net.sunken.core.item.impl.BasicItem");
             AnItem anItem = (AnItem) clazz.getDeclaredConstructor(String.class, ItemBuilder.class).newInstance(itemConfiguration.getId(), itemBuilder);
-            itemConfiguration.getAttributes().forEach(itemAttributeConfiguration -> anItem.getAttributes().put(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+            itemConfiguration.getAttributes().forEach(itemAttributeConfiguration -> anItem.addAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
 
             register(anItem);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

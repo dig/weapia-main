@@ -31,7 +31,7 @@ public class ItemListener implements Facet, Listener {
                 if (anItemOptional.isPresent()) {
                     AnItem anItem = anItemOptional.get();
                     if (anItem.getListener() != null) {
-                        anItem.getListener().onInventoryClick(event);
+                        anItem.getListener().onInventoryClick(anItem, event);
                     }
                 }
             }
@@ -49,7 +49,7 @@ public class ItemListener implements Facet, Listener {
                 if (anItemOptional.isPresent()) {
                     AnItem anItem = anItemOptional.get();
                     if (anItem.getListener() != null) {
-                        anItem.getListener().onInteract(event);
+                        anItem.getListener().onInteract(anItem, event);
                     }
                 }
             }

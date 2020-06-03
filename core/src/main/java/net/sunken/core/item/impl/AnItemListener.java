@@ -5,7 +5,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public abstract class AnItemListener {
 
-    public void onInventoryClick(InventoryClickEvent event) {}
-    public void onInteract(PlayerInteractEvent event) {}
+    public void onInventoryClick(AnItem anItem, InventoryClickEvent event) {}
+    public void onInteract(AnItem anItem, PlayerInteractEvent event) {}
 
 }

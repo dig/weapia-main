@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @ConfigSerializable
-public class ItemConfiguration {
+public class AnItemConfiguration {
 
     @Setting
     private String id;

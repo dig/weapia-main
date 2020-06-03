@@ -21,9 +21,7 @@ public class ItemListener implements Facet, Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
         ItemStack clicked = event.getCurrentItem();
-
         if (clicked != null && clicked.getType() != Material.AIR) {
             NBTItem nbtItem = new NBTItem(clicked);
             if (nbtItem.getKeys().contains(Constants.ITEM_NBT_KEY)) {

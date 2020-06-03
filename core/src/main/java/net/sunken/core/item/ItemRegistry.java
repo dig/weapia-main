@@ -8,15 +8,14 @@ import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.core.Constants;
 import net.sunken.core.inventory.ItemBuilder;
-import net.sunken.core.item.config.ItemConfiguration;
-import net.sunken.core.item.config.ItemsConfiguration;
+import net.sunken.core.item.config.AnItemConfiguration;
+import net.sunken.core.item.config.AnItemsConfiguration;
 import net.sunken.core.item.impl.AnItem;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import org.bukkit.Material;
 import org.bukkit.inventory.*;
 
 import java.io.File;
@@ -47,20 +46,20 @@ public class ItemRegistry implements Facet, Enableable {
         log.info(String.format("Registered item: %s", anItem.getId()));
     }
 
-    public void register(ItemConfiguration itemConfiguration) {
-        ItemBuilder itemBuilder = new ItemBuilder(itemConfiguration.getMaterial())
-                .name(itemConfiguration.getDisplayName())
-                .lores(itemConfiguration.getLore());
+    public void register(AnItemConfiguration anItemConfiguration) {
+        ItemBuilder itemBuilder = new ItemBuilder(anItemConfiguration.getMaterial())
+                .name(anItemConfiguration.getDisplayName())
+                .lores(anItemConfiguration.getLore());
 
         try {
-            Class clazz = Class.forName(itemConfiguration.getItemClass() != null ? itemConfiguration.getItemClass() : "net.sunken.core.item.impl.BasicItem");
-            AnItem anItem = (AnItem) clazz.getDeclaredConstructor(String.class, ItemBuilder.class).newInstance(itemConfiguration.getId(), itemBuilder);
-            itemConfiguration.getAttributes().forEach(itemAttributeConfiguration -> anItem.addAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+            Class clazz = Class.forName(anItemConfiguration.getItemClass() != null ? anItemConfiguration.getItemClass() : "net.sunken.core.item.impl.BasicItem");
+            AnItem anItem = (AnItem) clazz.getDeclaredConstructor(String.class, ItemBuilder.class).newInstance(anItemConfiguration.getId(), itemBuilder);
+            anItemConfiguration.getAttributes().forEach(itemAttributeConfiguration -> anItem.addAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
 
             register(anItem);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
-            log.info(String.format("Unable to register item. (%s)", itemConfiguration.getId()));
+            log.info(String.format("Unable to register item. (%s)", anItemConfiguration.getId()));
         }
     }
 
@@ -74,9 +73,9 @@ public class ItemRegistry implements Facet, Enableable {
         if (itemDirectory.exists()) {
             File[] itemFiles = itemDirectory.listFiles((dir, name) -> name.endsWith(".conf"));
             for (File itemFile : itemFiles) {
-                ItemsConfiguration itemsConfiguration = loadConfig(itemFile, ItemsConfiguration.class);
-                if (itemsConfiguration != null) {
-                    itemsConfiguration.getItems().forEach(this::register);
+                AnItemsConfiguration anItemsConfiguration = loadConfig(itemFile, AnItemsConfiguration.class);
+                if (anItemsConfiguration != null) {
+                    anItemsConfiguration.getItems().forEach(this::register);
                 }
             }
         }

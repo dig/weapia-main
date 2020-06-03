@@ -8,9 +8,9 @@ import java.util.List;
 
 @Getter
 @ConfigSerializable
-public class ItemsConfiguration {
+public class AnItemsConfiguration {
 
     @Setting
-    private List<ItemConfiguration> items;
+    private List<AnItemConfiguration> items;
 
 }

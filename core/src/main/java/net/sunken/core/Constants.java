@@ -34,6 +34,7 @@ public class Constants {
 
     public static final String ELEMENT_NBT_KEY = "WeapiaElement";
     public static final String ITEM_NBT_KEY = "WeapiaItem";
+    public static final String ITEM_UUID_NBT_KEY = "WeapiaItemUUID";
 
     public static final String COMMAND_WHERE = ChatColor.GREEN + "You are on server %s running %s, please include this in any reports you make.";
 

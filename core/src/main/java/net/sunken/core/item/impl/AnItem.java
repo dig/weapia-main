@@ -17,22 +17,17 @@ public abstract class AnItem {
     private final Map<String, Object> attributes = new HashMap<>();
     private final ItemBuilder itemBuilder;
 
-    public AnItem(String id, Material material) {
+    public AnItem(String id, ItemBuilder itemBuilder, boolean stack) {
         this.id = id;
-        this.itemBuilder = new ItemBuilder(material)
-                .addNBTString(Constants.ITEM_NBT_KEY, this.id);
-    }
 
-    public AnItem(String id, ItemBuilder itemBuilder) {
-        this.id = id;
-        itemBuilder = itemBuilder.addNBTString(Constants.ITEM_NBT_KEY, this.id);
-        this.itemBuilder = itemBuilder;
-    }
-
-    public AnItem(String id, ItemStack itemStack) {
-        this.id = id;
-        this.itemBuilder = new ItemBuilder(itemStack)
-                .addNBTString(Constants.ITEM_NBT_KEY, this.id);
+        if (!stack) {
+            this.itemBuilder = itemBuilder
+                    .addNBTString(Constants.ITEM_NBT_KEY, this.id)
+                    .addNBTString(Constants.ITEM_UUID_NBT_KEY, UUID.randomUUID().toString());
+        } else {
+            this.itemBuilder = itemBuilder
+                    .addNBTString(Constants.ITEM_NBT_KEY, this.id);
+        }
     }
 
     public void addAttribute(String key, Object value) {

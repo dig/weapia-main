@@ -10,6 +10,7 @@ import net.sunken.core.Constants;
 import net.sunken.core.inventory.ItemBuilder;
 import net.sunken.core.item.config.AnItemConfiguration;
 import net.sunken.core.item.config.AnItemsConfiguration;
+import net.sunken.core.item.config.ItemAttributeConfiguration;
 import net.sunken.core.item.impl.AnItem;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -55,10 +56,11 @@ public class ItemRegistry implements Facet, Enableable {
 
         try {
             Class clazz = Class.forName(anItemConfiguration.getItemClass() != null ? anItemConfiguration.getItemClass() : "net.sunken.core.item.impl.BasicItem");
-            AnItem anItem = (AnItem) clazz.getDeclaredConstructor(String.class, ItemBuilder.class).newInstance(anItemConfiguration.getId(), itemBuilder);
+            AnItem anItem = (AnItem) clazz.getDeclaredConstructor(String.class, ItemBuilder.class, Boolean.class).newInstance(anItemConfiguration.getId(), itemBuilder, anItemConfiguration.isStack());
 
-            if (anItemConfiguration.getAttributes() != null) {
-                anItemConfiguration.getAttributes().forEach(itemAttributeConfiguration -> anItem.addAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+            List<ItemAttributeConfiguration> attributeConfigurations = anItemConfiguration.getAttributes();
+            if (attributeConfigurations != null) {
+                attributeConfigurations.forEach(itemAttributeConfiguration -> anItem.addAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
             }
 
             register(anItem);

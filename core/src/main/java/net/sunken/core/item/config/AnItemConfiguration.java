@@ -16,6 +16,9 @@ public class AnItemConfiguration {
     private String id;
 
     @Setting
+    private boolean stack;
+
+    @Setting
     private Material material;
 
     @Setting

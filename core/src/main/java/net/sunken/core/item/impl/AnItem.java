@@ -35,6 +35,7 @@ public class AnItem {
         if (!this.stack) {
             itemBuilder = itemBuilder.addNBTString(Constants.ITEM_UUID_NBT_KEY, UUID.randomUUID().toString());
         }
+
         return itemBuilder.make();
     }
 

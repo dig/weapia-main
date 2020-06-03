@@ -56,7 +56,6 @@ public class ScoreboardRegistry {
         Team team = scoreboard.getTeam(playerName);
         if (team == null) {
             team = scoreboard.registerNewTeam(playerName);
-            team.addEntry(playerName);
         }
 
         team.setPrefix(customNameDetail.getPrefix());
@@ -65,6 +64,8 @@ public class ScoreboardRegistry {
 
         team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
         team.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, Team.OptionStatus.NEVER);
+
+        team.addEntry(playerName);
     }
 
 }

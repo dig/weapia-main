@@ -37,6 +37,12 @@ public class Constants {
 
     public static final String COMMAND_WHERE = ChatColor.GREEN + "You are on server %s running %s, please include this in any reports you make.";
 
+    public static final String COMMAND_ITEM_ID_INVALID = ChatColor.RED + "Invalid item.";
+    public static final String COMMAND_ITEM_SUCCESS = ChatColor.GREEN + "Added item.";
+
+    public static final String COMMAND_ITEM_TARGET_INVALID = ChatColor.RED + "Invalid target player.";
+    public static final String COMMAND_GIVE_ITEM_SUCCESS = ChatColor.GREEN + "Added item to target player.";
+
     public final static String GAME_PLAY_AGAIN = "[PLAY AGAIN]";
 
 }

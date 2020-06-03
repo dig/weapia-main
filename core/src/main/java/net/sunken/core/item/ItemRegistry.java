@@ -16,12 +16,14 @@ import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.bukkit.ChatColor;
 import org.bukkit.inventory.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Log
 @Singleton
@@ -48,13 +50,16 @@ public class ItemRegistry implements Facet, Enableable {
 
     public void register(AnItemConfiguration anItemConfiguration) {
         ItemBuilder itemBuilder = new ItemBuilder(anItemConfiguration.getMaterial())
-                .name(anItemConfiguration.getDisplayName())
-                .lores(anItemConfiguration.getLore());
+                .name(ChatColor.translateAlternateColorCodes('&', anItemConfiguration.getDisplayName()))
+                .lores(anItemConfiguration.getLore().stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
 
         try {
             Class clazz = Class.forName(anItemConfiguration.getItemClass() != null ? anItemConfiguration.getItemClass() : "net.sunken.core.item.impl.BasicItem");
             AnItem anItem = (AnItem) clazz.getDeclaredConstructor(String.class, ItemBuilder.class).newInstance(anItemConfiguration.getId(), itemBuilder);
-            anItemConfiguration.getAttributes().forEach(itemAttributeConfiguration -> anItem.addAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+
+            if (anItemConfiguration.getAttributes() != null) {
+                anItemConfiguration.getAttributes().forEach(itemAttributeConfiguration -> anItem.addAttribute(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+            }
 
             register(anItem);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

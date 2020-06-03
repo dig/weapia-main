@@ -58,7 +58,7 @@ public class ElementListener implements Facet, Listener {
         Player player = event.getPlayer();
         ItemStack clicked = event.getItem();
 
-        if (clicked != null) {
+        if (clicked != null && clicked.getType() != Material.AIR) {
             NBTItem nbtItem = new NBTItem(clicked);
             if (nbtItem.getKeys().contains(Constants.ELEMENT_NBT_KEY)) {
                 String uuid = nbtItem.getString(Constants.ELEMENT_NBT_KEY);

@@ -15,6 +15,8 @@ import net.sunken.core.inventory.command.ExampleInvCommand;
 import net.sunken.core.inventory.element.ElementListener;
 import net.sunken.core.item.ItemListener;
 import net.sunken.core.item.ItemRegistry;
+import net.sunken.core.item.command.GiveItemCommand;
+import net.sunken.core.item.command.ItemCommand;
 import net.sunken.core.item.config.ItemAttributeConfiguration;
 import net.sunken.core.item.config.ItemAttributeConfigurationSerializer;
 import net.sunken.core.npc.NPCRegistry;
@@ -50,6 +52,8 @@ public class CoreModule extends AbstractModule {
 
         pluginFacetBinder.addBinding(ItemRegistry.class);
         pluginFacetBinder.addBinding(ItemListener.class);
+        pluginFacetBinder.addBinding(ItemCommand.class);
+        pluginFacetBinder.addBinding(GiveItemCommand.class);
     }
 
     private void configureTypeSerializers() {

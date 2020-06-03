@@ -1,7 +1,5 @@
 package net.sunken.core.item.impl;
 
-import lombok.Getter;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

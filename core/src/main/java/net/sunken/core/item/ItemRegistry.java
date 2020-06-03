@@ -2,13 +2,13 @@ package net.sunken.core.item;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import de.tr7zw.changeme.nbtapi.*;
 import lombok.extern.java.Log;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.core.Constants;
-import net.sunken.core.Core;
 import net.sunken.core.inventory.ItemBuilder;
 import net.sunken.core.item.config.AnItemConfiguration;
 import net.sunken.core.item.config.AnItemsConfiguration;
@@ -22,11 +22,9 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.*;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,7 +33,7 @@ import java.util.stream.Collectors;
 public class ItemRegistry implements Facet, Enableable {
 
     @Inject
-    private JavaPlugin javaPlugin;
+    private Injector injector;
 
     /** ID -> AnItem */
     private final Map<String, AnItem> items = new HashMap<>();
@@ -64,9 +62,8 @@ public class ItemRegistry implements Facet, Enableable {
         AnItemListener listener = null;
         if (anItemConfiguration.getListener() != null) {
             try {
-                Core core = (Core) javaPlugin;
                 Class cls = Class.forName(anItemConfiguration.getListener());
-                listener = (AnItemListener) core.getInjector().getInstance(cls);
+                listener = (AnItemListener) injector.getInstance(cls);
             } catch (ClassNotFoundException | ClassCastException e) {
                 log.info(String.format("Unable to register listener. (%s)", anItemConfiguration.getId()));
             }

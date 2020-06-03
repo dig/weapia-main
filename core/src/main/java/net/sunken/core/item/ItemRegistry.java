@@ -1,13 +1,32 @@
 package net.sunken.core.item;
 
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Singleton;
 import de.tr7zw.changeme.nbtapi.*;
+import lombok.extern.java.Log;
+import net.sunken.common.inject.Enableable;
+import net.sunken.common.inject.Facet;
+import net.sunken.core.Constants;
+import net.sunken.core.inventory.ItemBuilder;
+import net.sunken.core.item.config.ItemConfiguration;
+import net.sunken.core.item.config.ItemsConfiguration;
+import net.sunken.core.item.impl.AnItem;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
+import ninja.leaping.configurate.loader.ConfigurationLoader;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import org.bukkit.Material;
 import org.bukkit.inventory.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class ItemRegistry {
-
-    private static final String REGISTERED_ITEM_KEY = "itemConfigName";
+@Log
+@Singleton
+public class ItemRegistry implements Facet, Enableable {
 
     /** ID -> AnItem */
     private final Map<String, AnItem> items = new HashMap<>();
@@ -19,15 +38,67 @@ public class ItemRegistry {
     public boolean isRegistered(ItemStack itemStack) {
         NBTItem itemStackNBT = new NBTItem(itemStack);
 
-        return itemStackNBT.hasKey(REGISTERED_ITEM_KEY) &&
-                isRegistered(itemStackNBT.getString(REGISTERED_ITEM_KEY));
+        return itemStackNBT.hasKey(Constants.ITEM_NBT_KEY) &&
+                isRegistered(itemStackNBT.getString(Constants.ITEM_NBT_KEY));
     }
 
     public void register(AnItem anItem) {
         items.put(anItem.getId(), anItem);
+        log.info(String.format("Registered item: %s", anItem.getId()));
+    }
+
+    public void register(ItemConfiguration itemConfiguration) {
+        ItemBuilder itemBuilder = new ItemBuilder(itemConfiguration.getMaterial())
+                .name(itemConfiguration.getDisplayName())
+                .lores(itemConfiguration.getLore());
+
+        try {
+            Class clazz = Class.forName(itemConfiguration.getItemClass() != null ? itemConfiguration.getItemClass() : "net.sunken.core.item.impl.BasicItem");
+            AnItem anItem = (AnItem) clazz.getDeclaredConstructor(String.class, ItemBuilder.class).newInstance(itemConfiguration.getId(), itemBuilder);
+            itemConfiguration.getAttributes().forEach(itemAttributeConfiguration -> anItem.getAttributes().put(itemAttributeConfiguration.getKey(), itemAttributeConfiguration.getValue()));
+
+            register(anItem);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+            log.info(String.format("Unable to register item. (%s)", itemConfiguration.getId()));
+        }
     }
 
     public Optional<AnItem> getItem(String id) {
         return Optional.ofNullable(items.get(id));
     }
+
+    @Override
+    public void enable() {
+        File itemDirectory = new File("config/item");
+        if (itemDirectory.exists()) {
+            File[] itemFiles = itemDirectory.listFiles((dir, name) -> name.endsWith(".conf"));
+            for (File itemFile : itemFiles) {
+                ItemsConfiguration itemsConfiguration = loadConfig(itemFile, ItemsConfiguration.class);
+                if (itemsConfiguration != null) {
+                    itemsConfiguration.getItems().forEach(this::register);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void disable() {
+    }
+
+    private <T> T loadConfig(File configFile, Class<T> type) {
+        ConfigurationLoader<CommentedConfigurationNode> loader =
+                HoconConfigurationLoader.builder().setPath(configFile.toPath()).build();
+
+        try {
+            ConfigurationNode rootNode = loader.load();
+            return rootNode.getValue(TypeToken.of(type));
+        } catch (IOException | ObjectMappingException e) {
+            e.printStackTrace();
+            log.severe(String.format("Unable to load item config file. (%s)", configFile.getName()));
+        }
+
+        return null;
+    }
+
 }

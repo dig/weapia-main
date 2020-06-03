@@ -32,7 +32,8 @@ public class Constants {
 
     public static final String GAME_ERROR = ChatColor.RED + "There was an error with the game you were in therefore you have been sent back to the lobby.";
 
-    public static final String ELEMENT_NBT_KEY = "MinevasionElement";
+    public static final String ELEMENT_NBT_KEY = "WeapiaElement";
+    public static final String ITEM_NBT_KEY = "WeapiaItem";
 
     public static final String COMMAND_WHERE = ChatColor.GREEN + "You are on server %s running %s, please include this in any reports you make.";
 

@@ -1,5 +1,6 @@
 package net.sunken.core.team;
 
+import com.google.common.collect.Sets;
 import com.google.inject.*;
 import lombok.*;
 import lombok.extern.java.*;
@@ -14,7 +15,6 @@ import org.bukkit.event.*;
 import org.bukkit.event.player.*;
 
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -33,11 +33,7 @@ public class TeamManager implements Facet, Enableable, Listener {
     @Setter
     private AllocationStrategy allocationStrategy;
     @Getter
-    private Set<Team> teamsList;
-
-    public TeamManager() {
-        this.teamsList = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    }
+    private Set<Team> teamsList = Sets.newHashSet();
 
     @Override
     public void enable() {

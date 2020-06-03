@@ -13,6 +13,10 @@ import net.sunken.core.config.InstanceConfigurationSerializer;
 import net.sunken.core.hologram.HologramListener;
 import net.sunken.core.inventory.command.ExampleInvCommand;
 import net.sunken.core.inventory.element.ElementListener;
+import net.sunken.core.item.ItemListener;
+import net.sunken.core.item.ItemRegistry;
+import net.sunken.core.item.config.ItemAttributeConfiguration;
+import net.sunken.core.item.config.ItemAttributeConfigurationSerializer;
 import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.player.ChatHandler;
 import net.sunken.core.player.ConnectHandler;
@@ -43,10 +47,14 @@ public class CoreModule extends AbstractModule {
         pluginFacetBinder.addBinding(NPCRegistry.class);
         pluginFacetBinder.addBinding(ElementListener.class);
         pluginFacetBinder.addBinding(ExampleInvCommand.class);
+
+        pluginFacetBinder.addBinding(ItemRegistry.class);
+        pluginFacetBinder.addBinding(ItemListener.class);
     }
 
     private void configureTypeSerializers() {
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(InstanceConfiguration.class), new InstanceConfigurationSerializer());
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(ItemAttributeConfiguration.class), new ItemAttributeConfigurationSerializer());
     }
 
 }

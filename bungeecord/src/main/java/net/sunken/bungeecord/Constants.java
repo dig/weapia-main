@@ -8,10 +8,10 @@ import java.util.List;
 
 public class Constants {
 
-    public static final String PLAYER_SEND_SERVER = ChatColor.GREEN + "You have been sent to %s.";
+    public static final String PLAYER_SEND_SERVER = ChatColor.GREEN + "Joined %s.";
 
-    public static final String DEFAULT_PING_TOP_LINE = "&b&lWeapia &8➤ &6&lPlay Soon! &81.8-1.15";
-    public static final String DEFAULT_PING_BOTTOM_LINE = "&fHome of unique minigames - &cComing soon.";
+    public static final String DEFAULT_PING_TOP_LINE = "&b&lWEAPIA &f✩ &6&lPlay Soon! &81.8-1.15";
+    public static final String DEFAULT_PING_BOTTOM_LINE = "&fHome to &6&lORE WARS&f, &b&lICE RUNNER&f & more!";
 
     public static final String FAILED_LOAD_DATA = ChatColor.RED + "Failed to load data for your profile.";
     public static final String FAILED_FIND_SERVER = ChatColor.RED + "Failed to find a server for you to connect to.";
@@ -23,7 +23,7 @@ public class Constants {
             " ",
             StringUtil.center(ChatColor.AQUA + "" + ChatColor.BOLD + "Weapia", 154),
             " ",
-            StringUtil.center(ChatColor.GOLD + "Explore the lobby and choose a game to begin:", 154),
+            StringUtil.center(ChatColor.GOLD + "Click a game to start playing:", 154),
             " "
     );
 
@@ -64,8 +64,8 @@ public class Constants {
     public static final String PARTY_KICK = ChatColor.RED + "%s has been kicked from the party.";
 
     public static final String COMMAND_SERVER_INVALID = ChatColor.RED + "Invalid game supplied.";
-    public static final String COMMAND_SEND_TO_GAME = ChatColor.YELLOW + "Finding a server for %s...";
-    public static final String COMMAND_ALREADY_IN_LOBBY = ChatColor.RED + "You are already in a lobby.";
+    public static final String COMMAND_SEND_TO_GAME = ChatColor.YELLOW + "Finding a %s game...";
+    public static final String COMMAND_ALREADY_IN_LOBBY = ChatColor.RED + "You are already in a lobby...";
 
     public static final String COMMAND_CREATESERVER_INVALID = ChatColor.RED + "Invalid type/game supplied.";
     public static final String COMMAND_CREATESERVER_SUCCESS = ChatColor.GREEN + "Requested server to be made.";

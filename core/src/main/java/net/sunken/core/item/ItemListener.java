@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
@@ -71,6 +72,24 @@ public class ItemListener implements Facet, Listener {
                         if (anItem.getListener() != null) {
                             anItem.getListener().onShootBow(anItem, event);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDurabilityDamage(PlayerItemDamageEvent event) {
+        ItemStack item = event.getItem();
+        if (item != null && item.getType() != Material.AIR) {
+            NBTItem nbtItem = new NBTItem(item);
+            if (nbtItem.getKeys().contains(Constants.ITEM_NBT_KEY)) {
+                String configName = nbtItem.getString(Constants.ITEM_NBT_KEY);
+                Optional<AnItem> anItemOptional = itemRegistry.getItem(configName);
+                if (anItemOptional.isPresent()) {
+                    AnItem anItem = anItemOptional.get();
+                    if (anItem.getListener() != null) {
+                        anItem.getListener().onDurabilityDamage(anItem, event);
                     }
                 }
             }

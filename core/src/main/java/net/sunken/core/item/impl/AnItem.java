@@ -40,8 +40,7 @@ public abstract class AnItem {
 
     public String getAttributeAsString(String key) {
         Object attribute = attributes.get(key);
-        String stringAttribute = (String) attribute;
-        return stringAttribute;
+        return (String) attribute;
     }
 
     public int getAttributeAsInt(String key) {

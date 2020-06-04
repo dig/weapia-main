@@ -7,6 +7,7 @@ import lombok.extern.java.*;
 import net.sunken.common.config.*;
 import net.sunken.common.inject.*;
 import net.sunken.common.player.module.*;
+import net.sunken.core.engine.state.impl.BaseTeamState;
 import net.sunken.core.team.allocate.*;
 import net.sunken.core.team.config.*;
 import net.sunken.core.team.impl.*;
@@ -60,6 +61,13 @@ public class TeamManager implements Facet, Enableable, Listener {
         return teamsList.stream()
                 .filter(team -> team.getMembers().contains(uuid))
                 .findFirst();
+    }
+
+    public Set<Team> hasState(Class<? extends BaseTeamState> state) {
+        return teamsList.stream()
+                .filter(team -> team.getState() != null)
+                .filter(team -> team.getState().getClass().isAssignableFrom(state))
+                .collect(Collectors.toSet());
     }
 
     @EventHandler

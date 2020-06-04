@@ -42,20 +42,6 @@ public abstract class BaseState {
     //--- Called on state stop, before switching.
     public abstract void stop(BaseGameState next);
 
-    public long getPlayingCount() {
-        return playerManager.getOnlinePlayers().stream()
-                .map(abstractPlayer -> (CorePlayer) abstractPlayer)
-                .filter(corePlayer -> !corePlayer.hasState() || !(corePlayer.getState() instanceof PlayerSpectatorState))
-                .count();
-    }
-
-    public Set<AbstractPlayer> getPlaying() {
-        return playerManager.getOnlinePlayers().stream()
-                .map(abstractPlayer -> (CorePlayer) abstractPlayer)
-                .filter(corePlayer -> !corePlayer.hasState() || !(corePlayer.getState() instanceof PlayerSpectatorState))
-                .collect(Collectors.toSet());
-    }
-
     public <T> T loadConfig(String filePath, Class<T> type) {
         File configFile = new File(filePath);
         ConfigurationLoader<CommentedConfigurationNode> loader =

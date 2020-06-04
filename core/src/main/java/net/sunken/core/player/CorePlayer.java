@@ -16,10 +16,9 @@ import java.util.UUID;
 
 public abstract class CorePlayer extends AbstractPlayer {
 
-    protected ScoreboardRegistry scoreboardRegistry;
-
     @Getter
     protected BasePlayerState state;
+    protected ScoreboardRegistry scoreboardRegistry;
 
     public CorePlayer(UUID uuid, String username, ScoreboardRegistry scoreboardRegistry) {
         super(uuid, username);
@@ -69,10 +68,10 @@ public abstract class CorePlayer extends AbstractPlayer {
 
     public void setState(BasePlayerState newState) {
         if (state != null) {
-            state.stop(newState);
+            state.stop(this, newState);
         }
 
-        newState.start(state);
+        newState.start(this, state);
         state = newState;
     }
 

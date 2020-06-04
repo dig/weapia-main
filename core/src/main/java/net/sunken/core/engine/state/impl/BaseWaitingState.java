@@ -99,7 +99,7 @@ public abstract class BaseWaitingState extends EventGameState {
         player.setGameMode(GameMode.ADVENTURE);
         player.teleport(waitingConfiguration.getLocationConfiguration().toLocation());
 
-        Optional<CustomScoreboard> scoreboardOptional = scoreboardRegistry.get("Waiting");
+        Optional<CustomScoreboard> scoreboardOptional = scoreboardRegistry.get(SCOREBOARD_KEY);
         if (scoreboardOptional.isPresent()) {
             CustomScoreboard scoreboard = scoreboardOptional.get();
             scoreboard.add(player);

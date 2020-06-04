@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 public abstract class BaseWaitingState extends EventGameState {
 
-    private static final String SCOREBOARD_KEY = "Waiting";
+    protected static final String SCOREBOARD_KEY = "Waiting";
 
     @Inject @InjectConfig
     protected WaitingConfiguration waitingConfiguration;

@@ -25,7 +25,7 @@ public class PartyCommand extends BungeeCommand {
         Arrays.asList(
                 " ",
                 " &d&lPARTY",
-                " &eTeam up and conquer!",
+                " &fTeam up and conquer!",
                 " ",
                 " &aCreate &f\u27B2 &d/party create",
                 " &aDisband &f\u27B2 &5/party disband",

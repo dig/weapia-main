@@ -24,17 +24,17 @@ public class PartyCommand extends BungeeCommand {
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
         Arrays.asList(
                 " ",
-                "&d&lParty",
-                "&fGroup up with your friends",
+                "&d&l PARTY",
+                "&e Team up and conquer!",
                 " ",
-                "&7Create &8\u2996 &a/party create",
-                "&7Disband &8\u2996 &a/party disband",
-                "&7Leave &8\u2996 &a/party leave",
-                "&7Invite &8\u2996 &a/party invite <username>",
-                "&7Join &8\u2996 &a/party join <username>",
-                "&7Chat &8\u2996 &a/party chat <message>",
-                "&7Set Leader &8\u2996 &a/party setleader <username>",
-                "&7Kick &8\u2996 &a/party kick <username>",
+                "&aCreate &f\u27B2 &d/party create",
+                "&aDisband &f\u27B2 &5/party disband",
+                "&aLeave &f\u27B2 &d/party leave",
+                "&aInvite &f\u27B2 &5/party invite <username>",
+                "&aJoin &f\u27B2 &d/party join <username>",
+                "&aChat &f\u27B2 &5/party chat <message>",
+                "&aSet Leader &f\u27B2 &d/party setleader <username>",
+                "&aKick &f\u27B2 &5/party kick <username>",
                 " "
         ).forEach(message -> commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message))));
         return true;

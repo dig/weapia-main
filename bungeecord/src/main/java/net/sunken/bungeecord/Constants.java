@@ -52,7 +52,7 @@ public class Constants {
     public static final String PARTY_JOINED_OTHER = ChatColor.AQUA + "%s has joined the party!";
     public static final String PARTY_INVITE_DENY = ChatColor.RED + "%s has denied your party invite.";
     public static final String PARTY_DENIED = ChatColor.RED + "You have denied the party invite.";
-    public static final String PARTY_CHAT_FORMAT = ChatColor.LIGHT_PURPLE + "Party %s" + ChatColor.WHITE + ": %s";
+    public static final String PARTY_CHAT_FORMAT = ChatColor.LIGHT_PURPLE + "Party %s" + ChatColor.LIGHT_PURPLE + ": %s";
     public static final String PARTY_LEAVE = ChatColor.AQUA + "You have left the party.";
     public static final String PARTY_LEAVE_OTHER = ChatColor.AQUA + "%s has left the party.";
     public static final String PARTY_IS_LEADER = ChatColor.RED + "You cannot leave the party as the leader, either disband or set leader to another member.";

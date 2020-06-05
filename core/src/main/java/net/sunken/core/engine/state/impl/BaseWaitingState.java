@@ -243,7 +243,7 @@ public abstract class BaseWaitingState extends EventGameState {
 
                 if (customScoreboard.getEntry("PlayersValue") != null) {
                     customScoreboard.getEntry("PlayersValue").update(playersColour + "" + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers());
-                    customScoreboard.getEntry("StartingValue").update(((timeDiff <= (10 * 1000)) && ((timeDiff / 1000) % 2000 == 0) ? ChatColor.WHITE : ChatColor.LIGHT_PURPLE) + " " + timeFormat);
+                    customScoreboard.getEntry("StartingValue").update(((timeDiff <= (10 * 1000)) && ((timeDiff / 1000) % 2000 == 0) ? ChatColor.WHITE : ChatColor.LIGHT_PURPLE) + "" + timeFormat);
                 }
             }
         }

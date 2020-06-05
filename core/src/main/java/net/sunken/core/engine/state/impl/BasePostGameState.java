@@ -1,6 +1,7 @@
 package net.sunken.core.engine.state.impl;
 
 import com.google.inject.Inject;
+import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.Core;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -28,7 +29,7 @@ public abstract class BasePostGameState extends EventGameState {
     public void tick(int tickCount) {
         if (gameEndTimeMillis > 0 && gameEndTimeMillis <= System.currentTimeMillis()) {
             gameEndTimeMillis = 0;
-            core.handleGraceShutdown();
+            AsyncHelper.executor().execute(() -> core.handleGraceShutdown());
         }
     }
 

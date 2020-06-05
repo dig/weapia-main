@@ -1,6 +1,7 @@
 package net.sunken.core.util;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 
 public class Cuboid {
@@ -77,6 +78,16 @@ public class Cuboid {
         return cuboid.getWorld().equals(world) &&
                 !(cuboid.getMinX() > maxX || cuboid.getMinY() > maxY || cuboid.getMinZ() > maxZ ||
                         minZ > cuboid.getMaxX() || minY > cuboid.getMaxY() || minZ > cuboid.getMaxZ());
+    }
+
+    public void setType(Material material) {
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    world.getBlockAt(x, y, z).setType(material);
+                }
+            }
+        }
     }
 
 }

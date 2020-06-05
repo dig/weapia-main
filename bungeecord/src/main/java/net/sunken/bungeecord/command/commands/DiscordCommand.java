@@ -17,16 +17,13 @@ public class DiscordCommand extends BungeeCommand {
     @Override
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
         Arrays.asList(
-                " ",
-                "&a&lCommunity Chat - Discord",
-                "&fUpdates. Text & Voice Chat. Meet other players.",
+                " &5&lCOMMUNITY CHAT - DISCORD",
+                "  &fUpdates. Text & Voice Chat. Meet other players.",
                 " "
         ).forEach(message -> commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message))));
 
-        TextComponent clickableLink = new TextComponent("[JOIN]");
-        clickableLink.setColor(ChatColor.GREEN);
-        clickableLink.setBold(true);
-        clickableLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/m2h4Gxt"));
+        TextComponent clickableLink = new TextComponent(TextComponent.fromLegacyText(ChatColor.GOLD + "" + ChatColor.BOLD + "Click " + ChatColor.WHITE + "to open"));
+        clickableLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.com"));
         commandSender.sendMessage(clickableLink);
 
         commandSender.sendMessage(new TextComponent(" "));

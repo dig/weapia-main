@@ -24,9 +24,8 @@ public class Constants {
 
     public static final String SEND_TO_GAME = ChatColor.YELLOW + "Finding a server for %s...";
 
-    public static final String COUNTDOWN_LOBBY_SECONDS = ChatColor.YELLOW + "Lobby ending in %d second(s).";
-    public static final String COUNTDOWN_GAME_SECONDS = ChatColor.YELLOW + "Game starting in %d second(s).";
-    public static final String COUNTDOWN_STARTING = ChatColor.YELLOW + "Preparing game.";
+    public static final String COUNTDOWN_LOBBY_SECONDS = ChatColor.YELLOW + "Game starting in %ds";
+    public static final String COUNTDOWN_STARTING = ChatColor.YELLOW + "Game now starting.";
     public static final String COUNTDOWN_FAILED_REQUIRED = ChatColor.YELLOW + "Waiting for more players to join...";
     public static final String COUNTDOWN_FAILED_STATE_NULL = ChatColor.RED + "Appears this minigame is not setup correctly, please contact administrators with this message.";
 

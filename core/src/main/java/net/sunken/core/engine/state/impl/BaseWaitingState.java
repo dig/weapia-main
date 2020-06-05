@@ -58,7 +58,7 @@ public abstract class BaseWaitingState extends EventGameState {
 
     private void setupScoreboard() {
         Game game = pluginInform.getServer().getGame();
-        CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.BOLD + "" + ChatColor.AQUA + "WEAPIA");
+        CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
         customScoreboard.createEntry("Spacer1", ChatColor.RED + " ", 11);
         customScoreboard.createEntry("MapTitle", ChatColor.WHITE + "Map", 10);
         customScoreboard.createEntry("MapValue", ChatColor.GOLD + "" + pluginInform.getServer().getWorld().getFriendlyName(), 9);

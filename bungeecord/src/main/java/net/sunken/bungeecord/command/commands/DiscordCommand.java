@@ -17,8 +17,9 @@ public class DiscordCommand extends BungeeCommand {
     @Override
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
         Arrays.asList(
+                " ",
                 " &5&lCOMMUNITY CHAT - DISCORD",
-                "  &fUpdates. Text & Voice Chat. Meet other players.",
+                " &fUpdates. Text & Voice Chat. Meet other players.",
                 " "
         ).forEach(message -> commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message))));
 

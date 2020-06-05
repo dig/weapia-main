@@ -17,8 +17,9 @@ public class BuyCommand extends BungeeCommand {
     @Override
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
         Arrays.asList(
+                " ",
                 " &a&lSTORE",
-                "  &fSupport our development and get access to lots of powerful perks.",
+                " &fSupport our development and get access to lots of powerful perks.",
                 " "
         ).forEach(message -> commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message))));
 

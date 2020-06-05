@@ -54,10 +54,7 @@ public abstract class Core extends JavaPlugin {
         if (!shutdown) {
             shutdown = true;
 
-            //--- Change state to closed
             pluginInform.setState(Server.State.CLOSED);
-
-            //-- Fallback all players to lobbies
             Bukkit.getOnlinePlayers().forEach(player -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
 
             //--- Wait for all players to go

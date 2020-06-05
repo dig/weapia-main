@@ -1,6 +1,7 @@
 package net.sunken.lobby.player;
 
 import lombok.extern.java.Log;
+import net.sunken.common.player.Rank;
 import net.sunken.common.server.ServerHelper;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.core.PluginInform;
@@ -46,18 +47,22 @@ public class LobbyPlayer extends CorePlayer {
             Player player = playerOptional.get();
             player.getInventory().clear();
 
-            Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
-            String title = ChatColor.AQUA + "" + ChatColor.BOLD + "Lobby #"
-                    + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
+            CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.BOLD + "" + ChatColor.AQUA + "WEAPIA");
+            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 10);
 
-            CustomScoreboard customScoreboard = new CustomScoreboard(title);
-            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 4);
+            customScoreboard.createEntry("RankTitle", ChatColor.GRAY + "Rank", 9);
+            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank /join" : ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 8);
+            customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 7);
 
-            customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank " + ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 3);
-            customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players " + ChatColor.YELLOW + serverManager.getTotalPlayersOnline(), 2);
+            customScoreboard.createEntry("EventsTitle", ChatColor.WHITE + "Events", 6);
+            customScoreboard.createEntry("EventsValue", ChatColor.LIGHT_PURPLE + "2x /vote", 5);
+            customScoreboard.createEntry("Spacer3", ChatColor.RED + " ", 4);
 
-            customScoreboard.createEntry("Spacer3", ChatColor.RED + " ", 1);
-            customScoreboard.createEntry("URL", ChatColor.AQUA + "play.weapia.com", 0);
+            customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 3);
+            customScoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 2);
+
+            customScoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 1);
+            customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
 
             customScoreboard.add(player);
             scoreboardRegistry.register(player.getUniqueId().toString(), customScoreboard);

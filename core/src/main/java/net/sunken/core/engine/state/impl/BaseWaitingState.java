@@ -58,10 +58,10 @@ public abstract class BaseWaitingState extends EventGameState {
 
     private void setupScoreboard() {
         Game game = pluginInform.getServer().getGame();
-        CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + game.getFriendlyName());
+        CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.BOLD + "" + ChatColor.AQUA + "WEAPIA");
         customScoreboard.createEntry("Spacer1", ChatColor.RED + " ", 11);
         customScoreboard.createEntry("MapTitle", ChatColor.WHITE + "Map", 10);
-        customScoreboard.createEntry("MapValue", ChatColor.GOLD + " " + pluginInform.getServer().getWorld().getFriendlyName(), 9);
+        customScoreboard.createEntry("MapValue", ChatColor.GOLD + "" + pluginInform.getServer().getWorld().getFriendlyName(), 9);
         customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
 
         ChatColor playersColour = ChatColor.GREEN;
@@ -72,16 +72,16 @@ public abstract class BaseWaitingState extends EventGameState {
         }
 
         customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 7);
-        customScoreboard.createEntry("PlayersValue", playersColour + " " + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers(), 6);
+        customScoreboard.createEntry("PlayersValue", playersColour + "" + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers(), 6);
         customScoreboard.createEntry("Spacer3", ChatColor.WHITE + " ", 5);
 
         long timeDiff = startTimeMillis - System.currentTimeMillis();
         customScoreboard.createEntry("StartingTitle", ChatColor.WHITE + "Starting in", 4);
-        customScoreboard.createEntry("StartingValue", ChatColor.LIGHT_PURPLE + " " + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 3);
+        customScoreboard.createEntry("StartingValue", ChatColor.LIGHT_PURPLE + "" + String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff))), 3);
         customScoreboard.createEntry("Spacer4", ChatColor.GRAY + " ", 2);
 
         customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
-        customScoreboard.createEntry("URL", ChatColor.AQUA + "play.weapia.com", 0);
+        customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
 
         Bukkit.getOnlinePlayers().forEach(customScoreboard::add);
         scoreboardRegistry.register(SCOREBOARD_KEY, customScoreboard);
@@ -242,7 +242,7 @@ public abstract class BaseWaitingState extends EventGameState {
                 }
 
                 if (customScoreboard.getEntry("PlayersValue") != null) {
-                    customScoreboard.getEntry("PlayersValue").update(playersColour + " " + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers());
+                    customScoreboard.getEntry("PlayersValue").update(playersColour + "" + playerManager.getOnlinePlayers().size() + "/" + game.getMaxPlayers());
                     customScoreboard.getEntry("StartingValue").update(((timeDiff <= (10 * 1000)) && ((timeDiff / 1000) % 2000 == 0) ? ChatColor.WHITE : ChatColor.LIGHT_PURPLE) + " " + timeFormat);
                 }
             }

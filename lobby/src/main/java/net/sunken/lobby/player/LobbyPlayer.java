@@ -48,20 +48,21 @@ public class LobbyPlayer extends CorePlayer {
             player.getInventory().clear();
 
             CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
-            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 10);
+            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
 
-            customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 9);
-            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank /join" : ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 8);
-            customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 7);
+            customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
+            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank /join" : ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 9);
+            customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
 
-            customScoreboard.createEntry("EventsTitle", ChatColor.WHITE + "Events", 6);
-            customScoreboard.createEntry("EventsValue", ChatColor.LIGHT_PURPLE + "2x /vote", 5);
-            customScoreboard.createEntry("Spacer3", ChatColor.RED + " ", 4);
+            customScoreboard.createEntry("EventsTitle", ChatColor.WHITE + "Events", 7);
+            customScoreboard.createEntry("EventsValue", ChatColor.LIGHT_PURPLE + "2x /vote", 6);
+            customScoreboard.createEntry("Spacer3", ChatColor.RED + " ", 5);
 
-            customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 3);
-            customScoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 2);
+            customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
+            customScoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 3);
 
-            customScoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 1);
+            customScoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
+            customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
             customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
 
             customScoreboard.add(player);

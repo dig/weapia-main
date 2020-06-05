@@ -10,6 +10,8 @@ import org.bukkit.ChatColor;
 public class TeamSingleConfiguration {
 
     @Setting
+    private String id;
+    @Setting
     private ChatColor colour;
     @Setting
     private String displayName;

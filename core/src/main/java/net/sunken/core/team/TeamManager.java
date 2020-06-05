@@ -57,6 +57,13 @@ public class TeamManager implements Facet, Enableable, Listener {
         }
     }
 
+    public Optional<Team> getById(String id) {
+        return teamsList.stream()
+                .filter(team -> team.getId().equals(id))
+                .findFirst();
+    }
+
+
     public Optional<Team> getByMemberUUID(@NonNull UUID uuid) {
         return teamsList.stream()
                 .filter(team -> team.getMembers().contains(uuid))

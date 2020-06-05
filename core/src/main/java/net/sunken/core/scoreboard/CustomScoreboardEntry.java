@@ -2,6 +2,7 @@ package net.sunken.core.scoreboard;
 
 import com.google.common.base.Splitter;
 import lombok.NonNull;
+import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
@@ -38,18 +39,25 @@ public class CustomScoreboardEntry {
         } else {
             team = scoreboard.registerNewTeam("team-" + (id.length() > 11 ? id.substring(0, 11) : id));
 
+            String begin = "";
+            String mid = "";
+
             Iterator<String> iterator = Splitter.fixedLength(16).split(name).iterator();
-            if (name.length() > 16)
-                team.setPrefix(iterator.next());
+            if (name.length() > 16) {
+                String entry = iterator.next();
+                begin = ChatColor.getLastColors(entry);
+                team.setPrefix(entry);
+            }
 
             String entry = iterator.next();
-            score = objective.getScore(entry);
+            mid = ChatColor.getLastColors(entry);
+            score = objective.getScore(begin + entry);
             score.setScore(value);
 
             if (name.length() > 32)
-                team.setSuffix(iterator.next());
+                team.setSuffix(mid + iterator.next());
 
-            team.addEntry(entry);
+            team.addEntry(begin + entry);
         }
     }
 

@@ -8,7 +8,6 @@ import lombok.Getter;
 public enum Game {
 
     NONE ("None", 80, null, null),
-
     ICE_RUNNER_SOLO ("Ice Runner (Solo)", 4, "respects/wep-infrastructure:icerunner-solo", "respects/wep-infrastructure-dev:icerunner-solo");
 
     private String friendlyName;

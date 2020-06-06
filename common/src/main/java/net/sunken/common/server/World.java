@@ -15,7 +15,6 @@ public enum World {
     NONE ("None",false),
     LOBBY ("Lobby",false),
     GAME_LOBBY ("Game Lobby", false),
-
     ICERUNNER_PLAINS ("Plains", Game.ICE_RUNNER_SOLO, true);
 
     private String friendlyName;

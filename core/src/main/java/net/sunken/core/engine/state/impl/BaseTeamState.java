@@ -37,7 +37,7 @@ public abstract class BaseTeamState {
                 player.setPlayerListName(team.getColour() + "[" + team.getDisplayName() + "] " + player.getName());
             }
 
-            scoreboardRegistry.changeName(corePlayer, team.getColour() + "[" + team.getDisplayName() + "] ", "", team.getColour(), Rank.PLAYER.getOrder());
+            scoreboardRegistry.changeName(corePlayer, team.getColour() + "[" + team.getDisplayName() + "] ", "", team.getColour(), team.getColour().ordinal());
         }
     }
 

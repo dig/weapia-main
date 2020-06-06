@@ -21,7 +21,6 @@ public class GreedyAllocationStrategy implements AllocationStrategy {
             while (team.getMembers().size() < team.getMaxPlayers() && !unallocatedPlayers.isEmpty()) {
                 UUID uuid = unallocatedPlayers.poll().getUuid();
                 team.addMember(uuid);
-                log.info(String.format("TeamManager: Assigning %s to team colour %s.", uuid.toString(), team.getColour().toString()));
             }
 
             if (team.getMembers().size() > 0) {

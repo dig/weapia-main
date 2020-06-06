@@ -55,10 +55,7 @@ public class Kube {
             for (int i = 0; i < containerArray.size(); i++) {
                 JsonObject containerObject = containerArray.get(i).getAsJsonObject();
 
-                //--- Name
                 containerObject.addProperty("name", "container" + i);
-
-                //--- Image
                 containerObject.addProperty("image", imageUri);
 
                 //--- Setup environment variables

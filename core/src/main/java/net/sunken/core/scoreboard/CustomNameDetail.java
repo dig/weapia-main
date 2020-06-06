@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 @AllArgsConstructor
 public class CustomNameDetail {
 
+    private final String id;
     private final String prefix;
     private final String suffix;
     private final ChatColor colour;

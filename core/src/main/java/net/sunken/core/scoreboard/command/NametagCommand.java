@@ -46,7 +46,7 @@ public class NametagCommand extends BukkitCommand {
                 colour = ChatColor.valueOf(args[1]);
             }
 
-            scoreboardRegistry.changeName(abstractPlayer.getUsername(), prefix, suffix, colour, order);
+            scoreboardRegistry.changeName(abstractPlayer, prefix, suffix, colour, order);
             commandSender.sendMessage(Constants.COMMAND_NAMETAG_SUCCESS);
             return true;
         }

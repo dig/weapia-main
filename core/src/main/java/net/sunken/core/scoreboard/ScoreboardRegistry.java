@@ -12,6 +12,7 @@ import org.bukkit.scoreboard.Team;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Log
 @Singleton
@@ -45,11 +46,11 @@ public class ScoreboardRegistry {
         return Optional.ofNullable(scoreboardMap.get(key));
     }
 
-    public void changeName(@NonNull String playerName, @NonNull String prefix, @NonNull String suffix, @NonNull ChatColor colour, int order) {
-        CustomNameDetail customNameDetail = new CustomNameDetail(prefix, suffix, colour, order);
-        customNames.remove(playerName);
-        customNames.put(playerName, customNameDetail);
-        scoreboardMap.values().forEach(customScoreboard -> registerCustomName(customScoreboard, playerName, customNameDetail));
+    public void changeName(@NonNull AbstractPlayer abstractPlayer, @NonNull String prefix, @NonNull String suffix, @NonNull ChatColor colour, int order) {
+        CustomNameDetail customNameDetail = new CustomNameDetail(abstractPlayer.getUuid().toString().replace("-", "").substring(15), prefix, suffix, colour, order);
+        customNames.remove(abstractPlayer.getUsername());
+        customNames.put(abstractPlayer.getUsername(), customNameDetail);
+        scoreboardMap.values().forEach(customScoreboard -> registerCustomName(customScoreboard, abstractPlayer.getUsername(), customNameDetail));
     }
 
     public Optional<CustomNameDetail> getCustomName(@NonNull String playerName) {
@@ -58,15 +59,9 @@ public class ScoreboardRegistry {
 
     private void registerCustomName(@NonNull CustomScoreboard customScoreboard, @NonNull String playerName, @NonNull CustomNameDetail customNameDetail) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
-
-        Team team = scoreboard.getTeam(playerName);
+        Team team = scoreboard.getTeam(customNameDetail.getOrder() + customNameDetail.getId());
         if (team == null) {
-            team = scoreboard.registerNewTeam(playerName);
-        }
-
-        Team order = scoreboard.getTeam(customNameDetail.getOrder() + "order");
-        if (order == null) {
-            order = scoreboard.registerNewTeam(customNameDetail.getOrder() + "order");
+            team = scoreboard.registerNewTeam(customNameDetail.getOrder() + customNameDetail.getId());
         }
 
         team.setPrefix(customNameDetail.getPrefix());
@@ -77,7 +72,6 @@ public class ScoreboardRegistry {
         team.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, Team.OptionStatus.NEVER);
 
         team.addEntry(playerName);
-        order.addEntry(playerName);
     }
 
 }

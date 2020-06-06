@@ -2,6 +2,7 @@ package net.sunken.core.engine.state.impl;
 
 import com.google.inject.Inject;
 import net.sunken.common.player.AbstractPlayer;
+import net.sunken.common.player.Rank;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
@@ -36,7 +37,7 @@ public abstract class BaseTeamState {
                 player.setPlayerListName(team.getColour() + "[" + team.getDisplayName() + "] " + player.getName());
             }
 
-            scoreboardRegistry.changeName(corePlayer.getUsername(), team.getColour() + "[" + team.getDisplayName() + "] ", "", team.getColour());
+            scoreboardRegistry.changeName(corePlayer.getUsername(), team.getColour() + "[" + team.getDisplayName() + "] ", "", team.getColour(), Rank.PLAYER.getOrder());
         }
     }
 

@@ -27,6 +27,7 @@ public class NametagCommand extends BukkitCommand {
             String prefix = "";
             String suffix = "";
             ChatColor colour = ChatColor.WHITE;
+            int order = Rank.PLAYER.getOrder();
 
             Optional<CustomNameDetail> customNameDetailOptional = scoreboardRegistry.getCustomName(abstractPlayer.getUsername());
             if (customNameDetailOptional.isPresent()) {
@@ -34,6 +35,7 @@ public class NametagCommand extends BukkitCommand {
                 prefix = customNameDetail.getPrefix();
                 suffix = customNameDetail.getSuffix();
                 colour = customNameDetail.getColour();
+                order = customNameDetail.getOrder();
             }
 
             if (args[0].equalsIgnoreCase("prefix")) {
@@ -44,7 +46,7 @@ public class NametagCommand extends BukkitCommand {
                 colour = ChatColor.valueOf(args[1]);
             }
 
-            scoreboardRegistry.changeName(abstractPlayer.getUsername(), prefix, suffix, colour);
+            scoreboardRegistry.changeName(abstractPlayer.getUsername(), prefix, suffix, colour, order);
             commandSender.sendMessage(Constants.COMMAND_NAMETAG_SUCCESS);
             return true;
         }

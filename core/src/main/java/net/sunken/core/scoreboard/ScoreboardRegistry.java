@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.sunken.common.player.AbstractPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -44,8 +45,8 @@ public class ScoreboardRegistry {
         return Optional.ofNullable(scoreboardMap.get(key));
     }
 
-    public void changeName(@NonNull String playerName, @NonNull String prefix, @NonNull String suffix, @NonNull ChatColor colour) {
-        CustomNameDetail customNameDetail = new CustomNameDetail(prefix, suffix, colour);
+    public void changeName(@NonNull String playerName, @NonNull String prefix, @NonNull String suffix, @NonNull ChatColor colour, int order) {
+        CustomNameDetail customNameDetail = new CustomNameDetail(prefix, suffix, colour, order);
         customNames.remove(playerName);
         customNames.put(playerName, customNameDetail);
         scoreboardMap.values().forEach(customScoreboard -> registerCustomName(customScoreboard, playerName, customNameDetail));
@@ -63,6 +64,11 @@ public class ScoreboardRegistry {
             team = scoreboard.registerNewTeam(playerName);
         }
 
+        Team order = scoreboard.getTeam(customNameDetail.getOrder() + "order");
+        if (order == null) {
+            order = scoreboard.registerNewTeam(customNameDetail.getOrder() + "order");
+        }
+
         team.setPrefix(customNameDetail.getPrefix());
         team.setSuffix(customNameDetail.getSuffix());
         team.setColor(customNameDetail.getColour());
@@ -71,6 +77,7 @@ public class ScoreboardRegistry {
         team.setOption(Team.Option.DEATH_MESSAGE_VISIBILITY, Team.OptionStatus.NEVER);
 
         team.addEntry(playerName);
+        order.addEntry(playerName);
     }
 
 }

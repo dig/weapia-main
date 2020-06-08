@@ -183,7 +183,7 @@ public class ServerManager implements Facet, Enableable {
         return pendingPlayerConnection.getIfPresent(uuid) != null;
     }
 
-    public int getPlayersOnline(Server.Type type, Game game) {
+    public int getPlayersOnline(@NonNull Server.Type type, @NonNull Game game) {
         int playersOnline = 0;
 
         Set<Server> serversWithType = findAll(type, game);

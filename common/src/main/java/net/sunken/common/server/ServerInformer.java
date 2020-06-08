@@ -32,8 +32,9 @@ public class ServerInformer {
 
             //--- Metadata
             for (String key : ServerHelper.SERVER_METADATA_KEYS) {
-                if (server.getMetadata().containsKey(key))
+                if (server.getMetadata().containsKey(key)) {
                     serverKeysBuilder.put(key, server.getMetadata().get(key));
+                }
             }
 
             jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), serverKeysBuilder.build());
@@ -62,10 +63,10 @@ public class ServerInformer {
         try (Jedis jedis = redisConnection.getConnection()) {
             ImmutableMap.Builder<String, String> serverKeysBuilder = ImmutableMap.<String, String>builder();
 
-            //--- Metadata
             for (String key : ServerHelper.SERVER_METADATA_KEYS) {
-                if (server.getMetadata().containsKey(key))
+                if (server.getMetadata().containsKey(key)) {
                     serverKeysBuilder.put(key, server.getMetadata().get(key));
+                }
             }
 
             jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), serverKeysBuilder.build());

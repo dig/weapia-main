@@ -32,8 +32,6 @@ public class InstanceManager implements Facet, Enableable {
     private Queue<InstanceDetail> pendingInstanceCreation;
     @Getter
     private Cache<Server, DummyObject> pendingInstanceStart;
-    @Getter
-    private Queue<InstanceDetail> pendingReassign;
 
     @Inject
     private ServerManager serverManager;
@@ -55,11 +53,8 @@ public class InstanceManager implements Facet, Enableable {
         pendingInstanceStart = CacheBuilder.newBuilder()
                 .expireAfterWrite(3, TimeUnit.MINUTES)
                 .build();
-        pendingReassign = new ConcurrentLinkedQueue<>();
 
         packetHandlerRegistry.registerHandler(RequestServerCreationPacket.class, requestServerCreationHandler);
-
-        //--- Instance thread
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(instanceRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
     }
 
@@ -100,16 +95,6 @@ public class InstanceManager implements Facet, Enableable {
         kubeApi.deletePod(server.getId());
         serverManager.getServerList().removeIf(srv -> srv.getId().equals(server.getId()));
         serverInformer.remove(server.getId(), true);
-
-        //--- Reassign all IDs if a server has been taken out of such type
-        if (server.getType().isAssignId() && !isPendingReassign(server.getType(), server.getGame()))
-            pendingReassign.add(new InstanceDetail(server.getType(), server.getGame()));
-    }
-
-    private boolean isPendingReassign(Server.Type type, Game game) {
-        return pendingReassign.stream()
-                .filter(instanceDetail -> instanceDetail.getType() == type && instanceDetail.getGame() == game)
-                .count() > 0;
     }
 
     private static class InstanceRunnable implements Runnable {
@@ -120,40 +105,20 @@ public class InstanceManager implements Facet, Enableable {
         private ServerManager serverManager;
         @Inject
         private Kube kubeApi;
-        @Inject
-        private ServerInformer serverInformer;
 
         @Override
         public void run() {
-            Queue<InstanceDetail> pendingReassign = instanceManager.getPendingReassign();
             Queue<InstanceDetail> pendingInstanceCreation = instanceManager.getPendingInstanceCreation();
-
-            //--- Reassign ID task
-            while (pendingReassign.size() > 0) {
-                InstanceDetail detail = pendingReassign.poll();
-                Set<Server> serversToReassign = serverManager.findAll(detail.getType(), detail.getGame());
-
-                int serverCount = 1;
-                for (Server server : serversToReassign) {
-                    server.getMetadata().put(ServerHelper.SERVER_METADATA_ID_KEY, String.valueOf(serverCount));
-                    serverInformer.updateMetadata(server, true);
-
-                    log.info(String.format("Reassigning %s to %s", String.valueOf(serverCount), server.getId()));
-
-                    serverCount++;
-                }
-            }
-
-            //--- Pending instance creation
-            while (pendingInstanceCreation.size() > 0) {
+            while (!pendingInstanceCreation.isEmpty()) {
                 InstanceDetail instanceDetail = pendingInstanceCreation.poll();
 
                 Server.Type type = instanceDetail.getType();
                 Game game = instanceDetail.getGame();
 
                 Map<String, String> metadata = new HashMap<>();
-                if (type.isAssignId())
-                    metadata.put(ServerHelper.SERVER_METADATA_ID_KEY, String.valueOf(serverManager.findAllCount(type, game) + instanceManager.findPendingStartCount(type, game) + 1));
+                if (type.isAssignId()) {
+                    metadata.put(ServerHelper.SERVER_METADATA_ID_KEY, String.valueOf(serverManager.findNextAvailableID(type, game)));
+                }
 
                 Server instanceCreate = Server.builder()
                         .id(type.generateId())
@@ -168,8 +133,9 @@ public class InstanceManager implements Facet, Enableable {
                         .metadata(metadata)
                         .build();
 
-                if (kubeApi.createPod(instanceCreate))
+                if (kubeApi.createPod(instanceCreate)) {
                     instanceManager.getPendingInstanceStart().put(instanceCreate, new DummyObject());
+                }
             }
         }
 

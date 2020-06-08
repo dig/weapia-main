@@ -61,12 +61,10 @@ public class ServerManager implements Facet, Enableable {
         try (Jedis jedis = redisConnection.getConnection()) {
             Set<Server> scannedServerList = Sets.newLinkedHashSet();
 
-            //--- Scan pattern
             ScanParams params = new ScanParams();
             params.count(200);
             params.match(ServerHelper.SERVER_STORAGE_KEY + ":*");
 
-            //--- Result
             ScanResult<String> scanResult = jedis.scan("0", params);
             List<String> keys = scanResult.getResult();
 
@@ -189,9 +187,9 @@ public class ServerManager implements Facet, Enableable {
         int playersOnline = 0;
 
         Set<Server> serversWithType = findAll(type, game);
-
-        for (Server srv : serversWithType)
+        for (Server srv : serversWithType) {
             playersOnline += srv.getPlayers();
+        }
 
         return playersOnline;
     }
@@ -203,10 +201,38 @@ public class ServerManager implements Facet, Enableable {
                 .filter(srv -> srv.getType() == Server.Type.BUNGEE)
                 .collect(Collectors.toSet());
 
-        for (Server srv : allBungees)
+        for (Server srv : allBungees) {
             totalPlayersOnline += srv.getPlayers();
+        }
 
         return totalPlayersOnline;
+    }
+
+    public int findNextAvailableID(@NonNull Server.Type type, @NonNull Game game) {
+        int assignableID = 0;
+        for (int i = 1; i < Integer.MAX_VALUE; i++) {
+            boolean available = true;
+
+            Set<Server> servers = findAll(type, game);
+            for (Server server : servers) {
+                Map<String, String> serverMetadata = server.getMetadata();
+                if (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY)) {
+                    int id = Integer.parseInt(serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY));
+
+                    if (id == i) {
+                        available = false;
+                        break;
+                    }
+                }
+            }
+
+            if (available) {
+                assignableID = i;
+                break;
+            }
+        }
+
+        return assignableID;
     }
 
 }

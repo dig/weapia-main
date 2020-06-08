@@ -97,7 +97,6 @@ public class CommandHandler extends Command {
                         } else {
                             log.severe(String.format("Command not handled for %s.", getName()));
                         }
-
                         break;
                 }
             }

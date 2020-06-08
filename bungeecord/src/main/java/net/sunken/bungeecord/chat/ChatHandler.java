@@ -37,10 +37,9 @@ public class ChatHandler implements Facet, Listener {
 
         for (int i = 1; i < message.length(); i++) {
             char curCharacter = message.charAt(i);
-
-            if (lastCharacter != curCharacter)
+            if (lastCharacter != curCharacter) {
                 strippedCharacters.append(curCharacter);
-
+            }
             lastCharacter = curCharacter;
         }
 
@@ -69,13 +68,15 @@ public class ChatHandler implements Facet, Listener {
 
             boolean isBlockedWord = false;
             for (String blockedWord : chatConfiguration.getBlacklistedWords()) {
-                if (word.indexOf(blockedWord) >= 0)
+                if (word.indexOf(blockedWord) >= 0) {
                     isBlockedWord = true;
+                }
             }
 
             for (String blockedWord : chatConfiguration.getExactBlacklistedWords()) {
-                if (word.equalsIgnoreCase(blockedWord))
+                if (word.equalsIgnoreCase(blockedWord)) {
                     isBlockedWord = true;
+                }
             }
 
             finalMessage.append(finalMessage.length() <= 0 ? "" : " ");

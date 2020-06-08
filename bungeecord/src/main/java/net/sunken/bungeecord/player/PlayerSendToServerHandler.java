@@ -22,7 +22,6 @@ public class PlayerSendToServerHandler extends PacketHandler<PlayerSendToServerP
         if (abstractPlayerOptional.isPresent()) {
             BungeePlayer bungeePlayer = (BungeePlayer) abstractPlayerOptional.get();
             bungeePlayer.connect(packet.getServerDetail());
-
             log.info(String.format("PlayerSendToServerHandler: Sending to server. (%s, %s)", packet.getUuid().toString(), packet.getServerDetail().getId()));
         }
     }

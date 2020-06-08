@@ -34,11 +34,6 @@ public class DisconnectHandler implements Facet, Listener {
 
             AsyncHelper.executor().submit(() -> {
                boolean saveState = bungeePlayer.save();
-
-               if (!saveState) {
-                   log.severe(String.format("Unable to save data. (%s)", bungeePlayer.getUuid().toString()));
-               }
-
                playerManager.remove(bungeePlayer.getUuid());
             });
         }

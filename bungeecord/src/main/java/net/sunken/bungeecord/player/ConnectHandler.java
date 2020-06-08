@@ -86,6 +86,7 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                     PlayerSendToServerPacket playerSendToServerPacket = (PlayerSendToServerPacket) packet;
 
                     if (playerSendToServerPacket.getUuid().equals(pendingConnection.getUniqueId())) {
+                        log.info(String.format("expectation : found %s", playerSendToServerPacket.getServerDetail().toString()));
                         bungeePlayer.setServerTarget(Optional.of(playerSendToServerPacket.getServerDetail()));
                         return true;
                     }

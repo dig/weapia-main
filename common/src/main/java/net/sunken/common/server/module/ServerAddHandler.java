@@ -31,13 +31,12 @@ public class ServerAddHandler extends PacketHandler<ServerAddPacket> {
             try (Jedis jedis = redisConnection.getConnection()) {
                 Map<String, String> kv = jedis.hgetAll(ServerHelper.SERVER_STORAGE_KEY + ":" + packet.getId());
                 Server server = serverManager.fromRedis(kv);
+                
+                serverManager.getServerList().removeIf(srv -> srv.getId().equals(packet.getId()));
+                serverManager.getServerList().add(server);
 
-                if (!serverManager.findServerById(server.getId()).isPresent()) {
-                    serverManager.getServerList().add(server);
-                    eventManager.callEvent(new ServerAddedEvent(server));
-
-                    log.info(String.format("ServerAddPacket (%s)", server.toString()));
-                }
+                eventManager.callEvent(new ServerAddedEvent(server));
+                log.info(String.format("ServerAddPacket (%s)", server.toString()));
             }
         });
     }

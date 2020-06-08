@@ -13,7 +13,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.sunken.bungeecord.BungeeInform;
 import net.sunken.bungeecord.Constants;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
@@ -28,7 +27,6 @@ import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
 import net.sunken.common.server.module.ServerManager;
-import net.sunken.common.server.packet.ServerConnectedPacket;
 import net.sunken.common.util.AsyncHelper;
 
 import java.util.Arrays;
@@ -49,8 +47,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
     private PacketUtil packetUtil;
     @Inject
     private ExpectationFactory expectationFactory;
-    @Inject
-    private BungeeInform bungeeInform;
 
     @Inject
     private PacketHandlerRegistry packetHandlerRegistry;

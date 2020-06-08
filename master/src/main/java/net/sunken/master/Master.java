@@ -19,20 +19,14 @@ public class Master {
 
     public Master() {
         instance = this;
-
-        //--- Configure all modules
         injector = Guice.createInjector(new MasterModule());
 
-        //--- Connect databases
         redisConnection = injector.getInstance(RedisConnection.class);
-
-        //--- Enable all modules
         masterFacetLoader = injector.getInstance(MasterFacetLoader.class);
         masterFacetLoader.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> this.handleGraceShutdown()));
 
-        //--- Keep the application running.
         while (true) {
             try {
                 Thread.sleep(1000);

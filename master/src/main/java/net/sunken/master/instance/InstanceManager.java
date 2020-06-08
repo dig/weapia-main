@@ -97,14 +97,13 @@ public class InstanceManager implements Facet, Enableable {
     }
 
     public void removeInstance(Server server, Reason reason) {
-        if (kubeApi.deletePod(server.getId())) {
-            serverManager.getServerList().removeIf(srv -> srv.getId().equals(server.getId()));
-            serverInformer.remove(server.getId(), true);
+        kubeApi.deletePod(server.getId());
+        serverManager.getServerList().removeIf(srv -> srv.getId().equals(server.getId()));
+        serverInformer.remove(server.getId(), true);
 
-            //--- Reassign all IDs if a server has been taken out of such type
-            if (server.getType().isAssignId() && !isPendingReassign(server.getType(), server.getGame()))
-                pendingReassign.add(new InstanceDetail(server.getType(), server.getGame()));
-        }
+        //--- Reassign all IDs if a server has been taken out of such type
+        if (server.getType().isAssignId() && !isPendingReassign(server.getType(), server.getGame()))
+            pendingReassign.add(new InstanceDetail(server.getType(), server.getGame()));
     }
 
     private boolean isPendingReassign(Server.Type type, Game game) {

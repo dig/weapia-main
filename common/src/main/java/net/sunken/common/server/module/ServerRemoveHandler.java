@@ -23,8 +23,9 @@ public class ServerRemoveHandler extends PacketHandler<ServerRemovePacket> {
         Optional<Server> serverOptional = serverManager.findServerById(packet.getId());
         serverManager.getServerList().removeIf(server -> server.getId().equals(packet.getId()));
 
-        if (serverOptional.isPresent())
+        if (serverOptional.isPresent()) {
             eventManager.callEvent(new ServerRemovedEvent(serverOptional.get()));
+        }
 
         log.info(String.format("ServerRemovePacket (%s)", packet.getId()));
     }

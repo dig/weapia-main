@@ -1,19 +1,17 @@
 package net.sunken.common.player;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.util.UUID;
 
-@ToString
+@Data
 public abstract class AbstractPlayer {
 
-    @Getter
-    protected UUID uuid;
-    @Getter
-    protected String username;
-    @Getter @Setter
+    protected final UUID uuid;
+    protected final String username;
     protected Rank rank;
 
     public AbstractPlayer(UUID uuid, String username) {

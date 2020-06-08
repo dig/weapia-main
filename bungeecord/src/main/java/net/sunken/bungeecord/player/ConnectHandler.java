@@ -87,13 +87,9 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         event.registerIntent(plugin);
         AsyncHelper.executor().submit(() -> {
             log.info(String.format("onLogin: AsyncHelper start (%s)", pendingConnection.getUniqueId().toString()));
-
             boolean loadState = bungeePlayer.load();
 
-            //--- Send request
-            packetUtil.send(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
-
-            //--- Wait for packet
+            packetUtil.sendSync(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
             boolean success = expectationFactory.waitFor(packet -> {
                 if (packet instanceof PlayerSendToServerPacket) {
                     PlayerSendToServerPacket playerSendToServerPacket = (PlayerSendToServerPacket) packet;
@@ -124,7 +120,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
             }
 
             event.completeIntent(plugin);
-
             log.info(String.format("onLogin: completeIntent (%s)", pendingConnection.getUniqueId().toString()));
         });
     }
@@ -142,10 +137,9 @@ public class ConnectHandler implements Facet, Listener, Enableable {
             packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), bungeeInform.getServer().getId()));
         }
 
-        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
-
         log.info(String.format("onServerConnect (%s)", player.getUniqueId().toString()));
 
+        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
         if (!abstractPlayerOptional.isPresent()) {
             player.disconnect(TextComponent.fromLegacyText(Constants.FAILED_LOAD_DATA));
         } else {
@@ -232,8 +226,9 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         ServerInfo serverInfo = event.getServer().getInfo();
         Optional<Server> serverOptional = serverManager.findServerById(serverInfo.getName());
 
-        if (serverOptional.isPresent() && serverOptional.get().getType() == Server.Type.INSTANCE)
+        if (serverOptional.isPresent() && serverOptional.get().getType() == Server.Type.INSTANCE) {
             player.sendMessage(TextComponent.fromLegacyText(String.format(Constants.PLAYER_SEND_SERVER, serverInfo.getName())));
+        }
     }
 
     @EventHandler

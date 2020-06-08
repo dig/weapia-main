@@ -8,6 +8,7 @@ import lombok.ToString;
 import java.util.UUID;
 
 @Data
+@ToString
 public abstract class AbstractPlayer {
 
     protected final UUID uuid;

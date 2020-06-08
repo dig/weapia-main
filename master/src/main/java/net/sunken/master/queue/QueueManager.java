@@ -12,17 +12,16 @@ import net.sunken.common.player.packet.*;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
-import net.sunken.common.server.packet.ServerDisconnectedPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.master.instance.InstanceDetail;
 import net.sunken.master.instance.InstanceManager;
 import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
+import net.sunken.master.queue.handler.PlayerProxyQuitHandler;
 import net.sunken.master.queue.handler.PlayerRequestServerHandler;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.master.queue.handler.PlayerRequestServerIDHandler;
 import net.sunken.master.queue.handler.PlayerSaveStateHandler;
-import net.sunken.master.queue.handler.ServerDisconnectedHandler;
 import net.sunken.master.queue.impl.IQueue;
 import net.sunken.master.queue.impl.PartyQueue;
 import net.sunken.master.queue.impl.PlayerQueue;
@@ -43,7 +42,7 @@ public class QueueManager implements Facet, Enableable {
     @Inject
     private PlayerSaveStateHandler playerSaveStateHandler;
     @Inject
-    private ServerDisconnectedHandler serverDisconnectedHandler;
+    private PlayerProxyQuitHandler playerProxyQuitHandler;
     @Inject
     private PlayerRequestServerIDHandler playerRequestServerIDHandler;
 
@@ -72,7 +71,7 @@ public class QueueManager implements Facet, Enableable {
 
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
-        packetHandlerRegistry.registerHandler(ServerDisconnectedPacket.class, serverDisconnectedHandler);
+        packetHandlerRegistry.registerHandler(PlayerProxyQuitPacket.class, playerProxyQuitHandler);
         packetHandlerRegistry.registerHandler(PlayerRequestServerIDPacket.class, playerRequestServerIDHandler);
 
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(queueRunnable, 200L, 200L, TimeUnit.MILLISECONDS);

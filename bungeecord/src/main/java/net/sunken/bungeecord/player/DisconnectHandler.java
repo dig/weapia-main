@@ -33,8 +33,6 @@ public class DisconnectHandler implements Facet, Listener {
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
 
         packetUtil.send(new PlayerProxyQuitPacket(player.getUniqueId()));
-        packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), bungeeInform.getServer().getId()));
-
         if (abstractPlayerOptional.isPresent()) {
             BungeePlayer bungeePlayer = (BungeePlayer) abstractPlayerOptional.get();
 

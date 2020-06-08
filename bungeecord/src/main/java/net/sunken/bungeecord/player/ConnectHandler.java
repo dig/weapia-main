@@ -3,8 +3,6 @@ package net.sunken.bungeecord.player;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
-import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -17,14 +15,12 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.sunken.bungeecord.BungeeInform;
 import net.sunken.bungeecord.Constants;
-import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.packet.expectation.ExpectationFactory;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.Rank;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.common.player.packet.*;
@@ -34,7 +30,6 @@ import net.sunken.common.server.ServerDetail;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.server.packet.ServerConnectedPacket;
 import net.sunken.common.util.AsyncHelper;
-import net.sunken.common.util.StringUtil;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -134,7 +129,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
             pendingPlayerConnection.invalidate(player.getUniqueId());
 
             packetUtil.send(new PlayerProxyJoinPacket(bungeePlayer.toPlayerDetail()));
-            packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), bungeeInform.getServer().getId()));
         }
 
         log.info(String.format("onServerConnect (%s)", player.getUniqueId().toString()));

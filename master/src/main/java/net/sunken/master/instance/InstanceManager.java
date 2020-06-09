@@ -51,7 +51,7 @@ public class InstanceManager implements Facet, Enableable {
     public void enable() {
         pendingInstanceCreation = Queues.newConcurrentLinkedQueue();
         packetHandlerRegistry.registerHandler(RequestServerCreationPacket.class, requestServerCreationHandler);
-        
+
         if (kubeConfiguration.isKubernetes()) {
             AsyncHelper.scheduledExecutor().scheduleAtFixedRate(instanceRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
         }
@@ -70,8 +70,9 @@ public class InstanceManager implements Facet, Enableable {
     }
 
     public void createInstance(@NonNull Server.Type type, @NonNull Game game, int amount, @NonNull Reason reason) {
-        for (int i = 0; i < amount; i++)
+        for (int i = 0; i < amount; i++) {
             pendingInstanceCreation.add(new InstanceDetail(type, game));
+        }
     }
 
     public void createInstance(@NonNull Server.Type type, @NonNull Game game, @NonNull Reason reason) {

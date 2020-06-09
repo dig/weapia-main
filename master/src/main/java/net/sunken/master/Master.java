@@ -41,7 +41,6 @@ public class Master {
     private void handleGraceShutdown() {
         masterFacetLoader.stop();
         redisConnection.disconnect();
-        System.exit(0);
     }
 
     public static void main(String[] args) {

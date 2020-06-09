@@ -38,15 +38,12 @@ public class PacketListener implements Facet, Enableable {
     @Override
     public void enable() {
         subscriber = redisConnection.getConnection();
-
-        //--- Start subscriber thread
         subscriberThread = new Thread(() -> subscriber.subscribe(new Listener(), packetChannel.getBytes()));
         subscriberThread.start();
     }
 
     @Override
     public void disable() {
-        //--- Close
         subscriberThread.interrupt();
         // subscriber.close();
     }
@@ -62,7 +59,6 @@ public class PacketListener implements Facet, Enableable {
 
                 if (deserialized != null && handlers.containsKey(deserialized.getClass())) {
                     PacketHandler handler = handlers.get(deserialized.getClass());
-
                     handler.onReceive(deserialized);
                 }
 

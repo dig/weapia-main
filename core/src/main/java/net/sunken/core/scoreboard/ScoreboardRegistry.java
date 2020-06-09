@@ -47,7 +47,9 @@ public class ScoreboardRegistry {
     }
 
     public void changeName(@NonNull AbstractPlayer abstractPlayer, @NonNull String prefix, @NonNull String suffix, @NonNull ChatColor colour, int order) {
-        CustomNameDetail customNameDetail = new CustomNameDetail(abstractPlayer.getUuid().toString().replace("-", "").substring(0, 15), prefix, suffix, colour, order);
+        int length = order > 0 ? (int) (Math.log10(order) + 1) : 1;
+        CustomNameDetail customNameDetail = new CustomNameDetail(abstractPlayer.getUuid().toString().replace("-", "").substring(0, 16 - length), prefix, suffix, colour, order);
+
         customNames.remove(abstractPlayer.getUsername());
         customNames.put(abstractPlayer.getUsername(), customNameDetail);
         scoreboardMap.values().forEach(customScoreboard -> registerCustomName(customScoreboard, abstractPlayer.getUsername(), customNameDetail));

@@ -3,8 +3,6 @@ package net.sunken.bungeecord.player;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
-import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -15,16 +13,13 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.sunken.bungeecord.BungeeInform;
 import net.sunken.bungeecord.Constants;
-import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.packet.expectation.ExpectationFactory;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.Rank;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.common.player.packet.*;
@@ -32,9 +27,7 @@ import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
 import net.sunken.common.server.module.ServerManager;
-import net.sunken.common.server.packet.ServerConnectedPacket;
 import net.sunken.common.util.AsyncHelper;
-import net.sunken.common.util.StringUtil;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -54,8 +47,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
     private PacketUtil packetUtil;
     @Inject
     private ExpectationFactory expectationFactory;
-    @Inject
-    private BungeeInform bungeeInform;
 
     @Inject
     private PacketHandlerRegistry packetHandlerRegistry;
@@ -82,18 +73,11 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                 break;
         }
 
-        log.info(String.format("onLogin (%s)", pendingConnection.getUniqueId().toString()));
-
         event.registerIntent(plugin);
         AsyncHelper.executor().submit(() -> {
-            log.info(String.format("onLogin: AsyncHelper start (%s)", pendingConnection.getUniqueId().toString()));
-
             boolean loadState = bungeePlayer.load();
 
-            //--- Send request
-            packetUtil.send(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
-
-            //--- Wait for packet
+            packetUtil.sendSync(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
             boolean success = expectationFactory.waitFor(packet -> {
                 if (packet instanceof PlayerSendToServerPacket) {
                     PlayerSendToServerPacket playerSendToServerPacket = (PlayerSendToServerPacket) packet;
@@ -106,8 +90,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
 
                 return false;
             }, 15 * 10, 100);
-
-            log.info(String.format("onLogin: Finish waiting (%s)", pendingConnection.getUniqueId().toString()));
 
             if (!loadState) {
                 event.setCancelReason(TextComponent.fromLegacyText(Constants.FAILED_LOAD_DATA));
@@ -124,8 +106,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
             }
 
             event.completeIntent(plugin);
-
-            log.info(String.format("onLogin: completeIntent (%s)", pendingConnection.getUniqueId().toString()));
         });
     }
 
@@ -139,13 +119,9 @@ public class ConnectHandler implements Facet, Listener, Enableable {
             pendingPlayerConnection.invalidate(player.getUniqueId());
 
             packetUtil.send(new PlayerProxyJoinPacket(bungeePlayer.toPlayerDetail()));
-            packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), bungeeInform.getServer().getId()));
         }
 
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
-
-        log.info(String.format("onServerConnect (%s)", player.getUniqueId().toString()));
-
         if (!abstractPlayerOptional.isPresent()) {
             player.disconnect(TextComponent.fromLegacyText(Constants.FAILED_LOAD_DATA));
         } else {
@@ -167,7 +143,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                     } else {
                         player.disconnect(TextComponent.fromLegacyText(Constants.FAILED_FIND_SERVER));
                     }
-
                     break;
                 case SERVER_DOWN_REDIRECT:
                 case LOBBY_FALLBACK:
@@ -182,7 +157,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                     } else {
                         player.disconnect(TextComponent.fromLegacyText(Constants.FAILED_FIND_SERVER));
                     }
-
                     break;
                 case PLUGIN_MESSAGE:
                 case UNKNOWN:
@@ -196,9 +170,7 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                         Server server = serverOptional.get();
 
                         bungeePlayer.setServerConnectedTo(Optional.of(server.toServerDetail()));
-                        log.info(String.format("Changed serverConnectedTo. (%s)", server.getId()));
                     }
-
                     break;
             }
 
@@ -232,8 +204,9 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         ServerInfo serverInfo = event.getServer().getInfo();
         Optional<Server> serverOptional = serverManager.findServerById(serverInfo.getName());
 
-        if (serverOptional.isPresent() && serverOptional.get().getType() == Server.Type.INSTANCE)
+        if (serverOptional.isPresent() && serverOptional.get().getType() == Server.Type.INSTANCE) {
             player.sendMessage(TextComponent.fromLegacyText(String.format(Constants.PLAYER_SEND_SERVER, serverInfo.getName())));
+        }
     }
 
     @EventHandler

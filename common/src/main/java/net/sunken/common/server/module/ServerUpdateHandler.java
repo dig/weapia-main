@@ -48,8 +48,9 @@ public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
                             break;
                         case METADATA:
                             for (String key : ServerHelper.SERVER_METADATA_KEYS) {
-                                if (kv.containsKey(key))
+                                if (kv.containsKey(key)) {
                                     serverToUpdate.getMetadata().put(key, kv.get(key));
+                                }
                             }
 
                             break;

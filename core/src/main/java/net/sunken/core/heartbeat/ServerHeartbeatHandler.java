@@ -19,8 +19,9 @@ public class ServerHeartbeatHandler extends PacketHandler<ServerHeartbeatPacket>
 
     @Override
     public void onReceive(ServerHeartbeatPacket packet) {
-        if (packet.getReason() == ServerHeartbeatPacket.Reason.REQUEST)
+        if (packet.getReason() == ServerHeartbeatPacket.Reason.REQUEST) {
             bukkitSyncExecutor.execute(new ServerRespondRunnable());
+        }
     }
 
     private class ServerRespondRunnable implements Runnable {

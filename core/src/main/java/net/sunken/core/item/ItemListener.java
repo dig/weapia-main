@@ -26,15 +26,11 @@ public class ItemListener implements Facet, Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         ItemStack clicked = event.getCurrentItem();
         if (clicked != null && clicked.getType() != Material.AIR) {
-            NBTItem nbtItem = new NBTItem(clicked);
-            if (nbtItem.getKeys().contains(Constants.ITEM_NBT_KEY)) {
-                String configName = nbtItem.getString(Constants.ITEM_NBT_KEY);
-                Optional<AnItem> anItemOptional = itemRegistry.getItem(configName);
-                if (anItemOptional.isPresent()) {
-                    AnItem anItem = anItemOptional.get();
-                    if (anItem.getListener() != null) {
-                        anItem.getListener().onInventoryClick(anItem, event);
-                    }
+            Optional<AnItem> anItemOptional = itemRegistry.getItem(clicked);
+            if (anItemOptional.isPresent()) {
+                AnItem anItem = anItemOptional.get();
+                if (anItem.getListener() != null) {
+                    anItem.getListener().onInventoryClick(anItem, event);
                 }
             }
         }
@@ -44,15 +40,11 @@ public class ItemListener implements Facet, Listener {
     public void onInteract(PlayerInteractEvent event) {
         ItemStack clicked = event.getItem();
         if (clicked != null && clicked.getType() != Material.AIR) {
-            NBTItem nbtItem = new NBTItem(clicked);
-            if (nbtItem.getKeys().contains(Constants.ITEM_NBT_KEY)) {
-                String configName = nbtItem.getString(Constants.ITEM_NBT_KEY);
-                Optional<AnItem> anItemOptional = itemRegistry.getItem(configName);
-                if (anItemOptional.isPresent()) {
-                    AnItem anItem = anItemOptional.get();
-                    if (anItem.getListener() != null) {
-                        anItem.getListener().onInteract(anItem, event);
-                    }
+            Optional<AnItem> anItemOptional = itemRegistry.getItem(clicked);
+            if (anItemOptional.isPresent()) {
+                AnItem anItem = anItemOptional.get();
+                if (anItem.getListener() != null) {
+                    anItem.getListener().onInteract(anItem, event);
                 }
             }
         }
@@ -63,15 +55,11 @@ public class ItemListener implements Facet, Listener {
         if (event.getEntity() instanceof Player) {
             ItemStack bow = event.getBow();
             if (bow != null && bow.getType() == Material.BOW) {
-                NBTItem nbtItem = new NBTItem(bow);
-                if (nbtItem.getKeys().contains(Constants.ITEM_NBT_KEY)) {
-                    String configName = nbtItem.getString(Constants.ITEM_NBT_KEY);
-                    Optional<AnItem> anItemOptional = itemRegistry.getItem(configName);
-                    if (anItemOptional.isPresent()) {
-                        AnItem anItem = anItemOptional.get();
-                        if (anItem.getListener() != null) {
-                            anItem.getListener().onShootBow(anItem, event);
-                        }
+                Optional<AnItem> anItemOptional = itemRegistry.getItem(bow);
+                if (anItemOptional.isPresent()) {
+                    AnItem anItem = anItemOptional.get();
+                    if (anItem.getListener() != null) {
+                        anItem.getListener().onShootBow(anItem, event);
                     }
                 }
             }
@@ -82,15 +70,11 @@ public class ItemListener implements Facet, Listener {
     public void onDurabilityDamage(PlayerItemDamageEvent event) {
         ItemStack item = event.getItem();
         if (item != null && item.getType() != Material.AIR) {
-            NBTItem nbtItem = new NBTItem(item);
-            if (nbtItem.getKeys().contains(Constants.ITEM_NBT_KEY)) {
-                String configName = nbtItem.getString(Constants.ITEM_NBT_KEY);
-                Optional<AnItem> anItemOptional = itemRegistry.getItem(configName);
-                if (anItemOptional.isPresent()) {
-                    AnItem anItem = anItemOptional.get();
-                    if (anItem.getListener() != null) {
-                        anItem.getListener().onDurabilityDamage(anItem, event);
-                    }
+            Optional<AnItem> anItemOptional = itemRegistry.getItem(item);
+            if (anItemOptional.isPresent()) {
+                AnItem anItem = anItemOptional.get();
+                if (anItem.getListener() != null) {
+                    anItem.getListener().onDurabilityDamage(anItem, event);
                 }
             }
         }

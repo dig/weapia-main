@@ -21,7 +21,6 @@ public class PartyChatCommand extends BungeeCommand {
         if (abstractPlayerOptional.isPresent()) {
             AbstractPlayer abstractPlayer = abstractPlayerOptional.get();
             String message = String.join(" ", args);
-
             packetUtil.send(new PartyMessageRequestPacket(abstractPlayer.toPlayerDetail(), message));
             return true;
         }

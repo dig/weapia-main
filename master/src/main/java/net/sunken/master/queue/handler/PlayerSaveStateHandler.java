@@ -11,8 +11,9 @@ public class PlayerSaveStateHandler extends PacketHandler<PlayerSaveStatePacket>
 
     @Override
     public void onReceive(PlayerSaveStatePacket packet) {
-        if (packet.getReason() != PlayerSaveStatePacket.Reason.REQUEST)
+        if (packet.getReason() != PlayerSaveStatePacket.Reason.REQUEST) {
             playerRequestServerHandler.connected(packet.getUuid(), packet.getReason());
+        }
     }
 
 }

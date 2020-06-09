@@ -11,8 +11,9 @@ public class ServerHeartbeatHandler extends PacketHandler<ServerHeartbeatPacket>
 
     @Override
     public void onReceive(ServerHeartbeatPacket packet) {
-        if (packet.getReason() == ServerHeartbeatPacket.Reason.RESPOND)
+        if (packet.getReason() == ServerHeartbeatPacket.Reason.RESPOND) {
             heartbeatManager.responded(packet.getServerId());
+        }
     }
 
 }

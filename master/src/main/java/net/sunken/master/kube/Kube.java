@@ -29,14 +29,17 @@ public class Kube {
     private static String KUBERNETES_API_URL = "https://kubernetes.default.svc";
     private String serviceAccountBearer;
 
-    public Kube() {
-        try {
-            BufferedReader bearerBuffer = new BufferedReader(new FileReader("/var/run/secrets/kubernetes.io/serviceaccount/token"));
-            serviceAccountBearer = bearerBuffer.readLine();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Inject
+    public Kube(@InjectConfig KubeConfiguration kubeConfiguration) {
+        if (kubeConfiguration.isKubernetes()) {
+            try {
+                BufferedReader bearerBuffer = new BufferedReader(new FileReader("/var/run/secrets/kubernetes.io/serviceaccount/token"));
+                serviceAccountBearer = bearerBuffer.readLine();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -48,7 +51,6 @@ public class Kube {
             JsonReader reader = new JsonReader(new FileReader("/home/minecraft/templates/base-pod.json"));
             JsonObject templateObject = gson.fromJson(reader, JsonObject.class);
 
-            //--- Change pod name to ID
             templateObject.getAsJsonObject("metadata").addProperty("name", server.getId());
 
             JsonArray containerArray = templateObject.getAsJsonObject("spec").getAsJsonArray("containers");
@@ -116,7 +118,6 @@ public class Kube {
     }
 
     public boolean deletePod(@NonNull String podId) {
-        //--- Attempt delete request
         try {
             HttpResponse<String> response = Unirest.delete(String.format("%s/api/v1/namespaces/default/pods/%s", KUBERNETES_API_URL, podId))
                     .header("Authorization", String.format("Bearer %s", serviceAccountBearer))

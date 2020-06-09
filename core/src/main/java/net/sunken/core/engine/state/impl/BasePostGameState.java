@@ -6,8 +6,10 @@ import net.sunken.core.Core;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 
 public abstract class BasePostGameState extends EventGameState {
 
@@ -69,6 +71,15 @@ public abstract class BasePostGameState extends EventGameState {
     @Override
     public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
         return false;
+    }
+
+    @EventHandler
+    public void onWeatherChange(WeatherChangeEvent event) {
+        if (event.toWeatherState()) {
+            event.setCancelled(true);
+            event.getWorld().setWeatherDuration(0);
+            event.getWorld().setThundering(false);
+        }
     }
 
 }

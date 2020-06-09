@@ -36,15 +36,17 @@ public class NetworkCommandListener implements Listener, Facet {
             String firstWord = splitByWord[0];
             if (firstWord.length() > 1) {
                 String commandName = firstWord.substring(1);
-                if (!cooldowns.canProceed(COOLDOWN_KEY, playerId)) {
-                    return;
-                }
 
                 CommandUtil.findSimpleCommandMap().ifPresent(commandMap -> {
                     if (commandMap.getCommand(commandName) == null) {
                         playerManager.get(playerId)
                                 .map(AbstractPlayer::toPlayerDetail)
                                 .ifPresent(playerDetail -> {
+                                    event.setCancelled(true);
+
+                                    if (!cooldowns.canProceed(COOLDOWN_KEY, playerId)) {
+                                        return;
+                                    }
                                     cooldowns.create(COOLDOWN_KEY, playerId, System.currentTimeMillis() + GLOBAL_COOLDOWN_MILLIS);
 
                                     String[] args = splitByWord.length > 1 ?

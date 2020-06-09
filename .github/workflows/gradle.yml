@@ -53,5 +53,5 @@ jobs:
       run: |
         tmux send-keys -t master C-c
         tmux send-keys -t lobby000a "stop" ENTER
-        tmux send-keys -t bungee000a "end" ENTER
+        tmux send-keys -t bungee000a C-c
 

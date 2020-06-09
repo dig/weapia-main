@@ -27,6 +27,7 @@ public class Master {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> this.handleGraceShutdown()));
 
+        /*
         while (true) {
             try {
                 Thread.sleep(1000);
@@ -34,6 +35,7 @@ public class Master {
                 e.printStackTrace();
             }
         }
+         */
     }
 
     private void handleGraceShutdown() {

@@ -11,9 +11,7 @@ on:
 
 jobs:
   build:
-
     runs-on: self-hosted
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -24,3 +22,12 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build --build-cache --daemon --configure-on-demand --parallel
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+    - name: Move jars
+      run: |
+        mv bin/master-1.0-SNAPSHOT.jar ~/static/master/plugins
+        mv bin/lobby-1.0-SNAPSHOT.jar ~/static/lobby000a/plugins
+        mv bin/bungeecord-1.0-SNAPSHOT.jar ~/static/bungee000a/plugins

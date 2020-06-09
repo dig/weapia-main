@@ -16,7 +16,8 @@ import java.util.*;
 
 public class NetworkCommandListener implements Listener, Facet {
 
-    public static final long GLOBAL_COOLDOWN_MILLIS = 100L;
+    private static final long GLOBAL_COOLDOWN_MILLIS = 100L;
+    private static final String COOLDOWN_KEY = "networkcmd";
 
     @Inject
     private PlayerManager playerManager;
@@ -24,7 +25,6 @@ public class NetworkCommandListener implements Listener, Facet {
     private PacketUtil packetUtil;
     @Inject
     private Cooldowns cooldowns;
-    public static final String COOLDOWN_KEY = "networkcmd";
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {

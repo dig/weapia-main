@@ -26,7 +26,11 @@ jobs:
     runs-on: self-hosted
     needs: build
     steps:
-    - name: Move jars
+    - name: Create directory
+      run: |
+        mkdir -p ~/static/lobby000a/plugins/
+        mkdir -p ~/static/bungee000a/plugins/
+    - name: Move jar
       run: |
         mv bin/master-1.0-SNAPSHOT.jar ~/static/master/
         mv bin/lobby-1.0-SNAPSHOT.jar ~/static/lobby000a/plugins/

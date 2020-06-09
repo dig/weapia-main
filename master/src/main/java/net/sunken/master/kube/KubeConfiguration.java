@@ -9,6 +9,8 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class KubeConfiguration {
 
     @Setting
+    private boolean kubernetes;
+    @Setting
     private String branch;
 
 }

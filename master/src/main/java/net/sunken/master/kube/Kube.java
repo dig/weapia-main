@@ -30,13 +30,15 @@ public class Kube {
     private String serviceAccountBearer;
 
     public Kube() {
-        try {
-            BufferedReader bearerBuffer = new BufferedReader(new FileReader("/var/run/secrets/kubernetes.io/serviceaccount/token"));
-            serviceAccountBearer = bearerBuffer.readLine();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (kubeConfiguration.isKubernetes()) {
+            try {
+                BufferedReader bearerBuffer = new BufferedReader(new FileReader("/var/run/secrets/kubernetes.io/serviceaccount/token"));
+                serviceAccountBearer = bearerBuffer.readLine();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

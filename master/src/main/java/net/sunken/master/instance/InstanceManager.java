@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
@@ -15,6 +16,7 @@ import net.sunken.common.server.packet.RequestServerCreationPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.master.instance.creation.RequestServerCreationHandler;
 import net.sunken.master.kube.Kube;
+import net.sunken.master.kube.KubeConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,11 +44,17 @@ public class InstanceManager implements Facet, Enableable {
     @Inject
     private RequestServerCreationHandler requestServerCreationHandler;
 
+    @Inject @InjectConfig
+    private KubeConfiguration kubeConfiguration;
+
     @Override
     public void enable() {
         pendingInstanceCreation = Queues.newConcurrentLinkedQueue();
         packetHandlerRegistry.registerHandler(RequestServerCreationPacket.class, requestServerCreationHandler);
-        AsyncHelper.scheduledExecutor().scheduleAtFixedRate(instanceRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
+        
+        if (kubeConfiguration.isKubernetes()) {
+            AsyncHelper.scheduledExecutor().scheduleAtFixedRate(instanceRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override

@@ -1,19 +1,17 @@
-package net.sunken.core.command;
+package net.sunken.core.networkcommand;
 
-import com.google.inject.AbstractModule;
-import net.sunken.common.command.impl.BaseCommandRegistry;
-import net.sunken.common.inject.PluginFacetBinder;
-import net.sunken.core.command.commands.WhereCommand;
+import com.google.inject.*;
+import net.sunken.common.command.impl.*;
+import net.sunken.common.inject.*;
+import net.sunken.core.command.*;
+import net.sunken.core.command.commands.*;
 
-public class CommandModule extends AbstractModule {
+public class NetworkCommandModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(BaseCommandRegistry.class).toInstance(new CommandRegistry());
-
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(CommandRegistry.class);
-        pluginFacetBinder.addBinding(WhereCommand.class);
+        pluginFacetBinder.addBinding(NetworkCommandListener.class);
     }
 
 }

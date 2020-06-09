@@ -19,6 +19,7 @@ import net.sunken.core.item.command.GiveItemCommand;
 import net.sunken.core.item.command.ItemCommand;
 import net.sunken.core.item.config.ItemAttributeConfiguration;
 import net.sunken.core.item.config.ItemAttributeConfigurationSerializer;
+import net.sunken.core.networkcommand.*;
 import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.player.ChatHandler;
 import net.sunken.core.player.ConnectHandler;
@@ -39,6 +40,7 @@ public class CoreModule extends AbstractModule {
         install(new ConfigModule(new File("config/common.conf"), InstanceConfiguration.class));
         install(new CommandModule());
         install(new BarModule());
+        install(new NetworkCommandModule());
 
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(ChatHandler.class);

@@ -10,13 +10,12 @@ import net.sunken.common.command.impl.BaseCommand;
 import net.sunken.common.command.impl.BaseCommandRegistry;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
-import net.sunken.core.Constants;
-import org.bukkit.Bukkit;
+import net.sunken.core.*;
+import net.sunken.core.util.*;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.event.Listener;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -59,22 +58,8 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
         unregisterCommand(commandAnnotation.aliases()[0]);
     }
 
-    private Optional<SimpleCommandMap> findSimpleCommandMap() {
-        try {
-            Field bukkitCommandMap = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
-            bukkitCommandMap.setAccessible(true);
-            SimpleCommandMap commandMap = (SimpleCommandMap) bukkitCommandMap.get(Bukkit.getPluginManager());
-
-            return Optional.of(commandMap);
-        } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-        }
-
-        return Optional.empty();
-    }
-
     private void registerCommand(String fallback, BukkitCommand command) {
-        Optional<SimpleCommandMap> commandMapOptional = findSimpleCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.findSimpleCommandMap();
 
         if (commandMapOptional.isPresent()) {
             SimpleCommandMap commandMap = commandMapOptional.get();
@@ -85,7 +70,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void unregisterCommand(@NonNull String name) {
-        Optional<SimpleCommandMap> commandMapOptional = findSimpleCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.findSimpleCommandMap();
 
         if (commandMapOptional.isPresent()) {
             SimpleCommandMap commandMap = commandMapOptional.get();
@@ -105,7 +90,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void unregisterAllCommands() {
-        Optional<SimpleCommandMap> commandMapOptional = findSimpleCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.findSimpleCommandMap();
 
         if (commandMapOptional.isPresent()) {
             SimpleCommandMap commandMap = commandMapOptional.get();

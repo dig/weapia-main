@@ -28,6 +28,6 @@ jobs:
     steps:
     - name: Move jars
       run: |
-        mv bin/master-1.0-SNAPSHOT.jar ~/static/master/plugins
-        mv bin/lobby-1.0-SNAPSHOT.jar ~/static/lobby000a/plugins
-        mv bin/bungeecord-1.0-SNAPSHOT.jar ~/static/bungee000a/plugins
+        mv bin/master-1.0-SNAPSHOT.jar ~/static/master/
+        mv bin/lobby-1.0-SNAPSHOT.jar ~/static/lobby000a/plugins/
+        mv bin/bungeecord-1.0-SNAPSHOT.jar ~/static/bungee000a/plugins/

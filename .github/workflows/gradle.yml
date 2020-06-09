@@ -22,6 +22,11 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build --build-cache --daemon --configure-on-demand --parallel
+    - name: Delete common jars
+      run: |
+        rm -rf bin/common-1.0-SNAPSHOT.jar
+        rm -rf bin/core-1.0-SNAPSHOT.jar
+        rm -rf bin/void-1.0-SNAPSHOT.jar
     - name: Upload built jars
       uses: actions/upload-artifact@v2
       with:
@@ -44,3 +49,9 @@ jobs:
         mv bin/master-1.0-SNAPSHOT.jar ~/static/master/
         mv bin/lobby-1.0-SNAPSHOT.jar ~/static/lobby000a/plugins/
         mv bin/bungeecord-1.0-SNAPSHOT.jar ~/static/bungee000a/plugins/
+    - name: Restart servers
+      run: |
+        tmux send-keys -t master C-c
+        tmux send-keys -t lobby000a "stop" ENTER
+        tmux send-keys -t bungee000a "end" ENTER
+

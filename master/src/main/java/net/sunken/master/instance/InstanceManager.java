@@ -70,8 +70,10 @@ public class InstanceManager implements Facet, Enableable {
     }
 
     public void createInstance(@NonNull Server.Type type, @NonNull Game game, int amount, @NonNull Reason reason) {
-        for (int i = 0; i < amount; i++) {
-            pendingInstanceCreation.add(new InstanceDetail(type, game));
+        if (kubeConfiguration.isKubernetes()) {
+            for (int i = 0; i < amount; i++) {
+                pendingInstanceCreation.add(new InstanceDetail(type, game));
+            }
         }
     }
 
@@ -80,9 +82,11 @@ public class InstanceManager implements Facet, Enableable {
     }
 
     public void removeInstance(@NonNull Server server, @NonNull Reason reason) {
-        kubeApi.deletePod(server.getId());
-        serverManager.getServerList().removeIf(srv -> srv.getId().equals(server.getId()));
-        serverInformer.remove(server.getId(), true);
+        if (kubeConfiguration.isKubernetes()) {
+            kubeApi.deletePod(server.getId());
+            serverManager.getServerList().removeIf(srv -> srv.getId().equals(server.getId()));
+            serverInformer.remove(server.getId(), true);
+        }
     }
 
     private static class InstanceRunnable implements Runnable {

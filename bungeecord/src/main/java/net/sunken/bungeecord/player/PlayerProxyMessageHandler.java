@@ -26,7 +26,6 @@ public class PlayerProxyMessageHandler extends PacketHandler<PlayerProxyMessageP
 
             if (proxiedPlayerOptional.isPresent()) {
                 ProxiedPlayer proxiedPlayer = proxiedPlayerOptional.get();
-
                 proxiedPlayer.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', packet.getMessage())));
             }
         }

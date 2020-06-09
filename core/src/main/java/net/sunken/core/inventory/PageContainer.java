@@ -12,11 +12,7 @@ public class PageContainer {
     @Getter
     private String initialPage;
     @Getter
-    private final Map<String, Page> pages;
-
-    public PageContainer() {
-        pages = Maps.newHashMap();
-    }
+    private final Map<String, Page> pages = Maps.newHashMap();
 
     public void add(Page page) {
         pages.put(page.getId(), page);

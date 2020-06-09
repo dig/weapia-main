@@ -1,5 +1,7 @@
 package net.sunken.master.instance.heartbeat;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.Getter;
@@ -14,11 +16,9 @@ import net.sunken.common.server.packet.ServerHeartbeatPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.master.instance.InstanceManager;
 
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Log
@@ -37,9 +37,8 @@ public class HeartbeatManager implements Facet, Enableable {
 
     @Override
     public void enable() {
-        heartbeatServerAttempt = new ConcurrentHashMap<>();
+        heartbeatServerAttempt = Maps.newConcurrentMap();
         packetHandlerRegistry.registerHandler(ServerHeartbeatPacket.class, serverHeartbeatHandler);
-
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(heartbeatRunnable, 1L, 1L, TimeUnit.MINUTES);
     }
 
@@ -65,7 +64,7 @@ public class HeartbeatManager implements Facet, Enableable {
         @Override
         public void run() {
             Map<String, Integer> heartbeatServerAttempt = heartbeatManager.getHeartbeatServerAttempt();
-            Queue<String> serversToClose = new LinkedList<>();
+            Queue<String> serversToClose = Queues.newLinkedBlockingQueue();
 
             serverManager.getServerList().stream()
                     .filter(Server::canHeartbeatCheck)
@@ -86,8 +85,7 @@ public class HeartbeatManager implements Facet, Enableable {
 
             packetUtil.send(new ServerHeartbeatPacket(null, ServerHeartbeatPacket.Reason.REQUEST));
 
-            //--- Close unresponsive instances
-            while (serversToClose.size() > 0) {
+            while (!serversToClose.isEmpty()) {
                 String serverToCloseId = serversToClose.poll();
                 Optional<Server> serverToCloseOptional = serverManager.findServerById(serverToCloseId);
 

@@ -8,9 +8,7 @@ import lombok.Getter;
 public enum Game {
 
     NONE ("None", 80, null, null),
-    SPACE_GAMES_SOLO ("Space Games (Solo)", 12, "respects/mv-infrastructure:spacegames", "respects/mv-infrastructure-dev:spacegames"),
-    SPACE_GAMES_DUO ("Space Games (Duo)", 24, "respects/mv-infrastructure:spacegames", "respects/mv-infrastructure-dev:spacegames"),
-    NATURAL_DISASTER ("Natural Disaster", 12, "respects/mv-infrastructure:naturaldisaster", "respects/mv-infrastructure-dev:naturaldisaster");
+    ICE_RUNNER_SOLO ("Ice Runner (Solo)", 4, "respects/wep-infrastructure:icerunner-solo", "respects/wep-infrastructure-dev:icerunner-solo");
 
     private String friendlyName;
     private int maxPlayers;

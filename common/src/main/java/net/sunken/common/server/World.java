@@ -14,13 +14,8 @@ public enum World {
 
     NONE ("None",false),
     LOBBY ("Lobby",false),
-
-    //--- Space Games
-    SG_LOBBY ("Lobby", Arrays.asList(Game.SPACE_GAMES_SOLO, Game.SPACE_GAMES_DUO), false),
-    SG_TEST ("Test", Arrays.asList(Game.SPACE_GAMES_SOLO, Game.SPACE_GAMES_DUO), true),
-
-    //--- Natural Disaster
-    DISASTER_MEDIEVAL ("Medieval", Game.NATURAL_DISASTER, true);
+    GAME_LOBBY ("Game Lobby", false),
+    ICERUNNER_PLAINS ("Plains", Game.ICE_RUNNER_SOLO, true);
 
     private String friendlyName;
     private List<Game> types;

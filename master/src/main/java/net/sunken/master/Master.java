@@ -4,14 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import lombok.Getter;
 import net.sunken.common.database.RedisConnection;
-import net.sunken.common.server.Game;
-import net.sunken.common.server.Server;
 import net.sunken.master.inject.MasterFacetLoader;
-import net.sunken.master.kube.Kube;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class Master {
 
@@ -26,20 +19,14 @@ public class Master {
 
     public Master() {
         instance = this;
-
-        //--- Configure all modules
         injector = Guice.createInjector(new MasterModule());
 
-        //--- Connect databases
         redisConnection = injector.getInstance(RedisConnection.class);
-
-        //--- Enable all modules
         masterFacetLoader = injector.getInstance(MasterFacetLoader.class);
         masterFacetLoader.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> this.handleGraceShutdown()));
 
-        //--- Keep the application running.
         while (true) {
             try {
                 Thread.sleep(1000);

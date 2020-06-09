@@ -21,9 +21,7 @@ public class LocationUtil {
         finalResult.setY(finalResult.getWorld().getHighestBlockYAt(finalResult) - 1);
 
         while (finalResult.getBlock().getType() == Material.WATER
-                || finalResult.getBlock().getType() == Material.STATIONARY_WATER
-                || finalResult.getBlock().getType() == Material.LAVA
-                || finalResult.getBlock().getType() == Material.STATIONARY_LAVA) {
+                || finalResult.getBlock().getType() == Material.LAVA) {
             finalResult = findRandomLocation(center, min, max);
             finalResult.setY(finalResult.getWorld().getHighestBlockYAt(finalResult) - 1);
         }

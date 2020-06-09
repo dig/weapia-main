@@ -10,11 +10,11 @@ import java.util.List;
 public class Constants {
 
     public static final ItemBuilder ITEM_GAME_SELECTOR = new ItemBuilder(Material.COMPASS)
-            .name(ChatColor.GREEN + " \u2996 Game Selector")
-            .lore(ChatColor.WHITE + "Select a gamemode to play.");
+            .name(ChatColor.GREEN + "Game Selector")
+            .lore(ChatColor.WHITE + "Choose which game to play!");
 
     public static final ItemBuilder ITEM_LOBBY_SELECTOR = new ItemBuilder(Material.BOOK)
-            .name(ChatColor.YELLOW + " \u2996 Lobby Selector")
-            .lore(ChatColor.WHITE + "Select a lobby to join.");
+            .name(ChatColor.YELLOW + "Lobby Selector")
+            .lore(ChatColor.WHITE + "Hang out in a lobby of your choice!");
 
 }

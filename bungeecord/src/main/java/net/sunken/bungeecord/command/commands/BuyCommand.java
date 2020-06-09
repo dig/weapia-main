@@ -18,15 +18,13 @@ public class BuyCommand extends BungeeCommand {
     public boolean onCommand(CommandSender commandSender, Optional<AbstractPlayer> abstractPlayerOptional, String[] args) {
         Arrays.asList(
                 " ",
-                "&a&lStore",
-                "&fSupport our development and get access to lots of powerful perks.",
+                " &a&lSTORE",
+                " &fSupport our development and get access to lots of powerful perks.",
                 " "
         ).forEach(message -> commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message))));
 
-        TextComponent clickableLink = new TextComponent("[VIEW]");
-        clickableLink.setColor(ChatColor.GREEN);
-        clickableLink.setBold(true);
-        clickableLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://store.minevasion.com"));
+        TextComponent clickableLink = new TextComponent(TextComponent.fromLegacyText(ChatColor.GOLD + "" + ChatColor.BOLD + " Click " + ChatColor.WHITE + "to open"));
+        clickableLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://store.weapia.com"));
         commandSender.sendMessage(clickableLink);
 
         commandSender.sendMessage(new TextComponent(" "));

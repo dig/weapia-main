@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,37 +29,29 @@ public class Hologram {
     public Hologram(Location location, List<String> lines, JavaPlugin plugin) {
         this.location = location;
         this.lines = lines;
-
         this.plugin = plugin;
         this.livingEntities = new ArrayList<>();
 
-        setup();
+        this.setup();
     }
 
     private void setup() {
-        if (lines.size() > 0) {
-            double y = 0;
+        double y = 0;
 
-            for (String line : lines) {
-                ArmorStand entity = (ArmorStand) this.location.getWorld().spawnEntity(location.clone().add(0, y, 0), EntityType.ARMOR_STAND);
-                entity.setVisible(false);
-                entity.setCustomNameVisible(true);
-                entity.setSmall(true);
-                entity.setBasePlate(true);
-                entity.setGravity(false);
-                entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
-                entity.setMetadata("hologram", new FixedMetadataValue(plugin, true));
+        for (String line : lines) {
+            ArmorStand entity = (ArmorStand) this.location.getWorld().spawnEntity(location.clone().add(0, y, 0), EntityType.ARMOR_STAND);
+            entity.setVisible(false);
+            entity.setCustomNameVisible(true);
+            entity.setSmall(true);
+            entity.setBasePlate(true);
+            entity.setGravity(false);
+            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
+            entity.setMetadata("hologram", new FixedMetadataValue(plugin, true));
 
-                livingEntities.add(entity.getUniqueId());
+            livingEntities.add(entity.getUniqueId());
 
-                y -= OFFSET_Y;
-            }
+            y -= OFFSET_Y;
         }
-    }
-
-    public void update() {
-        remove();
-        setup();
     }
 
     public void update(int index, String line) {
@@ -86,6 +77,11 @@ public class Hologram {
         }
 
         livingEntities.clear();
+    }
+
+    public void refresh() {
+        remove();
+        setup();
     }
 
 }

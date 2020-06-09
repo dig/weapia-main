@@ -4,5 +4,5 @@
 
 dependencies {
     included project(path: ':common', configuration: 'default')
-    compile group: 'net.md-5', name: 'bungeecord-api', version: '1.14-SNAPSHOT'
+    compile group: 'net.md-5', name: 'bungeecord-api', version: '1.15-SNAPSHOT'
 }

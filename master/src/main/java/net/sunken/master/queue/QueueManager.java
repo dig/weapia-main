@@ -8,23 +8,20 @@ import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
-import net.sunken.common.player.packet.PlayerProxyMessagePacket;
-import net.sunken.common.player.packet.PlayerRequestServerPacket;
-import net.sunken.common.player.packet.PlayerSaveStatePacket;
-import net.sunken.common.player.packet.PlayerSendToServerPacket;
+import net.sunken.common.player.packet.*;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
-import net.sunken.common.server.packet.ServerDisconnectedPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.master.instance.InstanceDetail;
 import net.sunken.master.instance.InstanceManager;
 import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
+import net.sunken.master.queue.handler.PlayerProxyQuitHandler;
 import net.sunken.master.queue.handler.PlayerRequestServerHandler;
 import net.sunken.common.server.module.ServerManager;
+import net.sunken.master.queue.handler.PlayerRequestServerIDHandler;
 import net.sunken.master.queue.handler.PlayerSaveStateHandler;
-import net.sunken.master.queue.handler.ServerDisconnectedHandler;
 import net.sunken.master.queue.impl.IQueue;
 import net.sunken.master.queue.impl.PartyQueue;
 import net.sunken.master.queue.impl.PlayerQueue;
@@ -45,7 +42,9 @@ public class QueueManager implements Facet, Enableable {
     @Inject
     private PlayerSaveStateHandler playerSaveStateHandler;
     @Inject
-    private ServerDisconnectedHandler serverDisconnectedHandler;
+    private PlayerProxyQuitHandler playerProxyQuitHandler;
+    @Inject
+    private PlayerRequestServerIDHandler playerRequestServerIDHandler;
 
     @Inject
     private QueueRunnable queueRunnable;
@@ -70,12 +69,11 @@ public class QueueManager implements Facet, Enableable {
         for (Game game : Game.values())
             gameQueue.put(game, new ConcurrentLinkedQueue<>());
 
-        //--- Register packets
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
-        packetHandlerRegistry.registerHandler(ServerDisconnectedPacket.class, serverDisconnectedHandler);
+        packetHandlerRegistry.registerHandler(PlayerProxyQuitPacket.class, playerProxyQuitHandler);
+        packetHandlerRegistry.registerHandler(PlayerRequestServerIDPacket.class, playerRequestServerIDHandler);
 
-        //--- Queue thread
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(queueRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
     }
 
@@ -171,12 +169,10 @@ public class QueueManager implements Facet, Enableable {
 
         @Override
         public void run() {
-            //--- Lobby
             handleQueue(Server.Type.LOBBY, Game.NONE);
-
-            //--- Instances
-            for (Game game : Game.values())
+            for (Game game : Game.values()) {
                 handleQueue(Server.Type.INSTANCE, game);
+            }
         }
 
         private void handleQueue(Server.Type type, Game game) {
@@ -187,13 +183,13 @@ public class QueueManager implements Facet, Enableable {
             long pendingInstancesCount = serverManager.getServerList().stream()
                     .filter(server -> server.getType() == type && server.getGame() == game && server.getState() == Server.State.PENDING)
                     .count();
-
             pendingInstancesCount += instanceManager.findPendingCount(type, game);
 
             //--- Total amount of available slots for such type & game.
             long availableInstanceSlots = 0;
-            for (Server server : availableInstances)
+            for (Server server : availableInstances) {
                 availableInstanceSlots += (server.getMaxPlayers() - (server.getPlayers() + serverManager.findPendingConnectionCount(server)));
+            }
 
             //--- Check if we need to start more servers due to high demand in queue
             long totalAmountOfSlotsAvailable = (availableInstanceSlots + (pendingInstancesCount * game.getMaxPlayers()));

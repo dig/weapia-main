@@ -3,6 +3,7 @@ package net.sunken.core.inject;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.google.inject.*;
+import net.sunken.core.Core;
 import org.bukkit.*;
 import org.bukkit.configuration.file.*;
 import org.bukkit.plugin.*;
@@ -19,6 +20,7 @@ public abstract class PluginModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(JavaPlugin.class).toInstance(plugin);
+        bind(Core.class).toInstance((Core) plugin);
         bind(Server.class).toInstance(plugin.getServer());
         bind(PluginManager.class).toInstance(plugin.getServer().getPluginManager());
         bind(FileConfiguration.class).toInstance(plugin.getConfig());

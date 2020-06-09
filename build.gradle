@@ -4,7 +4,7 @@
 
 //--- Configuration for all projects including sub projects
 allprojects {
-    group = 'com.minevasion'
+    group = 'com.weapia'
     version = '1.0-SNAPSHOT'
 }
 
@@ -16,11 +16,12 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven { url 'http://repo.maven.apache.org/maven2' }
+        maven { url 'https://repo.maven.apache.org/maven2' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'http://repo.dmulloy2.net/nexus/repository/public/' }
         maven { url 'https://repo.spongepowered.org/maven' }
         maven { url 'https://repo.ashcon.app/nexus/content/repositories/snapshots/' }
+        maven { url 'https://repo.codemc.org/repository/maven-public/' }
         maven {
             url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
 

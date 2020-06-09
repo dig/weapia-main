@@ -25,13 +25,9 @@ public abstract class Core extends JavaPlugin {
     private boolean shutdown = false;
 
     public void onEnable(PluginModule pluginModule) {
-        //--- Configure all modules
         injector = Guice.createInjector(pluginModule);
 
-        //--- Connect databases
         redisConnection = injector.getInstance(RedisConnection.class);
-
-        //--- Enable all modules
         pluginFacetLoader = injector.getInstance(PluginFacetLoader.class);
         pluginFacetLoader.start();
 
@@ -43,24 +39,17 @@ public abstract class Core extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        //--- Disable all modules
         pluginFacetLoader.stop();
-
-        //--- Disconnect databases
         redisConnection.disconnect();
     }
 
     public void handleGraceShutdown() {
         if (!shutdown) {
             shutdown = true;
-
-            //--- Change state to closed
             pluginInform.setState(Server.State.CLOSED);
 
-            //-- Fallback all players to lobbies
             Bukkit.getOnlinePlayers().forEach(player -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
 
-            //--- Wait for all players to go
             int iterations = 0;
             while (Bukkit.getOnlinePlayers().size() > 0) {
                 if (iterations >= (20 * 10)) {

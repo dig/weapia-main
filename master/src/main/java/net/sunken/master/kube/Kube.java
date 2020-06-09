@@ -48,17 +48,13 @@ public class Kube {
             JsonReader reader = new JsonReader(new FileReader("/home/minecraft/templates/base-pod.json"));
             JsonObject templateObject = gson.fromJson(reader, JsonObject.class);
 
-            //--- Change pod name to ID
             templateObject.getAsJsonObject("metadata").addProperty("name", server.getId());
 
             JsonArray containerArray = templateObject.getAsJsonObject("spec").getAsJsonArray("containers");
             for (int i = 0; i < containerArray.size(); i++) {
                 JsonObject containerObject = containerArray.get(i).getAsJsonObject();
 
-                //--- Name
                 containerObject.addProperty("name", "container" + i);
-
-                //--- Image
                 containerObject.addProperty("image", imageUri);
 
                 //--- Setup environment variables
@@ -119,7 +115,6 @@ public class Kube {
     }
 
     public boolean deletePod(@NonNull String podId) {
-        //--- Attempt delete request
         try {
             HttpResponse<String> response = Unirest.delete(String.format("%s/api/v1/namespaces/default/pods/%s", KUBERNETES_API_URL, podId))
                     .header("Authorization", String.format("Bearer %s", serviceAccountBearer))

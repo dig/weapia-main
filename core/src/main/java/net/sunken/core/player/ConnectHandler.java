@@ -13,8 +13,10 @@ import net.sunken.common.player.Rank;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.common.server.packet.ServerConnectedPacket;
 import net.sunken.common.util.DummyObject;
+import net.sunken.common.util.Tuple;
 import net.sunken.core.Constants;
 import net.sunken.core.PluginInform;
+import net.sunken.core.engine.EngineManager;
 import net.sunken.core.util.ColourUtil;
 import net.sunken.core.util.TabListUtil;
 import org.bukkit.ChatColor;
@@ -22,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.Optional;
@@ -38,6 +41,8 @@ public class ConnectHandler implements Facet, Listener {
     private PluginInform pluginInform;
     @Inject
     private PacketUtil packetUtil;
+    @Inject
+    private EngineManager engineManager;
 
     @Getter
     private Cache<UUID, AbstractPlayer> pendingConnection;
@@ -72,7 +77,9 @@ public class ConnectHandler implements Facet, Listener {
         }
     }
 
-    public boolean handlePreLogin(AbstractPlayer abstractPlayer) {
+    @EventHandler
+    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
+        AbstractPlayer abstractPlayer = engineManager.getGameMode().getPlayerMapper().apply(new Tuple<>(event.getUniqueId(), event.getName()));
         log.info(String.format("handlePreLogin (%s)", abstractPlayer.getUuid().toString()));
 
         boolean loadState = abstractPlayer.load();
@@ -84,10 +91,17 @@ public class ConnectHandler implements Facet, Listener {
             case "c83bc38d-11ae-4973-9d7c-5c77d6dcfb86":
                 abstractPlayer.setRank(Rank.OWNER);
                 break;
+            case "5190d5d8-0792-4ea0-a1da-d28d4d3af97a":
+                abstractPlayer.setRank(Rank.DEVELOPER);
+                break;
         }
 
-        if (loadState) pendingConnection.put(abstractPlayer.getUuid(), abstractPlayer);
-        return loadState;
+        if (loadState) {
+            pendingConnection.put(abstractPlayer.getUuid(), abstractPlayer);
+            event.allow();
+        } else {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Constants.FAILED_LOAD_DATA);
+        }
     }
 
 }

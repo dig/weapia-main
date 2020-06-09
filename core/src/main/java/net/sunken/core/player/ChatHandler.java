@@ -34,10 +34,10 @@ public class ChatHandler implements Facet, Listener {
 
             switch (abstractPlayer.getRank()) {
                 case PLAYER:
-                    event.setFormat(ColourUtil.fromColourCode(rank.getColourCode()) + abstractPlayer.getUsername() + ChatColor.WHITE + ": " + event.getMessage());
+                    event.setFormat(ColourUtil.fromColourCode(rank.getColourCode()) + "%s" + ChatColor.WHITE + ": %s");
                     break;
                 default:
-                    event.setFormat(ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + abstractPlayer.getUsername() + ChatColor.WHITE + ": " + event.getMessage());
+                    event.setFormat(ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + "%s" + ChatColor.WHITE + ": %s");
             }
         } else {
             player.sendMessage(Constants.FAILED_LOAD_DATA);

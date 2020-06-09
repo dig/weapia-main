@@ -18,7 +18,8 @@ public abstract class EventGameState extends BaseGameState {
     public abstract boolean canBreak(Player player, Block block);
     public abstract boolean canPlace(Player player, Block block);
 
-    public abstract boolean canTakeDamage(Player target, Entity instigator, EntityDamageEvent.DamageCause damageCause);
-    public abstract boolean canDealDamage(Player instigator, Entity target, EntityDamageEvent.DamageCause damageCause);
+    public abstract boolean canTakeEntityDamage(Player target, Entity instigator, EntityDamageEvent.DamageCause damageCause);
+    public abstract boolean canDealEntityDamage(Player instigator, Entity target, EntityDamageEvent.DamageCause damageCause);
+    public abstract boolean canTakeDamage(Player instigator, double finalDamage, double damage);
 
 }

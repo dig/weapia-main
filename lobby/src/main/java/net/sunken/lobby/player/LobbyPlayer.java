@@ -1,14 +1,14 @@
 package net.sunken.lobby.player;
 
 import lombok.extern.java.Log;
+import net.sunken.common.player.Rank;
 import net.sunken.common.server.ServerHelper;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.core.PluginInform;
 import net.sunken.core.player.CorePlayer;
-import net.sunken.core.scoreboard.ScoreboardManager;
-import net.sunken.core.scoreboard.ScoreboardWrapper;
+import net.sunken.core.scoreboard.CustomScoreboard;
+import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.ColourUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -19,12 +19,12 @@ import java.util.UUID;
 @Log
 public class LobbyPlayer extends CorePlayer {
 
+    private ServerManager serverManager;
     private PluginInform pluginInform;
-    private ScoreboardWrapper scoreboardWrapper;
 
-    public LobbyPlayer(UUID uuid, String username, PluginInform pluginInform, ScoreboardManager scoreboardManager) {
-        super(uuid, username, scoreboardManager);
-
+    public LobbyPlayer(UUID uuid, String username, ServerManager serverManager, PluginInform pluginInform, ScoreboardRegistry scoreboardRegistry) {
+        super(uuid, username, scoreboardRegistry);
+        this.serverManager = serverManager;
         this.pluginInform = pluginInform;
     }
 
@@ -40,58 +40,39 @@ public class LobbyPlayer extends CorePlayer {
 
     @Override
     public void setup() {
-        Optional<? extends Player> playerOptional = toPlayer();
+        super.setup();
 
+        Optional<? extends Player> playerOptional = toPlayer();
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
-
             player.getInventory().clear();
 
-            //--- Scoreboard
-            Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
-            String title = ChatColor.GREEN + "Lobby #"
-                    + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
+            CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
+            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
 
-            scoreboardWrapper = new ScoreboardWrapper(title, scoreboardManager);
-            scoreboardWrapper.add("Spacer1", ChatColor.WHITE + " ", 10);
+            customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
+            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank /join" : ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 9);
+            customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
 
-            scoreboardWrapper.add("CreditsTitle", ChatColor.WHITE + " \u2996 Credits", 9);
-            scoreboardWrapper.add("CreditsValue", ChatColor.LIGHT_PURPLE + " 0", 8);
-            scoreboardWrapper.add("Spacer2", ChatColor.WHITE + " ", 7);
+            customScoreboard.createEntry("EventsTitle", ChatColor.WHITE + "Events", 7);
+            customScoreboard.createEntry("EventsValue", ChatColor.LIGHT_PURPLE + "2x /vote", 6);
+            customScoreboard.createEntry("Spacer3", ChatColor.RED + " ", 5);
 
-            scoreboardWrapper.add("RankTitle", ChatColor.WHITE + " \u2996 Rank", 6);
-            scoreboardWrapper.add("RankValue", ColourUtil.fromColourCode(rank.getColourCode()) + " " + rank.getFriendlyName(), 5);
-            scoreboardWrapper.add("Spacer3", ChatColor.WHITE + " ", 4);
+            customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
+            customScoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 3);
 
-            scoreboardWrapper.add("PlayTitle", ChatColor.WHITE + " \u2996 Play Streak", 3);
-            scoreboardWrapper.add("PlayValue", ChatColor.GOLD + " 5 days", 2);
-            scoreboardWrapper.add("Spacer4", ChatColor.WHITE + " ", 1);
+            customScoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
+            customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
+            customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
 
-            scoreboardWrapper.add("URL", ChatColor.GREEN + "minevasion.com", 0);
-
-            scoreboardWrapper.add(player);
+            customScoreboard.add(player);
+            scoreboardRegistry.register(player.getUniqueId().toString(), customScoreboard);
         }
-
-        super.setup();
     }
 
     @Override
     public void destroy() {
-        scoreboardWrapper.getEntries().values().forEach(scoreboardEntry -> scoreboardEntry.remove());
+        scoreboardRegistry.unregister(this.uuid.toString());
     }
-
-    @Override
-    public ScoreboardWrapper getScoreboardWrapper() {
-        return scoreboardWrapper;
-    }
-
-    public void onServerUpdate() {
-        Map<String, String> serverMetadata = pluginInform.getServer().getMetadata();
-        String title = ChatColor.GREEN + "Lobby #"
-                + (serverMetadata.containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? serverMetadata.get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending.");
-
-        scoreboardWrapper.setTitle(title);
-    }
-
 
 }

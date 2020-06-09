@@ -1,6 +1,7 @@
 package net.sunken.lobby.inventory;
 
 import com.google.inject.Inject;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.common.event.ListensToEvent;
 import net.sunken.common.event.SunkenListener;
@@ -22,7 +23,6 @@ import net.sunken.core.inventory.PageContainer;
 import net.sunken.core.inventory.element.Action;
 import net.sunken.core.inventory.element.Element;
 import net.sunken.core.inventory.element.ElementFactory;
-import net.sunken.core.util.nbt.NBTItem;
 import net.sunken.lobby.config.SelectorInteractionConfiguration;
 import net.sunken.lobby.config.SelectorItemConfiguration;
 import net.sunken.lobby.config.UIConfiguration;
@@ -57,31 +57,29 @@ public class GameSelectorHandler implements Facet, Enableable, Listener, SunkenL
 
     @Override
     public void enable() {
-        Element darkGreenGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
+        Element darkAquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.BLUE_STAINED_GLASS_PANE)
                 .name(ChatColor.WHITE + " ")
-                .durability(13)
                 .make());
-        Element greenGlassPane = elementFactory.createElement(new ItemBuilder(Material.STAINED_GLASS_PANE)
+        Element aquaGlassPane = elementFactory.createElement(new ItemBuilder(Material.LIGHT_BLUE_STAINED_GLASS_PANE)
                 .name(ChatColor.WHITE + " ")
-                .durability(5)
                 .make());
 
         Page compassMainMenu = Page.builder()
                 .id("compass-main-menu")
-                .title("Minevasion \u2996 Choose Game")
+                .title("Weapia > Choose Game")
                 .size(54)
-                .putElement(0, darkGreenGlassPane)
-                .putElement(1, greenGlassPane)
-                .putElement(7, greenGlassPane)
-                .putElement(8, darkGreenGlassPane)
-                .putElement(9, greenGlassPane)
-                .putElement(17, greenGlassPane)
-                .putElement(36, greenGlassPane)
-                .putElement(44, greenGlassPane)
-                .putElement(45, darkGreenGlassPane)
-                .putElement(46, greenGlassPane)
-                .putElement(52, greenGlassPane)
-                .putElement(53, darkGreenGlassPane)
+                .putElement(0, darkAquaGlassPane)
+                .putElement(1, aquaGlassPane)
+                .putElement(7, aquaGlassPane)
+                .putElement(8, darkAquaGlassPane)
+                .putElement(9, aquaGlassPane)
+                .putElement(17, aquaGlassPane)
+                .putElement(36, aquaGlassPane)
+                .putElement(44, aquaGlassPane)
+                .putElement(45, darkAquaGlassPane)
+                .putElement(46, aquaGlassPane)
+                .putElement(52, aquaGlassPane)
+                .putElement(53, darkAquaGlassPane)
                 .build();
 
         for (SelectorItemConfiguration selectorItemConfiguration : uiConfiguration.getGameSelector()) {

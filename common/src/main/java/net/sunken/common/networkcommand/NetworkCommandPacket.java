@@ -8,6 +8,7 @@ import net.sunken.common.player.*;
 @AllArgsConstructor
 public class NetworkCommandPacket extends Packet {
 
-    private final String command;
+    private final String commandName;
+    private final String[] args;
     private final PlayerDetail sender;
 }

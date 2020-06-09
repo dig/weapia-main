@@ -29,7 +29,8 @@ public class Kube {
     private static String KUBERNETES_API_URL = "https://kubernetes.default.svc";
     private String serviceAccountBearer;
 
-    public Kube() {
+    @Inject
+    public Kube(@InjectConfig KubeConfiguration kubeConfiguration) {
         if (kubeConfiguration.isKubernetes()) {
             try {
                 BufferedReader bearerBuffer = new BufferedReader(new FileReader("/var/run/secrets/kubernetes.io/serviceaccount/token"));

@@ -71,6 +71,7 @@ public class ServerManager implements Facet, Enableable {
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
 
+                log.info(key);
                 Server server = fromRedis(kv);
                 scannedServerList.add(server);
 

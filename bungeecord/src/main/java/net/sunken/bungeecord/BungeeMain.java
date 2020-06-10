@@ -16,30 +16,26 @@ public class BungeeMain extends Plugin {
     private RedisConnection redisConnection;
     private BungeeFacetLoader bungeeFacetLoader;
 
+    private BungeeInform bungeeInform;
+
     private boolean shutdown = false;
 
     @Override
     public void onEnable() {
-        //--- Configure all modules
         injector = Guice.createInjector(new BungeePluginModule(this));
 
-        //--- Connect databases
         redisConnection = injector.getInstance(RedisConnection.class);
-
-        //--- Enable all modules
         bungeeFacetLoader = injector.getInstance(BungeeFacetLoader.class);
         bungeeFacetLoader.start();
+
+        bungeeInform = injector.getInstance(BungeeInform.class);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> this.handleGraceShutdown()));
     }
 
     @Override
     public void onDisable() {
-        //--- Disable all modules
         bungeeFacetLoader.stop();
-
-        //--- Disconnect databases
-        redisConnection.disconnect();
     }
 
     private void handleGraceShutdown() {
@@ -47,10 +43,8 @@ public class BungeeMain extends Plugin {
             shutdown = true;
 
             if (getProxy().getPlayers().size() > 0) {
-                //--- Broadcast
                 getProxy().broadcast(TextComponent.fromLegacyText(Constants.PROXY_RESTART));
 
-                //--- Wait 30 seconds
                 try {
                     Thread.sleep(30 * 1000);
                 } catch (InterruptedException e) {
@@ -58,9 +52,8 @@ public class BungeeMain extends Plugin {
                 }
             }
 
-            //--- Shutdown
-            this.onDisable();
-            getProxy().stop();
+            bungeeInform.remove();
+            redisConnection.disconnect();
         }
     }
 

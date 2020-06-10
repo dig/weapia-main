@@ -49,7 +49,6 @@ public class BungeeInform implements Facet, Enableable, Listener {
 
     @Override
     public void disable() {
-        serverInformer.remove(server.getId(), true);
     }
 
     @EventHandler
@@ -62,6 +61,10 @@ public class BungeeInform implements Facet, Enableable, Listener {
     public void onPlayerDisconnect(PlayerDisconnectEvent event) {
         server.setPlayers(proxyServer.getOnlineCount() - 1);
         AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
+    }
+
+    public void remove() {
+        serverInformer.remove(server.getId(), true);
     }
 
 }

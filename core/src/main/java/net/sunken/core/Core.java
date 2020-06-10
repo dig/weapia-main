@@ -40,7 +40,6 @@ public abstract class Core extends JavaPlugin {
     @Override
     public void onDisable() {
         pluginFacetLoader.stop();
-        redisConnection.disconnect();
     }
 
     public void handleGraceShutdown() {
@@ -69,7 +68,7 @@ public abstract class Core extends JavaPlugin {
             }
 
             pluginInform.remove();
-            Bukkit.shutdown();
+            redisConnection.disconnect();
         }
     }
 

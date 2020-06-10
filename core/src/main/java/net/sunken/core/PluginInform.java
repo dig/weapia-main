@@ -14,6 +14,7 @@ import net.sunken.common.server.packet.ServerHeartbeatPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.config.InstanceConfiguration;
 import net.sunken.core.heartbeat.ServerHeartbeatHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -54,7 +55,7 @@ public class PluginInform implements Facet, Enableable, Listener {
                     .port(javaPlugin.getServer().getPort())
                     .game(instanceConfiguration.getGame())
                     .world(instanceConfiguration.getWorld())
-                    .players(javaPlugin.getServer().getOnlinePlayers().size())
+                    .players(Bukkit.getOnlinePlayers().size())
                     .maxPlayers(instanceConfiguration.getGame().getMaxPlayers())
                     .state(Server.State.PENDING)
                     .metadata(metadata)
@@ -66,18 +67,17 @@ public class PluginInform implements Facet, Enableable, Listener {
 
     @Override
     public void disable() {
-        remove();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        server.setPlayers(javaPlugin.getServer().getOnlinePlayers().size());
+        server.setPlayers(Bukkit.getOnlinePlayers().size());
         AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        server.setPlayers(javaPlugin.getServer().getOnlinePlayers().size() - 1);
+        server.setPlayers(Bukkit.getOnlinePlayers().size() - 1);
         AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
     }
 

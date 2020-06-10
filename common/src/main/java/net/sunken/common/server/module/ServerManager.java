@@ -71,10 +71,8 @@ public class ServerManager implements Facet, Enableable {
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
 
-                log.info(key);
                 Server server = fromRedis(kv);
                 scannedServerList.add(server);
-
                 log.info(String.format("Loaded server (%s)", server.toString()));
             }
 
@@ -92,8 +90,6 @@ public class ServerManager implements Facet, Enableable {
     }
 
     public Server fromRedis(Map<String, String> kv) {
-        log.info(kv.toString());
-
         Server.Type type = Server.Type.valueOf(kv.get(ServerHelper.SERVER_TYPE_KEY));
         Game game = Game.valueOf(kv.get(ServerHelper.SERVER_GAME_KEY));
 

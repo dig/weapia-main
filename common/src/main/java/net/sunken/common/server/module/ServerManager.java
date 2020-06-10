@@ -91,14 +91,16 @@ public class ServerManager implements Facet, Enableable {
     }
 
     public Server fromRedis(Map<String, String> kv) {
+        log.info(kv.toString());
+
         Server.Type type = Server.Type.valueOf(kv.get(ServerHelper.SERVER_TYPE_KEY));
         Game game = Game.valueOf(kv.get(ServerHelper.SERVER_GAME_KEY));
 
-        //--- Custom metadata per server
         Map<String, String> metadata = new HashMap<>();
         for (String key : ServerHelper.SERVER_METADATA_KEYS) {
-            if (kv.containsKey(key))
+            if (kv.containsKey(key)) {
                 metadata.put(key, kv.get(key));
+            }
         }
 
         return Server.builder()

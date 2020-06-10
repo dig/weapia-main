@@ -7,7 +7,6 @@ import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
-import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerHelper;
 import net.sunken.common.server.ServerInformer;
@@ -44,8 +43,9 @@ public class PluginInform implements Facet, Enableable, Listener {
     @Override
     public void enable() {
         Map<String, String> metadata = new HashMap<>();
-        if (instanceConfiguration.getMetadataId().isPresent())
+        if (instanceConfiguration.getMetadataId().isPresent()) {
             metadata.put(ServerHelper.SERVER_METADATA_ID_KEY, instanceConfiguration.getMetadataId().get());
+        }
 
         server = Server.builder()
                     .id(instanceConfiguration.getId())
@@ -60,13 +60,13 @@ public class PluginInform implements Facet, Enableable, Listener {
                     .metadata(metadata)
                     .build();
 
-        serverInformer.add(server, true);
         packetHandlerRegistry.registerHandler(ServerHeartbeatPacket.class, serverHeartbeatHandler);
+        serverInformer.add(server, true);
     }
 
     @Override
     public void disable() {
-        serverInformer.remove(server.getId(), true);
+        remove();
     }
 
     @EventHandler
@@ -84,6 +84,10 @@ public class PluginInform implements Facet, Enableable, Listener {
     public void setState(Server.State state) {
         server.setState(state);
         serverInformer.update(server, true);
+    }
+
+    public void remove() {
+        serverInformer.remove(server.getId(), true);
     }
 
 }

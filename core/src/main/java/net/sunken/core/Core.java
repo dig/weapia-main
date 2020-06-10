@@ -46,12 +46,15 @@ public abstract class Core extends JavaPlugin {
     public void handleGraceShutdown() {
         if (!shutdown) {
             shutdown = true;
-            pluginInform.setState(Server.State.CLOSED);
+
+            if (pluginInform.getServer().getState() != Server.State.CLOSED) {
+                pluginInform.setState(Server.State.CLOSED);
+            }
 
             Bukkit.getOnlinePlayers().forEach(player -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
 
             int iterations = 0;
-            while (Bukkit.getOnlinePlayers().size() > 0) {
+            while (!Bukkit.getOnlinePlayers().isEmpty()) {
                 if (iterations >= (20 * 10)) {
                     break;
                 }
@@ -65,6 +68,7 @@ public abstract class Core extends JavaPlugin {
                 iterations++;
             }
 
+            pluginInform.remove();
             Bukkit.shutdown();
         }
     }

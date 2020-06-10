@@ -42,7 +42,7 @@ public abstract class Core extends JavaPlugin {
         pluginFacetLoader.stop();
     }
 
-    public void handleGraceShutdown() {
+    private void handleGraceShutdown() {
         if (!shutdown) {
             shutdown = true;
 

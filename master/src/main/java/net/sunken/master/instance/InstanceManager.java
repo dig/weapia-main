@@ -83,9 +83,9 @@ public class InstanceManager implements Facet, Enableable {
 
     public void removeInstance(@NonNull Server server, @NonNull Reason reason) {
         if (kubeConfiguration.isKubernetes()) {
-            kubeApi.deletePod(server.getId());
             serverManager.getServerList().removeIf(srv -> srv.getId().equals(server.getId()));
             serverInformer.remove(server.getId(), true);
+            kubeApi.deletePod(server.getId());
         }
     }
 

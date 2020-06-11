@@ -168,7 +168,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                     Optional<Server> serverOptional = serverManager.findServerById(event.getTarget().getName());
                     if (serverOptional.isPresent()) {
                         Server server = serverOptional.get();
-
                         bungeePlayer.setServerConnectedTo(Optional.of(server.toServerDetail()));
                     }
                     break;

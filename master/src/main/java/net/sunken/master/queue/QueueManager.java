@@ -1,5 +1,7 @@
 package net.sunken.master.queue;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.Getter;
@@ -27,8 +29,6 @@ import net.sunken.master.queue.impl.PartyQueue;
 import net.sunken.master.queue.impl.PlayerQueue;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 @Log
@@ -62,12 +62,11 @@ public class QueueManager implements Facet, Enableable {
 
     @Override
     public void enable() {
-        lobbyQueue = new ConcurrentLinkedQueue<>();
-        gameQueue = new ConcurrentHashMap<>();
-
-        //--- Load game queues
-        for (Game game : Game.values())
-            gameQueue.put(game, new ConcurrentLinkedQueue<>());
+        lobbyQueue = Queues.newConcurrentLinkedQueue();
+        gameQueue = Maps.newConcurrentMap();
+        for (Game game : Game.values()) {
+            gameQueue.put(game, Queues.newConcurrentLinkedQueue());
+        }
 
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
@@ -82,8 +81,6 @@ public class QueueManager implements Facet, Enableable {
     }
 
     public void queue(UUID uuid, Server.Type type, Game game) {
-        IQueue iQueue = null;
-
         Optional<Party> partyOptional = partyManager.findPartyByMember(uuid);
         if (partyOptional.isPresent() && type != Server.Type.LOBBY) {
             Party party = partyOptional.get();
@@ -96,6 +93,7 @@ public class QueueManager implements Facet, Enableable {
 
         removeIfPresent(uuid);
 
+        IQueue iQueue;
         if (!serverManager.hasPendingConnection(uuid)) {
             if (partyOptional.isPresent() && type != Server.Type.LOBBY) {
                 iQueue = new PartyQueue(partyOptional.get());
@@ -133,8 +131,9 @@ public class QueueManager implements Facet, Enableable {
 
     public boolean inQueue(UUID uuid) {
         boolean inGameQueue = false;
-        for (Game game : Game.values())
+        for (Game game : Game.values()) {
             if (!inGameQueue) inGameQueue = inQueue(uuid, Server.Type.INSTANCE, game);
+        }
 
         return inQueue(uuid, Server.Type.LOBBY, Game.NONE) || inGameQueue;
     }
@@ -143,17 +142,18 @@ public class QueueManager implements Facet, Enableable {
         Queue<IQueue> queueDetails = (type == Server.Type.LOBBY ? lobbyQueue : gameQueue.get(game));
 
         int amount = 0;
-        for (IQueue iQueue : queueDetails)
+        for (IQueue iQueue : queueDetails) {
             amount += iQueue.getMembers().size();
+        }
 
         return amount;
     }
 
     public void removeIfPresent(UUID uuid) {
         lobbyQueue.removeIf(iQueue -> iQueue.getMembers().contains(uuid));
-
-        for (Game game : Game.values())
+        for (Game game : Game.values()) {
             (gameQueue.get(game)).removeIf(iQueue -> iQueue.getMembers().contains(uuid));
+        }
     }
 
     private static class QueueRunnable implements Runnable {

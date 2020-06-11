@@ -54,10 +54,6 @@ public class LobbyPlayer extends CorePlayer {
             customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank /join" : ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 9);
             customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
 
-            customScoreboard.createEntry("EventsTitle", ChatColor.WHITE + "Events", 7);
-            customScoreboard.createEntry("EventsValue", ChatColor.LIGHT_PURPLE + "2x /vote", 6);
-            customScoreboard.createEntry("Spacer3", ChatColor.RED + " ", 5);
-
             customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
             customScoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 3);
 

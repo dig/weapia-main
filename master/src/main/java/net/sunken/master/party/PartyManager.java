@@ -59,11 +59,9 @@ public class PartyManager implements Facet, Enableable {
         this.parties = Collections.newSetFromMap(new ConcurrentHashMap<>());
         this.partyPendingInvites = CacheBuilder.newBuilder()
                 .expireAfterWrite(20, TimeUnit.SECONDS)
-                .removalListener(new RemovalListener<PartyInvite, DummyObject>() {
-                    @Override
-                    public void onRemoval(RemovalNotification<PartyInvite, DummyObject> notification) {
-                        if (notification.getCause() == RemovalCause.EXPIRED)
-                            log.info(String.format("Invite expired for %s.", notification.getKey().getTarget().toString()));
+                .removalListener((RemovalListener<PartyInvite, DummyObject>) notification -> {
+                    if (notification.getCause() == RemovalCause.EXPIRED) {
+                        log.info(String.format("Invite expired for %s.", notification.getKey().getTarget().toString()));
                     }
                 })
                 .build();

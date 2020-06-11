@@ -207,7 +207,7 @@ public class PartyManager implements Facet, Enableable {
             }
         }
 
-        parties.remove(party);
+        parties.remove(party.getUuid());
         return true;
     }
 

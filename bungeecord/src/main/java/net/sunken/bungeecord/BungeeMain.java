@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import lombok.Getter;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.sunken.bungeecord.inject.BungeeFacetLoader;
@@ -15,20 +16,16 @@ public class BungeeMain extends Plugin {
     private Injector injector;
     private RedisConnection redisConnection;
     private BungeeFacetLoader bungeeFacetLoader;
-
     private BungeeInform bungeeInform;
-
-    private boolean shutdown = false;
 
     @Override
     public void onEnable() {
         injector = Guice.createInjector(new BungeePluginModule(this));
 
         redisConnection = injector.getInstance(RedisConnection.class);
+        bungeeInform = injector.getInstance(BungeeInform.class);
         bungeeFacetLoader = injector.getInstance(BungeeFacetLoader.class);
         bungeeFacetLoader.start();
-
-        bungeeInform = injector.getInstance(BungeeInform.class);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> this.handleGraceShutdown()));
     }
@@ -39,22 +36,19 @@ public class BungeeMain extends Plugin {
     }
 
     private void handleGraceShutdown() {
-        if (!shutdown) {
-            shutdown = true;
+        ProxyServer proxy = getProxy();
+        if (!proxy.getPlayers().isEmpty()) {
+            proxy.broadcast(TextComponent.fromLegacyText(Constants.PROXY_RESTART));
 
-            if (getProxy().getPlayers().size() > 0) {
-                getProxy().broadcast(TextComponent.fromLegacyText(Constants.PROXY_RESTART));
-
-                try {
-                    Thread.sleep(30 * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            try {
+                Thread.sleep(30 * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
-            bungeeInform.remove();
-            redisConnection.disconnect();
         }
+
+        bungeeInform.remove();
+        redisConnection.disconnect();
     }
 
 }

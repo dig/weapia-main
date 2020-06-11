@@ -11,6 +11,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.util.StringUtil;
@@ -32,10 +33,7 @@ public class PingListener implements Facet, Listener {
     public void onPing(ProxyPingEvent event) {
         ServerPing serverPing = event.getResponse();
 
-        Set<Server> allBungees = serverManager.getServerList().stream()
-                .filter(srv -> srv.getType() == Server.Type.BUNGEE)
-                .collect(Collectors.toSet());
-
+        Set<Server> allBungees = serverManager.findAll(Server.Type.BUNGEE, Game.NONE);
         serverPing.getPlayers().setOnline(serverManager.getTotalPlayersOnline());
         serverPing.getPlayers().setMax(allBungees.size() * 500);
 

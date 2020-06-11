@@ -181,7 +181,7 @@ public class QueueManager implements Facet, Enableable {
             Set<Server> availableInstances = serverManager.findAllAvailable(type, game);
 
             //--- Pending instances, about to start of such type & game.
-            long pendingInstancesCount = serverManager.getServerList().stream()
+            long pendingInstancesCount = serverManager.findAll().stream()
                     .filter(server -> server.getType() == type && server.getGame() == game && server.getState() == Server.State.PENDING)
                     .count();
             pendingInstancesCount += instanceManager.findPendingCount(type, game);

@@ -35,8 +35,6 @@ public class InstanceManager implements Facet, Enableable {
     @Inject
     private InstanceRunnable instanceRunnable;
     @Inject
-    private ServerInformer serverInformer;
-    @Inject
     private Kube kubeApi;
 
     @Inject
@@ -81,8 +79,7 @@ public class InstanceManager implements Facet, Enableable {
 
     public void removeInstance(@NonNull Server server, @NonNull Reason reason) {
         if (kubeConfiguration.isKubernetes()) {
-            serverManager.getServerList().removeIf(srv -> srv.getId().equals(server.getId()));
-            serverInformer.remove(server.getId(), true);
+            serverManager.remove(server.getId(), false);
             kubeApi.deletePod(server.getId());
         }
     }
@@ -124,7 +121,7 @@ public class InstanceManager implements Facet, Enableable {
                         .build();
 
                 if (kubeApi.createPod(server)) {
-                    serverManager.getServerList().add(server);
+                    serverManager.add(server, true);
                 }
             }
         }

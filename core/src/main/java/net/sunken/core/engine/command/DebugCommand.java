@@ -29,10 +29,6 @@ public class DebugCommand extends BukkitCommand {
         commandSender.sendMessage(String.format("State: %s", engineManager.getCurrentGameState().getClass().getSimpleName()));
         commandSender.sendMessage(String.format("GameMode: %s", engineManager.getGameMode().toString()));
 
-        commandSender.sendMessage("---- SERVER MANAGER ----");
-        commandSender.sendMessage(String.format("serverList count: %s", serverManager.getServerList().size()));
-        commandSender.sendMessage(String.format("serverList: %s", serverManager.getServerList().toString()));
-
         commandSender.sendMessage("---- PLAYER MANAGER ----");
         commandSender.sendMessage(String.format("onlinePlayers count: %s", playerManager.getOnlinePlayers().size()));
         commandSender.sendMessage(String.format("onlinePlayers: %s", playerManager.getOnlinePlayers().toString()));

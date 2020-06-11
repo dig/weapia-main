@@ -9,7 +9,7 @@ import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerHelper;
-import net.sunken.common.server.ServerInformer;
+import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.server.packet.ServerHeartbeatPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.config.InstanceConfiguration;
@@ -30,7 +30,7 @@ public class PluginInform implements Facet, Enableable, Listener {
     @Inject @InjectConfig
     private InstanceConfiguration instanceConfiguration;
     @Inject
-    private ServerInformer serverInformer;
+    private ServerManager serverManager;
     @Inject
     private JavaPlugin javaPlugin;
     @Inject
@@ -49,20 +49,20 @@ public class PluginInform implements Facet, Enableable, Listener {
         }
 
         server = Server.builder()
-                    .id(instanceConfiguration.getId())
-                    .type(instanceConfiguration.getType())
-                    .host(javaPlugin.getServer().getIp())
-                    .port(javaPlugin.getServer().getPort())
-                    .game(instanceConfiguration.getGame())
-                    .world(instanceConfiguration.getWorld())
-                    .players(Bukkit.getOnlinePlayers().size())
-                    .maxPlayers(instanceConfiguration.getGame().getMaxPlayers())
-                    .state(Server.State.PENDING)
-                    .metadata(metadata)
-                    .build();
+            .id(instanceConfiguration.getId())
+            .type(instanceConfiguration.getType())
+            .host(javaPlugin.getServer().getIp())
+            .port(javaPlugin.getServer().getPort())
+            .game(instanceConfiguration.getGame())
+            .world(instanceConfiguration.getWorld())
+            .players(Bukkit.getOnlinePlayers().size())
+            .maxPlayers(instanceConfiguration.getGame().getMaxPlayers())
+            .state(Server.State.PENDING)
+            .metadata(metadata)
+            .build();
 
         packetHandlerRegistry.registerHandler(ServerHeartbeatPacket.class, serverHeartbeatHandler);
-        serverInformer.add(server, true);
+        serverManager.add(server, false);
     }
 
     @Override
@@ -72,22 +72,22 @@ public class PluginInform implements Facet, Enableable, Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         server.setPlayers(Bukkit.getOnlinePlayers().size());
-        AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
+        AsyncHelper.executor().submit(() -> serverManager.update(server, true));
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         server.setPlayers(Bukkit.getOnlinePlayers().size() - 1);
-        AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
+        AsyncHelper.executor().submit(() -> serverManager.update(server, true));
     }
 
     public void setState(Server.State state) {
         server.setState(state);
-        serverInformer.update(server, true);
+        serverManager.update(server, true);
     }
 
     public void remove() {
-        serverInformer.remove(server.getId(), true);
+        serverManager.remove(server.getId(), false);
     }
 
 }

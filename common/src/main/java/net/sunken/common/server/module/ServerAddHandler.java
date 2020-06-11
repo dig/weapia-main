@@ -30,10 +30,8 @@ public class ServerAddHandler extends PacketHandler<ServerAddPacket> {
             try (Jedis jedis = redisConnection.getConnection()) {
                 Map<String, String> kv = jedis.hgetAll(ServerHelper.SERVER_STORAGE_KEY + ":" + packet.getId());
                 Server server = ServerHelper.from(kv);
-                
-                serverManager.getServerList().removeIf(srv -> srv.getId().equals(packet.getId()));
-                serverManager.getServerList().add(server);
 
+                serverManager.add(server, true);
                 eventManager.callEvent(new ServerAddedEvent(server));
             }
         });

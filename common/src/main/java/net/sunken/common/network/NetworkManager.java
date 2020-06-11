@@ -92,6 +92,8 @@ public class NetworkManager implements Facet, Enableable {
 
                 playerCache.put(playerDetail.getUuid(), playerDetail);
                 nameCache.put(playerDetail.getDisplayName(), playerDetail.getUuid());
+
+                log.info(String.format("Loaded player %s", playerDetail.toRedis()));
             }
         }
 

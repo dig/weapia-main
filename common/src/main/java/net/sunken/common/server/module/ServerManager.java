@@ -59,8 +59,6 @@ public class ServerManager implements Facet, Enableable {
     @Override
     public void enable() {
         try (Jedis jedis = redisConnection.getConnection()) {
-            Set<Server> scannedServerList = Sets.newLinkedHashSet();
-
             ScanParams params = new ScanParams();
             params.count(200);
             params.match(ServerHelper.SERVER_STORAGE_KEY + ":*");
@@ -70,13 +68,9 @@ public class ServerManager implements Facet, Enableable {
 
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
-
-                Server server = fromRedis(kv);
-                scannedServerList.add(server);
-                log.info(String.format("Loaded server (%s)", server.toString()));
+                Server server = ServerHelper.from(kv);
+                serverList.add(server);
             }
-
-            serverList = scannedServerList;
         }
 
         packetHandlerRegistry.registerHandler(ServerAddPacket.class, serverAddHandler);
@@ -87,31 +81,6 @@ public class ServerManager implements Facet, Enableable {
 
     @Override
     public void disable() {
-    }
-
-    public Server fromRedis(Map<String, String> kv) {
-        Server.Type type = Server.Type.valueOf(kv.get(ServerHelper.SERVER_TYPE_KEY));
-        Game game = Game.valueOf(kv.get(ServerHelper.SERVER_GAME_KEY));
-
-        Map<String, String> metadata = new HashMap<>();
-        for (String key : ServerHelper.SERVER_METADATA_KEYS) {
-            if (kv.containsKey(key)) {
-                metadata.put(key, kv.get(key));
-            }
-        }
-
-        return Server.builder()
-                .id(kv.get(ServerHelper.SERVER_ID_KEY))
-                .type(type)
-                .host(kv.get(ServerHelper.SERVER_HOST_KEY))
-                .port(Integer.parseInt(kv.get(ServerHelper.SERVER_PORT_KEY)))
-                .game(game)
-                .world(World.valueOf(kv.get(ServerHelper.SERVER_WORLD_KEY)))
-                .players(Integer.parseInt(kv.get(ServerHelper.SERVER_PLAYERS_KEY)))
-                .maxPlayers(Integer.parseInt(kv.get(ServerHelper.SERVER_MAXPLAYERS_KEY)))
-                .state(Server.State.valueOf(kv.get(ServerHelper.SERVER_STATE_KEY)))
-                .metadata(metadata)
-                .build();
     }
 
     public Optional<Server> findServerById(@NonNull String id) {

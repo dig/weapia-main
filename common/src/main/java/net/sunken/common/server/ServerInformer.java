@@ -18,24 +18,7 @@ public class ServerInformer {
 
     public void add(Server server, boolean notify) {
         try (Jedis jedis = redisConnection.getConnection()) {
-            ImmutableMap.Builder<String, String> serverKeysBuilder = ImmutableMap.<String, String>builder()
-                    .put(ServerHelper.SERVER_ID_KEY, server.getId())
-                    .put(ServerHelper.SERVER_TYPE_KEY, server.getType().toString())
-                    .put(ServerHelper.SERVER_GAME_KEY, server.getGame().toString())
-                    .put(ServerHelper.SERVER_WORLD_KEY, server.getWorld().toString())
-                    .put(ServerHelper.SERVER_HOST_KEY, server.getHost())
-                    .put(ServerHelper.SERVER_PORT_KEY, String.valueOf(server.getPort()))
-                    .put(ServerHelper.SERVER_PLAYERS_KEY, String.valueOf(server.getPlayers()))
-                    .put(ServerHelper.SERVER_MAXPLAYERS_KEY, String.valueOf(server.getMaxPlayers()))
-                    .put(ServerHelper.SERVER_STATE_KEY, server.getState().toString());
-
-            for (String key : ServerHelper.SERVER_METADATA_KEYS) {
-                if (server.getMetadata().containsKey(key)) {
-                    serverKeysBuilder.put(key, server.getMetadata().get(key));
-                }
-            }
-
-            jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), serverKeysBuilder.build());
+            jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), server.toRedis());
         }
 
         if (notify) {

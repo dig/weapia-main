@@ -1,4 +1,4 @@
-package net.sunken.master.network;
+package net.sunken.common.network;
 
 import com.google.inject.AbstractModule;
 import net.sunken.common.inject.PluginFacetBinder;

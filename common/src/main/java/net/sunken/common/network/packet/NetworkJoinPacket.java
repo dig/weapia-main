@@ -1,4 +1,4 @@
-package net.sunken.common.player.packet;
+package net.sunken.common.network.packet;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,8 +13,9 @@ import net.sunken.common.player.PlayerDetail;
  */
 @Getter
 @AllArgsConstructor
-public class PlayerProxyJoinPacket extends Packet {
+public class NetworkJoinPacket extends Packet {
 
     private PlayerDetail player;
 
 }
+

@@ -1,6 +1,8 @@
 package net.sunken.common.server;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.*;
+import net.sunken.common.database.RedisSerializable;
 
 import java.net.InetSocketAddress;
 import java.security.SecureRandom;
@@ -9,7 +11,7 @@ import java.util.Map;
 @Builder
 @ToString
 @AllArgsConstructor
-public class Server {
+public class Server implements RedisSerializable {
 
     @Getter
     private final String id;
@@ -49,6 +51,28 @@ public class Server {
 
     public boolean canHeartbeatCheck() {
         return this.state != State.PENDING && this.type.isHeartbeatCheck();
+    }
+
+    @Override
+    public Map<String, String> toRedis() {
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder()
+                .put(ServerHelper.SERVER_ID_KEY, id)
+                .put(ServerHelper.SERVER_TYPE_KEY, type.toString())
+                .put(ServerHelper.SERVER_GAME_KEY, game.toString())
+                .put(ServerHelper.SERVER_WORLD_KEY, world.toString())
+                .put(ServerHelper.SERVER_HOST_KEY, host)
+                .put(ServerHelper.SERVER_PORT_KEY, String.valueOf(port))
+                .put(ServerHelper.SERVER_PLAYERS_KEY, String.valueOf(players))
+                .put(ServerHelper.SERVER_MAXPLAYERS_KEY, String.valueOf(maxPlayers))
+                .put(ServerHelper.SERVER_STATE_KEY, state.toString());
+
+        for (String key : ServerHelper.SERVER_METADATA_KEYS) {
+            if (metadata.containsKey(key)) {
+                builder.put(key, metadata.get(key));
+            }
+        }
+
+        return builder.build();
     }
 
     @Getter

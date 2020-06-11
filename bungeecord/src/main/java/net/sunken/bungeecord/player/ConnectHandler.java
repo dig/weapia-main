@@ -16,6 +16,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.sunken.bungeecord.Constants;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.network.NetworkManager;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.packet.expectation.ExpectationFactory;
@@ -39,6 +40,8 @@ public class ConnectHandler implements Facet, Listener, Enableable {
 
     @Inject
     private PlayerManager playerManager;
+    @Inject
+    private NetworkManager networkManager;
     @Inject
     private ServerManager serverManager;
     @Inject
@@ -116,9 +119,8 @@ public class ConnectHandler implements Facet, Listener, Enableable {
             BungeePlayer bungeePlayer = pendingPlayerConnection.getIfPresent(player.getUniqueId());
 
             playerManager.add(bungeePlayer);
+            AsyncHelper.executor().submit(() -> networkManager.add(bungeePlayer.toPlayerDetail(), false));
             pendingPlayerConnection.invalidate(player.getUniqueId());
-
-            packetUtil.send(new PlayerProxyJoinPacket(bungeePlayer.toPlayerDetail()));
         }
 
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());

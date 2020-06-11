@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.network.packet.NetworkQuitPacket;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.*;
@@ -19,7 +20,7 @@ import net.sunken.master.instance.InstanceDetail;
 import net.sunken.master.instance.InstanceManager;
 import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
-import net.sunken.master.queue.handler.PlayerProxyQuitHandler;
+import net.sunken.master.queue.handler.NetworkQuitHandler;
 import net.sunken.master.queue.handler.PlayerRequestServerHandler;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.master.queue.handler.PlayerRequestServerIDHandler;
@@ -42,7 +43,7 @@ public class QueueManager implements Facet, Enableable {
     @Inject
     private PlayerSaveStateHandler playerSaveStateHandler;
     @Inject
-    private PlayerProxyQuitHandler playerProxyQuitHandler;
+    private NetworkQuitHandler playerProxyQuitHandler;
     @Inject
     private PlayerRequestServerIDHandler playerRequestServerIDHandler;
 
@@ -68,9 +69,9 @@ public class QueueManager implements Facet, Enableable {
             gameQueue.put(game, Queues.newConcurrentLinkedQueue());
         }
 
+        packetHandlerRegistry.registerHandler(NetworkQuitPacket.class, playerProxyQuitHandler);
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
-        packetHandlerRegistry.registerHandler(PlayerProxyQuitPacket.class, playerProxyQuitHandler);
         packetHandlerRegistry.registerHandler(PlayerRequestServerIDPacket.class, playerRequestServerIDHandler);
 
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(queueRunnable, 200L, 200L, TimeUnit.MILLISECONDS);

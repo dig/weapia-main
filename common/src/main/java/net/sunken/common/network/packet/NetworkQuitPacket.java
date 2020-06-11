@@ -1,8 +1,9 @@
-package net.sunken.common.player.packet;
+package net.sunken.common.network.packet;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.sunken.common.packet.Packet;
+import net.sunken.common.player.PlayerDetail;
 
 import java.util.UUID;
 
@@ -14,8 +15,8 @@ import java.util.UUID;
  */
 @Getter
 @AllArgsConstructor
-public class PlayerProxyQuitPacket extends Packet {
+public class NetworkQuitPacket extends Packet {
 
-    private UUID uuid;
+    private PlayerDetail player;
 
 }

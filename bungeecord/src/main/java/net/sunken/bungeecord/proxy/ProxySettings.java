@@ -12,7 +12,6 @@ import net.sunken.common.database.RedisConnection;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
-import net.sunken.common.util.AsyncHelper;
 import redis.clients.jedis.Jedis;
 
 import javax.imageio.ImageIO;
@@ -33,19 +32,15 @@ public class ProxySettings implements Facet, Enableable {
     private ProxyUpdateHandler proxyUpdateHandler;
 
     @Getter @Setter
-    private String motdTopLine;
+    private String motdTopLine = Constants.DEFAULT_PING_TOP_LINE;
     @Getter @Setter
-    private String motdBottomLine;
+    private String motdBottomLine = Constants.DEFAULT_PING_BOTTOM_LINE;
     @Getter @Setter
-    private boolean motdCentered;
+    private boolean motdCentered = false;
     @Getter @Setter
     private BufferedImage favicon;
 
     public ProxySettings() {
-        motdTopLine = Constants.DEFAULT_PING_TOP_LINE;
-        motdBottomLine = Constants.DEFAULT_PING_BOTTOM_LINE;
-        motdCentered = false;
-
         try {
             favicon = ImageIO.read(new File("config/favicon.png"));
         } catch (IOException e) {
@@ -59,9 +54,9 @@ public class ProxySettings implements Facet, Enableable {
             Map<String, String> kv = jedis.hgetAll(ProxyHelper.PROXY_STORAGE_KEY + ":" + ProxyHelper.PROXY_SETTINGS_KEY);
 
             if (kv.size() > 0) {
-                setMotdTopLine(kv.get(ProxyHelper.PROXY_SETTINGS_MOTDTOPLINE_KEY));
-                setMotdBottomLine(kv.get(ProxyHelper.PROXY_SETTINGS_MOTDBOTTOMLINE_KEY));
-                setMotdCentered(Boolean.valueOf(kv.get(ProxyHelper.PROXY_SETTINGS_MOTDCENTERED_KEY)));
+                motdTopLine = kv.get(ProxyHelper.PROXY_SETTINGS_MOTDTOPLINE_KEY);
+                motdBottomLine = kv.get(ProxyHelper.PROXY_SETTINGS_MOTDBOTTOMLINE_KEY);
+                motdCentered = Boolean.valueOf(kv.get(ProxyHelper.PROXY_SETTINGS_MOTDCENTERED_KEY));
             }
         }
 

@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class InstanceManager implements Facet, Enableable {
 
     @Getter
-    private Queue<InstanceDetail> pendingInstanceCreation;
+    private Queue<InstanceDetail> pendingInstanceCreation = Queues.newConcurrentLinkedQueue();
 
     @Inject
     private ServerManager serverManager;
@@ -49,9 +49,7 @@ public class InstanceManager implements Facet, Enableable {
 
     @Override
     public void enable() {
-        pendingInstanceCreation = Queues.newConcurrentLinkedQueue();
         packetHandlerRegistry.registerHandler(RequestServerCreationPacket.class, requestServerCreationHandler);
-
         if (kubeConfiguration.isKubernetes()) {
             AsyncHelper.scheduledExecutor().scheduleAtFixedRate(instanceRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
         }

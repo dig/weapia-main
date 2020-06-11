@@ -1,5 +1,6 @@
 package net.sunken.master.network;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.Getter;
@@ -13,11 +14,9 @@ import net.sunken.common.player.packet.PlayerProxyQuitPacket;
 import net.sunken.master.network.handler.PlayerProxyJoinHandler;
 import net.sunken.master.network.handler.PlayerProxyQuitHandler;
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class NetworkManager implements Facet, Enableable {
@@ -30,11 +29,7 @@ public class NetworkManager implements Facet, Enableable {
     private PlayerProxyQuitHandler playerProxyQuitHandler;
 
     @Getter
-    private Set<PlayerDetail> onlinePlayers;
-
-    public NetworkManager() {
-        this.onlinePlayers = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    }
+    private Set<PlayerDetail> onlinePlayers = Sets.newConcurrentHashSet();
 
     public void add(@NonNull PlayerDetail abstractPlayer) {
         onlinePlayers.add(abstractPlayer);

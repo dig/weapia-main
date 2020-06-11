@@ -43,7 +43,7 @@ public class ServerManager implements Facet, Enableable {
     private ServerConnectedHandler serverConnectedHandler;
 
     @Getter
-    private Set<Server> serverList = ImmutableSet.of();
+    private Set<Server> serverList = Sets.newConcurrentHashSet();
     @Getter
     private Cache<UUID, ServerDetail> pendingPlayerConnection;
 

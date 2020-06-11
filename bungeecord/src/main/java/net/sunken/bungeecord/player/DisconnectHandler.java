@@ -36,8 +36,6 @@ public class DisconnectHandler implements Facet, Listener {
 
                 networkManager.remove(bungeePlayer.toPlayerDetail(), false);
                 playerManager.remove(bungeePlayer.getUuid());
-
-                log.info(String.format("removing %s", bungeePlayer.getUuid().toString()));
             });
         }
     }

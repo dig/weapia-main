@@ -20,8 +20,6 @@ import net.sunken.common.util.DummyObject;
 import net.sunken.common.util.RedisUtil;
 import net.sunken.master.party.handler.*;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;

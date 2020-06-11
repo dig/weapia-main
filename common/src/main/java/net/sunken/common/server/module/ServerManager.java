@@ -19,9 +19,8 @@ import net.sunken.common.server.packet.ServerAddPacket;
 import net.sunken.common.server.packet.ServerConnectedPacket;
 import net.sunken.common.server.packet.ServerRemovePacket;
 import net.sunken.common.server.packet.ServerUpdatePacket;
+import net.sunken.common.util.RedisUtil;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -230,13 +229,7 @@ public class ServerManager implements Facet, Enableable {
     @Override
     public void enable() {
         try (Jedis jedis = redisConnection.getConnection()) {
-            ScanParams params = new ScanParams();
-            params.count(200);
-            params.match(ServerHelper.SERVER_STORAGE_KEY + ":*");
-
-            ScanResult<String> scanResult = jedis.scan("0", params);
-            List<String> keys = scanResult.getResult();
-
+            Set<String> keys = RedisUtil.scanAll(jedis, ServerHelper.SERVER_STORAGE_KEY + ":*");
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
                 Server server = ServerHelper.from(kv);

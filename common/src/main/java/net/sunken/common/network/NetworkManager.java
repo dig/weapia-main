@@ -15,14 +15,10 @@ import net.sunken.common.network.packet.NetworkQuitPacket;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.PlayerDetail;
+import net.sunken.common.util.RedisUtil;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ScanParams;
-import redis.clients.jedis.ScanResult;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Log
 @Singleton
@@ -82,13 +78,7 @@ public class NetworkManager implements Facet, Enableable {
     @Override
     public void enable() {
         try (Jedis jedis = redisConnection.getConnection()) {
-            ScanParams params = new ScanParams();
-            params.count(200);
-            params.match(NetworkHelper.NETWORK_PLAYER_STORAGE_KEY + ":*");
-
-            ScanResult<String> scanResult = jedis.scan("0", params);
-            List<String> keys = scanResult.getResult();
-
+            Set<String> keys = RedisUtil.scanAll(jedis, NetworkHelper.NETWORK_PLAYER_STORAGE_KEY + ":*");
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
                 PlayerDetail playerDetail = NetworkHelper.from(kv);

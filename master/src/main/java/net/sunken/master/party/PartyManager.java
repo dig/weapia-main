@@ -17,6 +17,7 @@ import net.sunken.common.party.packet.*;
 import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.Rank;
 import net.sunken.common.util.DummyObject;
+import net.sunken.common.util.RedisUtil;
 import net.sunken.master.party.handler.*;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ScanParams;
@@ -69,23 +70,12 @@ public class PartyManager implements Facet, Enableable {
     @Override
     public void enable() {
         try (Jedis jedis = redisConnection.getConnection()) {
-            ScanParams params = new ScanParams()
-                    .count(200)
-                    .match(PartyHelper.PARTY_STORAGE_KEY + ":*");
-
-            ScanResult<String> scanResult = jedis.scan("0", params);
-            List<String> keys = scanResult.getResult();
+            Set<String> keys = RedisUtil.scanAll(jedis, PartyHelper.PARTY_STORAGE_KEY + ":*");
 
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
                 Party party = fromRedis(kv);
-
-                ScanParams membersParams = new ScanParams()
-                        .count(200)
-                        .match(PartyHelper.PARTY_MEMBERS_STORAGE_KEY + ":" + party.getUuid().toString() + ":*");
-
-                ScanResult<String> membersScanResult = jedis.scan("0", membersParams);
-                List<String> membersKeys = membersScanResult.getResult();
+                Set<String> membersKeys = RedisUtil.scanAll(jedis, PartyHelper.PARTY_MEMBERS_STORAGE_KEY + ":" + party.getUuid().toString() + ":*");
 
                 for (String memberKey : membersKeys) {
                     Map<String, String> memberKV = jedis.hgetAll(memberKey);
@@ -93,7 +83,6 @@ public class PartyManager implements Facet, Enableable {
 
                     party.getMembers().add(playerDetail);
                     log.info(String.format("Loaded party member (%s, %s, %s)", party.getUuid().toString(), playerDetail.getUuid().toString(), playerDetail.getDisplayName()));
-
                 }
 
                 parties.put(party.getUuid(), party);
@@ -114,25 +103,13 @@ public class PartyManager implements Facet, Enableable {
     @Override
     public void disable() {
         try (Jedis jedis = redisConnection.getConnection()) {
-            //--- Delete all parties
-            ScanParams params = new ScanParams()
-                    .count(200)
-                    .match(PartyHelper.PARTY_STORAGE_KEY + ":*");
-
-            ScanResult<String> scanResult = jedis.scan("0", params);
-            List<String> keys = scanResult.getResult();
+            Set<String> keys = RedisUtil.scanAll(jedis, PartyHelper.PARTY_STORAGE_KEY + ":*");
+            Set<String> memberKeys = RedisUtil.scanAll(jedis, PartyHelper.PARTY_MEMBERS_STORAGE_KEY + ":*");
 
             if (keys.size() > 0) jedis.del(keys.toArray(new String[keys.size()]));
-
-            //--- Delete all members
-            params.match(PartyHelper.PARTY_MEMBERS_STORAGE_KEY + ":*");
-            ScanResult<String> memberScanResult = jedis.scan("0", params);
-            List<String> memberKeys = memberScanResult.getResult();
-
             if (memberKeys.size() > 0) jedis.del(memberKeys.toArray(new String[memberKeys.size()]));
 
             for (Party party : parties.values()) {
-                //--- Save party
                 ImmutableMap.Builder<String, String> partyDataBuilder = ImmutableMap.<String, String>builder()
                         .put(PartyHelper.PARTY_UUID_KEY, party.getUuid().toString())
                         .put(PartyHelper.PARTY_CREATED_KEY, party.getCreated().toString())
@@ -140,7 +117,6 @@ public class PartyManager implements Facet, Enableable {
 
                 jedis.hmset(PartyHelper.PARTY_STORAGE_KEY + ":" + party.getUuid().toString(), partyDataBuilder.build());
 
-                //--- Save members
                 for (PlayerDetail playerDetail : party.getMembers()) {
                     ImmutableMap.Builder<String, String> partyMemberBuilder = ImmutableMap.<String, String>builder()
                             .put(PartyHelper.PARTY_MEMBERS_UUID_KEY, playerDetail.getUuid().toString())

@@ -2,6 +2,7 @@ package net.sunken.master.party;
 
 import com.google.common.cache.*;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,6 @@ import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -52,12 +52,11 @@ public class PartyManager implements Facet, Enableable {
     @Inject
     private PartyKickHandler partyKickHandler;
 
-    private Set<Party> parties;
+    private Map<UUID, Party> parties = Maps.newConcurrentMap();
     private Cache<PartyInvite, DummyObject> partyPendingInvites;
 
     public PartyManager() {
-        this.parties = Collections.newSetFromMap(new ConcurrentHashMap<>());
-        this.partyPendingInvites = CacheBuilder.newBuilder()
+        partyPendingInvites = CacheBuilder.newBuilder()
                 .expireAfterWrite(20, TimeUnit.SECONDS)
                 .removalListener((RemovalListener<PartyInvite, DummyObject>) notification -> {
                     if (notification.getCause() == RemovalCause.EXPIRED) {
@@ -97,7 +96,7 @@ public class PartyManager implements Facet, Enableable {
 
                 }
 
-                parties.add(party);
+                parties.put(party.getUuid(), party);
                 log.info(String.format("Loaded party (%s)", party.toString()));
             }
         }
@@ -132,7 +131,7 @@ public class PartyManager implements Facet, Enableable {
 
             if (memberKeys.size() > 0) jedis.del(memberKeys.toArray(new String[memberKeys.size()]));
 
-            for (Party party : parties) {
+            for (Party party : parties.values()) {
                 //--- Save party
                 ImmutableMap.Builder<String, String> partyDataBuilder = ImmutableMap.<String, String>builder()
                         .put(PartyHelper.PARTY_UUID_KEY, party.getUuid().toString())
@@ -182,7 +181,7 @@ public class PartyManager implements Facet, Enableable {
         }
 
         Party party = new Party(leader);
-        parties.add(party);
+        parties.put(party.getUuid(), party);
 
         return PartyCreateResponsePacket.PartyCreateStatus.SUCCESS;
     }
@@ -263,13 +262,11 @@ public class PartyManager implements Facet, Enableable {
     }
 
     public Optional<Party> findPartyByUUID(@NonNull UUID uuid) {
-        return parties.stream()
-                .filter(party -> party.getUuid().equals(uuid))
-                .findFirst();
+        return Optional.ofNullable(parties.get(uuid));
     }
 
     public Optional<Party> findPartyByMember(@NonNull UUID uuid) {
-        for (Party party : parties) {
+        for (Party party : parties.values()) {
             for (PlayerDetail playerDetail : party.getMembers()) {
                 if (playerDetail.getUuid().equals(uuid)) return Optional.of(party);
             }
@@ -279,7 +276,7 @@ public class PartyManager implements Facet, Enableable {
     }
 
     public Optional<Party> findPartyByMember(@NonNull String displayName) {
-        for (Party party : parties) {
+        for (Party party : parties.values()) {
             for (PlayerDetail playerDetail : party.getMembers()) {
                 if (playerDetail.getDisplayName().equals(displayName)) return Optional.of(party);
             }

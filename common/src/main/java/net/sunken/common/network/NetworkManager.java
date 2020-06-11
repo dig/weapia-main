@@ -73,7 +73,10 @@ public class NetworkManager implements Facet, Enableable {
 
     public Optional<PlayerDetail> get(@NonNull String displayName) {
         UUID uuid = nameCache.get(displayName);
-        return Optional.ofNullable(playerCache.get(uuid));
+        if (uuid != null) {
+            return Optional.ofNullable(playerCache.get(uuid));
+        }
+        return Optional.empty();
     }
 
     @Override

@@ -7,7 +7,6 @@ import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.server.packet.ServerAddPacket;
 import net.sunken.common.server.packet.ServerRemovePacket;
 import net.sunken.common.server.packet.ServerUpdatePacket;
-import net.sunken.common.util.AsyncHelper;
 import redis.clients.jedis.Jedis;
 
 public class ServerInformer {
@@ -17,7 +16,7 @@ public class ServerInformer {
     @Inject
     private PacketUtil packetUtil;
 
-    public void add(Server server, boolean sendPacket) {
+    public void add(Server server, boolean notify) {
         try (Jedis jedis = redisConnection.getConnection()) {
             ImmutableMap.Builder<String, String> serverKeysBuilder = ImmutableMap.<String, String>builder()
                     .put(ServerHelper.SERVER_ID_KEY, server.getId())
@@ -40,12 +39,12 @@ public class ServerInformer {
             jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), serverKeysBuilder.build());
         }
 
-        if (sendPacket) {
+        if (notify) {
             packetUtil.send(new ServerAddPacket(server.getId()));
         }
     }
 
-    public void update(Server server, boolean sendPacket) {
+    public void update(Server server, boolean notify) {
         try (Jedis jedis = redisConnection.getConnection()) {
             ImmutableMap.Builder<String, String> serverKeysBuilder = ImmutableMap.<String, String>builder()
                     .put(ServerHelper.SERVER_PLAYERS_KEY, String.valueOf(server.getPlayers()))
@@ -54,12 +53,12 @@ public class ServerInformer {
             jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), serverKeysBuilder.build());
         }
 
-        if (sendPacket) {
+        if (notify) {
             packetUtil.send(new ServerUpdatePacket(server.getId(), ServerUpdatePacket.Type.SERVER));
         }
     }
 
-    public void updateMetadata(Server server, boolean sendPacket) {
+    public void updateMetadata(Server server, boolean notify) {
         try (Jedis jedis = redisConnection.getConnection()) {
             ImmutableMap.Builder<String, String> serverKeysBuilder = ImmutableMap.<String, String>builder();
 
@@ -72,17 +71,17 @@ public class ServerInformer {
             jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), serverKeysBuilder.build());
         }
 
-        if (sendPacket) {
+        if (notify) {
             packetUtil.send(new ServerUpdatePacket(server.getId(), ServerUpdatePacket.Type.METADATA));
         }
     }
 
-    public void remove(String id, boolean sendPacket) {
+    public void remove(String id, boolean notify) {
         try (Jedis jedis = redisConnection.getConnection()) {
             jedis.del(ServerHelper.SERVER_STORAGE_KEY + ":" + id);
         }
 
-        if (sendPacket) {
+        if (notify) {
             packetUtil.send(new ServerRemovePacket(id));
         }
     }

@@ -118,8 +118,8 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         if (pendingPlayerConnection.getIfPresent(player.getUniqueId()) != null) {
             BungeePlayer bungeePlayer = pendingPlayerConnection.getIfPresent(player.getUniqueId());
 
-            playerManager.add(bungeePlayer);
             AsyncHelper.executor().submit(() -> networkManager.add(bungeePlayer.toPlayerDetail(), false));
+            playerManager.add(bungeePlayer);
             pendingPlayerConnection.invalidate(player.getUniqueId());
         }
 

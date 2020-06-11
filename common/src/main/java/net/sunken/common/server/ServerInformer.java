@@ -29,7 +29,6 @@ public class ServerInformer {
                     .put(ServerHelper.SERVER_MAXPLAYERS_KEY, String.valueOf(server.getMaxPlayers()))
                     .put(ServerHelper.SERVER_STATE_KEY, server.getState().toString());
 
-            //--- Metadata
             for (String key : ServerHelper.SERVER_METADATA_KEYS) {
                 if (server.getMetadata().containsKey(key)) {
                     serverKeysBuilder.put(key, server.getMetadata().get(key));

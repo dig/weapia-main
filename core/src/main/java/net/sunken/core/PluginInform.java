@@ -7,14 +7,14 @@ import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
-import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerHelper;
-import net.sunken.common.server.ServerInformer;
+import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.server.packet.ServerHeartbeatPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.config.InstanceConfiguration;
 import net.sunken.core.heartbeat.ServerHeartbeatHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -30,7 +30,7 @@ public class PluginInform implements Facet, Enableable, Listener {
     @Inject @InjectConfig
     private InstanceConfiguration instanceConfiguration;
     @Inject
-    private ServerInformer serverInformer;
+    private ServerManager serverManager;
     @Inject
     private JavaPlugin javaPlugin;
     @Inject
@@ -44,46 +44,50 @@ public class PluginInform implements Facet, Enableable, Listener {
     @Override
     public void enable() {
         Map<String, String> metadata = new HashMap<>();
-        if (instanceConfiguration.getMetadataId().isPresent())
+        if (instanceConfiguration.getMetadataId().isPresent()) {
             metadata.put(ServerHelper.SERVER_METADATA_ID_KEY, instanceConfiguration.getMetadataId().get());
+        }
 
         server = Server.builder()
-                    .id(instanceConfiguration.getId())
-                    .type(instanceConfiguration.getType())
-                    .host(javaPlugin.getServer().getIp())
-                    .port(javaPlugin.getServer().getPort())
-                    .game(instanceConfiguration.getGame())
-                    .world(instanceConfiguration.getWorld())
-                    .players(javaPlugin.getServer().getOnlinePlayers().size())
-                    .maxPlayers(instanceConfiguration.getGame().getMaxPlayers())
-                    .state(Server.State.PENDING)
-                    .metadata(metadata)
-                    .build();
+            .id(instanceConfiguration.getId())
+            .type(instanceConfiguration.getType())
+            .host(javaPlugin.getServer().getIp())
+            .port(javaPlugin.getServer().getPort())
+            .game(instanceConfiguration.getGame())
+            .world(instanceConfiguration.getWorld())
+            .players(Bukkit.getOnlinePlayers().size())
+            .maxPlayers(instanceConfiguration.getGame().getMaxPlayers())
+            .state(Server.State.PENDING)
+            .metadata(metadata)
+            .build();
 
-        serverInformer.add(server, true);
         packetHandlerRegistry.registerHandler(ServerHeartbeatPacket.class, serverHeartbeatHandler);
+        serverManager.add(server, false);
     }
 
     @Override
     public void disable() {
-        serverInformer.remove(server.getId(), true);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        server.setPlayers(javaPlugin.getServer().getOnlinePlayers().size());
-        AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
+        server.setPlayers(Bukkit.getOnlinePlayers().size());
+        AsyncHelper.executor().submit(() -> serverManager.update(server, true));
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        server.setPlayers(javaPlugin.getServer().getOnlinePlayers().size() - 1);
-        AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
+        server.setPlayers(Bukkit.getOnlinePlayers().size() - 1);
+        AsyncHelper.executor().submit(() -> serverManager.update(server, true));
     }
 
     public void setState(Server.State state) {
         server.setState(state);
-        serverInformer.update(server, true);
+        serverManager.update(server, true);
+    }
+
+    public void remove() {
+        serverManager.remove(server.getId(), false);
     }
 
 }

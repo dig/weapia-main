@@ -20,16 +20,13 @@ public class BungeePlayer extends AbstractPlayer {
     @Getter @Setter
     private Optional<ServerDetail> serverTarget;
 
-    private String lastSentMessage;
-    private Long lastSentMessageTime;
+    private String lastSentMessage = "";
+    private Long lastSentMessageTime = 0L;
 
     public BungeePlayer(@NonNull UUID uuid, @NonNull String username) {
         super(uuid, username);
         this.serverConnectedTo = Optional.empty();
         this.serverTarget = Optional.empty();
-
-        this.lastSentMessage = "";
-        this.lastSentMessageTime = 0L;
     }
 
     public BungeePlayer(@NonNull ProxiedPlayer proxiedPlayer) {
@@ -70,11 +67,9 @@ public class BungeePlayer extends AbstractPlayer {
     }
 
     public boolean canSendMessage(String newMessage, Long delay) {
-        if (lastSentMessage.equalsIgnoreCase(newMessage))
+        if (lastSentMessage.equalsIgnoreCase(newMessage) || System.currentTimeMillis() < (lastSentMessageTime + delay)) {
             return false;
-
-        if (System.currentTimeMillis() < (lastSentMessageTime + delay))
-            return false;
+        }
 
         lastSentMessage = newMessage;
         lastSentMessageTime = System.currentTimeMillis();

@@ -22,8 +22,6 @@ public abstract class Core extends JavaPlugin {
     protected PluginInform pluginInform;
     protected PacketUtil packetUtil;
 
-    private boolean shutdown = false;
-
     public void onEnable(PluginModule pluginModule) {
         injector = Guice.createInjector(pluginModule);
 
@@ -40,33 +38,32 @@ public abstract class Core extends JavaPlugin {
     @Override
     public void onDisable() {
         pluginFacetLoader.stop();
-        redisConnection.disconnect();
     }
 
-    public void handleGraceShutdown() {
-        if (!shutdown) {
-            shutdown = true;
+    private void handleGraceShutdown() {
+        if (pluginInform.getServer().getState() != Server.State.CLOSED) {
             pluginInform.setState(Server.State.CLOSED);
+        }
 
-            Bukkit.getOnlinePlayers().forEach(player -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
+        Bukkit.getOnlinePlayers().forEach(player -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
 
-            int iterations = 0;
-            while (Bukkit.getOnlinePlayers().size() > 0) {
-                if (iterations >= (20 * 10)) {
-                    break;
-                }
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                iterations++;
+        int iterations = 0;
+        while (!Bukkit.getOnlinePlayers().isEmpty()) {
+            if (iterations >= (20 * 10)) {
+                break;
             }
 
-            Bukkit.shutdown();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            iterations++;
         }
+
+        pluginInform.remove();
+        redisConnection.disconnect();
     }
 
 }

@@ -8,7 +8,6 @@ import net.sunken.common.packet.PacketHandler;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerHelper;
 import net.sunken.common.server.module.event.ServerAddedEvent;
-import net.sunken.common.server.module.event.ServerUpdatedEvent;
 import net.sunken.common.server.packet.ServerAddPacket;
 import net.sunken.common.util.AsyncHelper;
 import redis.clients.jedis.Jedis;
@@ -30,13 +29,10 @@ public class ServerAddHandler extends PacketHandler<ServerAddPacket> {
         AsyncHelper.executor().submit(() -> {
             try (Jedis jedis = redisConnection.getConnection()) {
                 Map<String, String> kv = jedis.hgetAll(ServerHelper.SERVER_STORAGE_KEY + ":" + packet.getId());
-                Server server = serverManager.fromRedis(kv);
-                
-                serverManager.getServerList().removeIf(srv -> srv.getId().equals(packet.getId()));
-                serverManager.getServerList().add(server);
+                Server server = ServerHelper.from(kv);
 
+                serverManager.add(server, true);
                 eventManager.callEvent(new ServerAddedEvent(server));
-                log.info(String.format("ServerAddPacket (%s)", server.toString()));
             }
         });
     }

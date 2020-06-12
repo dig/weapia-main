@@ -7,10 +7,11 @@ import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.network.NetworkManager;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.AbstractPlayer;
+import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.module.PlayerManager;
-import net.sunken.common.player.packet.PlayerProxyQuitPacket;
 import net.sunken.common.util.AsyncHelper;
 
 import java.util.Optional;
@@ -21,20 +22,20 @@ public class DisconnectHandler implements Facet, Listener {
     @Inject
     private PlayerManager playerManager;
     @Inject
-    private PacketUtil packetUtil;
+    private NetworkManager networkManager;
 
     @EventHandler
     public void onDisconnect(PlayerDisconnectEvent event) {
         ProxiedPlayer player = event.getPlayer();
-        packetUtil.send(new PlayerProxyQuitPacket(player.getUniqueId()));
-
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
-        if (abstractPlayerOptional.isPresent()) {
-            BungeePlayer bungeePlayer = (BungeePlayer) abstractPlayerOptional.get();
 
+        if (abstractPlayerOptional.isPresent()) {
             AsyncHelper.executor().submit(() -> {
-               boolean saveState = bungeePlayer.save();
-               playerManager.remove(bungeePlayer.getUuid());
+                BungeePlayer bungeePlayer = (BungeePlayer) abstractPlayerOptional.get();
+                boolean saveState = bungeePlayer.save();
+
+                networkManager.remove(bungeePlayer.toPlayerDetail(), false);
+                playerManager.remove(bungeePlayer.getUuid());
             });
         }
     }

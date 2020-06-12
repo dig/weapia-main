@@ -28,6 +28,8 @@ public class RedisConnection extends Database<Jedis> {
     }
 
     @Override
-    public void disconnect() { jedisPool.destroy(); }
+    public void disconnect() {
+        jedisPool.destroy();
+    }
 
 }

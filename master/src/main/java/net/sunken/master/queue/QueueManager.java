@@ -1,11 +1,14 @@
 package net.sunken.master.queue;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.extern.java.Log;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.network.packet.NetworkQuitPacket;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.*;
@@ -17,7 +20,7 @@ import net.sunken.master.instance.InstanceDetail;
 import net.sunken.master.instance.InstanceManager;
 import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
-import net.sunken.master.queue.handler.PlayerProxyQuitHandler;
+import net.sunken.master.queue.handler.NetworkQuitHandler;
 import net.sunken.master.queue.handler.PlayerRequestServerHandler;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.master.queue.handler.PlayerRequestServerIDHandler;
@@ -27,8 +30,6 @@ import net.sunken.master.queue.impl.PartyQueue;
 import net.sunken.master.queue.impl.PlayerQueue;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 @Log
@@ -42,7 +43,7 @@ public class QueueManager implements Facet, Enableable {
     @Inject
     private PlayerSaveStateHandler playerSaveStateHandler;
     @Inject
-    private PlayerProxyQuitHandler playerProxyQuitHandler;
+    private NetworkQuitHandler playerProxyQuitHandler;
     @Inject
     private PlayerRequestServerIDHandler playerRequestServerIDHandler;
 
@@ -62,16 +63,15 @@ public class QueueManager implements Facet, Enableable {
 
     @Override
     public void enable() {
-        lobbyQueue = new ConcurrentLinkedQueue<>();
-        gameQueue = new ConcurrentHashMap<>();
+        lobbyQueue = Queues.newConcurrentLinkedQueue();
+        gameQueue = Maps.newConcurrentMap();
+        for (Game game : Game.values()) {
+            gameQueue.put(game, Queues.newConcurrentLinkedQueue());
+        }
 
-        //--- Load game queues
-        for (Game game : Game.values())
-            gameQueue.put(game, new ConcurrentLinkedQueue<>());
-
+        packetHandlerRegistry.registerHandler(NetworkQuitPacket.class, playerProxyQuitHandler);
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
-        packetHandlerRegistry.registerHandler(PlayerProxyQuitPacket.class, playerProxyQuitHandler);
         packetHandlerRegistry.registerHandler(PlayerRequestServerIDPacket.class, playerRequestServerIDHandler);
 
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(queueRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
@@ -82,8 +82,6 @@ public class QueueManager implements Facet, Enableable {
     }
 
     public void queue(UUID uuid, Server.Type type, Game game) {
-        IQueue iQueue = null;
-
         Optional<Party> partyOptional = partyManager.findPartyByMember(uuid);
         if (partyOptional.isPresent() && type != Server.Type.LOBBY) {
             Party party = partyOptional.get();
@@ -96,6 +94,7 @@ public class QueueManager implements Facet, Enableable {
 
         removeIfPresent(uuid);
 
+        IQueue iQueue;
         if (!serverManager.hasPendingConnection(uuid)) {
             if (partyOptional.isPresent() && type != Server.Type.LOBBY) {
                 iQueue = new PartyQueue(partyOptional.get());
@@ -133,8 +132,9 @@ public class QueueManager implements Facet, Enableable {
 
     public boolean inQueue(UUID uuid) {
         boolean inGameQueue = false;
-        for (Game game : Game.values())
+        for (Game game : Game.values()) {
             if (!inGameQueue) inGameQueue = inQueue(uuid, Server.Type.INSTANCE, game);
+        }
 
         return inQueue(uuid, Server.Type.LOBBY, Game.NONE) || inGameQueue;
     }
@@ -143,17 +143,18 @@ public class QueueManager implements Facet, Enableable {
         Queue<IQueue> queueDetails = (type == Server.Type.LOBBY ? lobbyQueue : gameQueue.get(game));
 
         int amount = 0;
-        for (IQueue iQueue : queueDetails)
+        for (IQueue iQueue : queueDetails) {
             amount += iQueue.getMembers().size();
+        }
 
         return amount;
     }
 
     public void removeIfPresent(UUID uuid) {
         lobbyQueue.removeIf(iQueue -> iQueue.getMembers().contains(uuid));
-
-        for (Game game : Game.values())
+        for (Game game : Game.values()) {
             (gameQueue.get(game)).removeIf(iQueue -> iQueue.getMembers().contains(uuid));
+        }
     }
 
     private static class QueueRunnable implements Runnable {
@@ -180,7 +181,7 @@ public class QueueManager implements Facet, Enableable {
             Set<Server> availableInstances = serverManager.findAllAvailable(type, game);
 
             //--- Pending instances, about to start of such type & game.
-            long pendingInstancesCount = serverManager.getServerList().stream()
+            long pendingInstancesCount = serverManager.findAll().stream()
                     .filter(server -> server.getType() == type && server.getGame() == game && server.getState() == Server.State.PENDING)
                     .count();
             pendingInstancesCount += instanceManager.findPendingCount(type, game);

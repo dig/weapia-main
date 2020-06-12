@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
@@ -15,6 +16,7 @@ import net.sunken.common.server.packet.RequestServerCreationPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.master.instance.creation.RequestServerCreationHandler;
 import net.sunken.master.kube.Kube;
+import net.sunken.master.kube.KubeConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,14 +28,12 @@ import java.util.concurrent.TimeUnit;
 public class InstanceManager implements Facet, Enableable {
 
     @Getter
-    private Queue<InstanceDetail> pendingInstanceCreation;
+    private Queue<InstanceDetail> pendingInstanceCreation = Queues.newConcurrentLinkedQueue();
 
     @Inject
     private ServerManager serverManager;
     @Inject
     private InstanceRunnable instanceRunnable;
-    @Inject
-    private ServerInformer serverInformer;
     @Inject
     private Kube kubeApi;
 
@@ -42,11 +42,15 @@ public class InstanceManager implements Facet, Enableable {
     @Inject
     private RequestServerCreationHandler requestServerCreationHandler;
 
+    @Inject @InjectConfig
+    private KubeConfiguration kubeConfiguration;
+
     @Override
     public void enable() {
-        pendingInstanceCreation = Queues.newConcurrentLinkedQueue();
         packetHandlerRegistry.registerHandler(RequestServerCreationPacket.class, requestServerCreationHandler);
-        AsyncHelper.scheduledExecutor().scheduleAtFixedRate(instanceRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
+        if (kubeConfiguration.isKubernetes()) {
+            AsyncHelper.scheduledExecutor().scheduleAtFixedRate(instanceRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override
@@ -62,8 +66,11 @@ public class InstanceManager implements Facet, Enableable {
     }
 
     public void createInstance(@NonNull Server.Type type, @NonNull Game game, int amount, @NonNull Reason reason) {
-        for (int i = 0; i < amount; i++)
-            pendingInstanceCreation.add(new InstanceDetail(type, game));
+        if (kubeConfiguration.isKubernetes()) {
+            for (int i = 0; i < amount; i++) {
+                pendingInstanceCreation.add(new InstanceDetail(type, game));
+            }
+        }
     }
 
     public void createInstance(@NonNull Server.Type type, @NonNull Game game, @NonNull Reason reason) {
@@ -71,9 +78,10 @@ public class InstanceManager implements Facet, Enableable {
     }
 
     public void removeInstance(@NonNull Server server, @NonNull Reason reason) {
-        kubeApi.deletePod(server.getId());
-        serverManager.getServerList().removeIf(srv -> srv.getId().equals(server.getId()));
-        serverInformer.remove(server.getId(), true);
+        if (kubeConfiguration.isKubernetes()) {
+            serverManager.remove(server.getId(), false);
+            kubeApi.deletePod(server.getId());
+        }
     }
 
     private static class InstanceRunnable implements Runnable {
@@ -113,7 +121,7 @@ public class InstanceManager implements Facet, Enableable {
                         .build();
 
                 if (kubeApi.createPod(server)) {
-                    serverManager.getServerList().add(server);
+                    serverManager.add(server, true);
                 }
             }
         }

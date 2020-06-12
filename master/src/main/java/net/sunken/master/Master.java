@@ -26,20 +26,11 @@ public class Master {
         masterFacetLoader.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> this.handleGraceShutdown()));
-
-        while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void handleGraceShutdown() {
         masterFacetLoader.stop();
         redisConnection.disconnect();
-        System.exit(0);
     }
 
     public static void main(String[] args) {

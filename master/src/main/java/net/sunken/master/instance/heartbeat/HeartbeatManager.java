@@ -66,7 +66,7 @@ public class HeartbeatManager implements Facet, Enableable {
             Map<String, Integer> heartbeatServerAttempt = heartbeatManager.getHeartbeatServerAttempt();
             Queue<String> serversToClose = Queues.newLinkedBlockingQueue();
 
-            serverManager.getServerList().stream()
+            serverManager.findAll().stream()
                     .filter(Server::canHeartbeatCheck)
                     .forEach(server -> {
                         int heartbeatCount = 0;

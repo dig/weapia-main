@@ -11,7 +11,7 @@ import net.sunken.common.player.AbstractPlayer;
 import java.util.Arrays;
 import java.util.Optional;
 
-@Command(aliases = {"discord", "disc", "join", "community"})
+@Command(aliases = {"discord", "disc", "community"})
 public class DiscordCommand extends BungeeCommand {
 
     @Override

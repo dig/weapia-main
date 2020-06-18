@@ -11,7 +11,7 @@ import net.sunken.common.player.AbstractPlayer;
 import java.util.Arrays;
 import java.util.Optional;
 
-@Command(aliases = {"buy", "store", "shop", "browse", "get", "donate", "view"})
+@Command(aliases = {"buy", "store", "shop", "browse", "get", "donate", "view", "join"})
 public class BuyCommand extends BungeeCommand {
 
     @Override

@@ -51,12 +51,6 @@ public class InstanceManager implements Facet, Enableable {
         if (kubeConfiguration.isKubernetes()) {
             instancePoolThread.start();
         }
-
-        // debug
-        for (Game game : instanceConfiguration.getGames().keySet()) {
-            InstanceGameConfiguration config = instanceConfiguration.getGames().get(game);
-            log.info(String.format("Game %s: %s", game, config.getWorlds().toString()));
-        }
     }
 
     @Override

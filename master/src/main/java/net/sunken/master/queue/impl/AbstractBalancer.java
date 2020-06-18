@@ -1,10 +1,9 @@
-package net.sunken.master.queue.impl.balancer;
+package net.sunken.master.queue.impl;
 
 import com.google.common.collect.Queues;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.packet.PacketUtil;
-import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.packet.PlayerSendToServerPacket;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
@@ -16,6 +15,7 @@ import net.sunken.master.queue.QueueDetail;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.UUID;
 
 @Log
 public abstract class AbstractBalancer {
@@ -33,13 +33,11 @@ public abstract class AbstractBalancer {
     }
 
     public boolean add(@NonNull QueueDetail queueDetail) {
-        PlayerDetail instigator = queueDetail.getInstigator();
-
-        Optional<Party> partyOptional = partyManager.findPartyByMember(instigator.getUuid());
+        Optional<Party> partyOptional = partyManager.findPartyByMember(queueDetail.getUuid());
         if (partyOptional.isPresent()) {
             Party party = partyOptional.get();
 
-            if (instigator.getUuid().equals(party.getLeaderUUID())) {
+            if (queueDetail.getUuid().equals(party.getLeaderUUID())) {
                 queue.add(queueDetail);
                 return true;
             }
@@ -51,10 +49,17 @@ public abstract class AbstractBalancer {
         return true;
     }
 
+    public boolean inQueue(@NonNull UUID uuid) {
+        Optional<QueueDetail> queueDetailOptional = queue.stream()
+                .filter(queueDetail -> queueDetail.getUuid().equals(uuid))
+                .findFirst();
+        return queueDetailOptional.isPresent();
+    }
+
     public void run() {
         while (!queue.isEmpty()) {
             QueueDetail queueDetail = queue.peek();
-            if (handle(queueDetail.getInstigator(), serverManager.findAllAvailable(queueDetail.getType(), queueDetail.getGame()))) {
+            if (handle(queueDetail.getUuid(), serverManager.findAllAvailable(queueDetail.getType(), queueDetail.getGame()))) {
                 queue.poll();
             } else {
                 log.info("Break out of balancer due to no available servers");
@@ -63,8 +68,8 @@ public abstract class AbstractBalancer {
         }
     }
 
-    private boolean handle(@NonNull PlayerDetail instigator, @NonNull Set<Server> servers) {
-        Optional<Party> partyOptional = partyManager.findPartyByMember(instigator.getUuid());
+    protected boolean handle(@NonNull UUID uuid, @NonNull Set<Server> servers) {
+        Optional<Party> partyOptional = partyManager.findPartyByMember(uuid);
 
         int amountNeeded = 1;
         if (partyOptional.isPresent()) {
@@ -86,10 +91,10 @@ public abstract class AbstractBalancer {
                 Party party = partyOptional.get();
                 party.getMembers().forEach(playerDetail -> packetUtil.sendSync(new PlayerSendToServerPacket(playerDetail.getUuid(), serverDetail)));
             } else {
-                packetUtil.sendSync(new PlayerSendToServerPacket(instigator.getUuid(), serverDetail));
+                packetUtil.sendSync(new PlayerSendToServerPacket(uuid, serverDetail));
             }
 
-            log.info(String.format("Sending player to instance. (%s, %s)", instigator.getUuid(), server.getId()));
+            log.info(String.format("Sending player to instance. (%s, %s)", uuid, server.getId()));
             return true;
         }
 

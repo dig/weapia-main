@@ -1,4 +1,4 @@
-package net.sunken.master.queue.impl.balancer;
+package net.sunken.master.queue.impl;
 
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.server.module.ServerManager;

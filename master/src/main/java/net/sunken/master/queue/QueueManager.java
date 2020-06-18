@@ -8,17 +8,23 @@ import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.PlayerDetail;
+import net.sunken.common.player.packet.PlayerRequestServerPacket;
+import net.sunken.common.player.packet.PlayerSaveStatePacket;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.master.party.PartyManager;
-import net.sunken.master.queue.impl.balancer.AbstractBalancer;
-import net.sunken.master.queue.impl.balancer.LobbyBalancer;
-import net.sunken.master.queue.impl.balancer.SimpleBalancer;
+import net.sunken.master.queue.handler.PlayerRequestServerHandler;
+import net.sunken.master.queue.handler.PlayerSaveStateHandler;
+import net.sunken.master.queue.impl.AbstractBalancer;
+import net.sunken.master.queue.impl.LobbyBalancer;
+import net.sunken.master.queue.impl.SimpleBalancer;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Log
 @Singleton
@@ -33,6 +39,13 @@ public class QueueManager implements Facet, Enableable {
     @Inject
     private PacketUtil packetUtil;
 
+    @Inject
+    private PacketHandlerRegistry packetHandlerRegistry;
+    @Inject
+    private PlayerRequestServerHandler playerRequestServerHandler;
+    @Inject
+    private PlayerSaveStateHandler playerSaveStateHandler;
+
     @Getter
     private final Map<Game, AbstractBalancer> gameBalancers = Maps.newHashMap();
     @Getter
@@ -43,6 +56,9 @@ public class QueueManager implements Facet, Enableable {
         lobbyBalancer = new LobbyBalancer(partyManager, serverManager, packetUtil);
         gameBalancers.put(Game.ICE_RUNNER_SOLO, new SimpleBalancer(partyManager, serverManager, packetUtil));
 
+        packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
+        packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
+
         queueThread.start();
     }
 
@@ -51,15 +67,26 @@ public class QueueManager implements Facet, Enableable {
         queueThread.interrupt();
     }
 
-    public boolean queue(@NonNull PlayerDetail instigator, @NonNull Server.Type type, @NonNull Game game) {
-        if (gameBalancers.containsKey(game) || type == Server.Type.LOBBY) {
+    public boolean queue(@NonNull UUID uuid, @NonNull Server.Type type, @NonNull Game game) {
+        if ((gameBalancers.containsKey(game) || type == Server.Type.LOBBY) && !inQueue(uuid)) {
             AbstractBalancer balancer = type == Server.Type.LOBBY ? lobbyBalancer : gameBalancers.get(game);
-            if (balancer.add(new QueueDetail(instigator, type, game))) {
+            if (balancer.add(new QueueDetail(uuid, type, game))) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public boolean inQueue(@NonNull UUID uuid) {
+        boolean queued = false;
+        for (AbstractBalancer balancer : gameBalancers.values()) {
+            if (balancer.inQueue(uuid)) {
+                queued = true;
+            }
+        }
+
+        return queued;
     }
 
     private static class QueueThread extends Thread {

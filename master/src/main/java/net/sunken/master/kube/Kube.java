@@ -13,8 +13,12 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.config.InjectConfig;
+import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerHelper;
+import net.sunken.master.instance.config.InstanceConfiguration;
+import net.sunken.master.instance.config.InstanceGameConfiguration;
+
 import java.io.*;
 
 @Log
@@ -25,6 +29,8 @@ public class Kube {
     private Gson gson;
     @Inject @InjectConfig
     private KubeConfiguration kubeConfiguration;
+    @Inject @InjectConfig
+    private InstanceConfiguration instanceConfiguration;
 
     private static String KUBERNETES_API_URL = "https://kubernetes.default.svc";
     private String serviceAccountBearer;
@@ -44,7 +50,7 @@ public class Kube {
     }
 
     public boolean createPod(@NonNull Server server) {
-        String imageUri = getImageUri(server);
+        String imageUri = getImageUri(server.getType(), server.getGame());
         Preconditions.checkNotNull(imageUri, "Failed to create pod, null image URI.");
 
         try {
@@ -137,13 +143,15 @@ public class Kube {
         return true;
     }
 
-    private String getImageUri(@NonNull Server server) {
-        switch (kubeConfiguration.getBranch()) {
-            case "develop":
-                return (server.getType().getDevImageUri() != null ? server.getType().getDevImageUri() : server.getGame().getDevImageUri());
-            default:
-                return (server.getType().getProdImageUri() != null ? server.getType().getProdImageUri() : server.getGame().getProdImageUri());
+    private String getImageUri(@NonNull Server.Type type, @NonNull Game game) {
+        InstanceGameConfiguration config;
+        if (instanceConfiguration.getTypes().containsKey(type)) {
+            config = instanceConfiguration.getTypes().get(type);
+        } else {
+            config = instanceConfiguration.getGames().get(game);
         }
+
+        return kubeConfiguration.getBranch() == "develop" ? config.getInfrastructure().getDevelopment() : config.getInfrastructure().getProduction();
     }
 
 }

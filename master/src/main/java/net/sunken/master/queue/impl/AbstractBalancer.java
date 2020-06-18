@@ -77,7 +77,7 @@ public abstract class AbstractBalancer {
 
         long pendingInstancesCount = serverManager.findAll().stream()
                 .filter(server -> server.getType() == type && server.getGame() == game && server.getState() == Server.State.PENDING)
-                .count() + instanceManager.findPendingCount(type, game);
+                .count();
 
         long availableInstanceSlots = 0;
         for (Server server : availableInstances) {
@@ -89,9 +89,9 @@ public abstract class AbstractBalancer {
 
         if (totalAmountOfSlotsAvailable < amountOfQueuedPlayers) {
             long amountOfInstancesNeeded = (long) Math.ceil(((double) amountOfQueuedPlayers - (double) totalAmountOfSlotsAvailable) / (double) game.getMaxPlayers());
-            instanceManager.createInstance(type, game, (int) amountOfInstancesNeeded, InstanceManager.Reason.QUEUE);
+            int created = instanceManager.create(type, game, (int) amountOfInstancesNeeded);
 
-            log.info(String.format("Starting instances. (%s, %s, %s)", type.toString(), game.toString(), amountOfInstancesNeeded));
+            log.info(String.format("Starting instances. (%s, %s, %s, %s)", type.toString(), game.toString(), amountOfInstancesNeeded, created));
             log.info(String.format("totalAmountOfSlotsAvailable = %s", totalAmountOfSlotsAvailable));
             log.info(String.format("availableInstanceSlots = %s", availableInstanceSlots));
             log.info(String.format("pendingInstancesCount = %s (%s slots)", pendingInstancesCount, pendingInstancesCount * game.getMaxPlayers()));

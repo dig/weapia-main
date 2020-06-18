@@ -91,14 +91,12 @@ public class HeartbeatManager implements Facet, Enableable {
 
                 if (serverToCloseOptional.isPresent()) {
                     heartbeatServerAttempt.remove(serverToCloseId);
-                    instanceManager.removeInstance(serverToCloseOptional.get(), InstanceManager.Reason.HEARTBEAT);
+                    instanceManager.remove(serverToCloseOptional.get().getId());
                     log.info(String.format("HeartbeatRunnable: Removing instance due to heartbeat check. (%s)", serverToCloseId));
                 } else {
                     log.severe(String.format("HeartbeatRunnable: Tried to close non-existent server? huh (%s)", serverToCloseId));
                 }
             }
-
-            log.info("HeartbeatRunnable: Sent heartbeat request to all servers.");
         }
 
     }

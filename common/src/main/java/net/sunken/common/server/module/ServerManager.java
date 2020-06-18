@@ -155,8 +155,17 @@ public class ServerManager implements Facet, Enableable {
                 .count();
     }
 
+    public long findAllAvailableCount(@NonNull Server.Type type, @NonNull Game game) {
+        return servers.values().stream()
+                .filter(server -> server.getType() == type && server.getGame() == game)
+                .filter(Server::canJoin)
+                .filter(server -> (server.getPlayers() + (int) findPendingConnectionCount(server)) < server.getMaxPlayers())
+                .count();
+    }
+
     public Set<Server> findAllAvailable(@NonNull Server.Type type, @NonNull Game game) {
-        return findAll(type, game).stream()
+        return servers.values().stream()
+                .filter(server -> server.getType() == type && server.getGame() == game)
                 .filter(Server::canJoin)
                 .filter(server -> (server.getPlayers() + (int) findPendingConnectionCount(server)) < server.getMaxPlayers())
                 .collect(Collectors.toSet());

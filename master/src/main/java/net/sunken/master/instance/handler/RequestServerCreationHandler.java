@@ -1,4 +1,4 @@
-package net.sunken.master.instance.creation;
+package net.sunken.master.instance.handler;
 
 import com.google.inject.Inject;
 import lombok.extern.java.Log;
@@ -14,7 +14,7 @@ public class RequestServerCreationHandler extends PacketHandler<RequestServerCre
 
     @Override
     public void onReceive(RequestServerCreationPacket packet) {
-        instanceManager.createInstance(packet.getType(), packet.getGame(), InstanceManager.Reason.COMMAND);
+        instanceManager.create(packet.getType(), packet.getGame());
         log.info(String.format("Creating instance. (%s, %s)", packet.getType().toString(), packet.getGame().toString()));
     }
 

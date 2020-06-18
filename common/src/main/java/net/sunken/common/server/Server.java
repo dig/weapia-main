@@ -77,37 +77,27 @@ public class Server implements RedisSerializable {
 
     @Getter
     public enum Type {
-        BUNGEE ("bungee", false),
-        LOBBY ("lobby", "respects/wep-infrastructure:lobby", "respects/wep-infrastructure-dev:lobby", true),
+        BUNGEE ("bungee", false, false),
+        LOBBY ("lobby", true),
         INSTANCE ("instance");
 
         private final String prefix;
         private boolean heartbeatCheck;
 
-        private String prodImageUri;
-        private String devImageUri;
-
         private boolean assignId;
 
         Type(String prefix) {
             this.prefix = prefix;
-
             this.heartbeatCheck = true;
             this.assignId = false;
         }
 
-        Type(String prefix, String prodImageUri, String devImageUri) {
+        Type(String prefix, boolean assignId) {
             this(prefix);
-            this.prodImageUri = prodImageUri;
-            this.devImageUri = devImageUri;
-        }
-
-        Type(String prefix, String prodImageUri, String devImageUri, boolean assignId) {
-            this(prefix, prodImageUri, devImageUri);
             this.assignId = assignId;
         }
 
-        Type(String prefix, boolean heartbeatCheck) {
+        Type(String prefix, boolean assignId, boolean heartbeatCheck) {
             this(prefix);
             this.heartbeatCheck = heartbeatCheck;
         }

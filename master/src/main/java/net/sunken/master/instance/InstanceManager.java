@@ -1,9 +1,8 @@
 package net.sunken.master.instance;
 
-import com.google.common.collect.Queues;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.config.InjectConfig;
@@ -13,27 +12,23 @@ import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.server.*;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.server.packet.RequestServerCreationPacket;
-import net.sunken.common.util.AsyncHelper;
-import net.sunken.master.instance.creation.RequestServerCreationHandler;
+import net.sunken.master.instance.config.InstanceConfiguration;
+import net.sunken.master.instance.config.InstanceGameConfiguration;
+import net.sunken.master.instance.handler.RequestServerCreationHandler;
 import net.sunken.master.kube.Kube;
 import net.sunken.master.kube.KubeConfiguration;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.TimeUnit;
+import java.util.Random;
 
-@Log
 @Singleton
 public class InstanceManager implements Facet, Enableable {
-
-    @Getter
-    private Queue<InstanceDetail> pendingInstanceCreation = Queues.newConcurrentLinkedQueue();
 
     @Inject
     private ServerManager serverManager;
     @Inject
-    private InstanceRunnable instanceRunnable;
+    private InstancePoolThread instancePoolThread;
     @Inject
     private Kube kubeApi;
 
@@ -44,93 +39,109 @@ public class InstanceManager implements Facet, Enableable {
 
     @Inject @InjectConfig
     private KubeConfiguration kubeConfiguration;
+    @Inject @InjectConfig
+    private InstanceConfiguration instanceConfiguration;
+
+    private Random random = new Random();
 
     @Override
     public void enable() {
         packetHandlerRegistry.registerHandler(RequestServerCreationPacket.class, requestServerCreationHandler);
         if (kubeConfiguration.isKubernetes()) {
-            AsyncHelper.scheduledExecutor().scheduleAtFixedRate(instanceRunnable, 200L, 200L, TimeUnit.MILLISECONDS);
+            instancePoolThread.start();
         }
     }
 
     @Override
     public void disable() {
+        instancePoolThread.interrupt();
     }
 
-    public long findPendingCount(@NonNull Server.Type type, @NonNull Game game) {
-        long pendingCreation = pendingInstanceCreation.stream()
-                .filter(instanceDetail -> instanceDetail.getType() == type && instanceDetail.getGame() == game)
-                .count();
+    public boolean create(@NonNull Server.Type type, @NonNull Game game) {
+        Map<String, String> metadata = Maps.newHashMap();
+        if (type.isAssignId()) {
+            metadata.put(ServerHelper.SERVER_METADATA_ID_KEY, String.valueOf(serverManager.findNextAvailableID(type, game)));
+        }
 
-        return pendingCreation;
+        World world = World.NONE;
+        if (instanceConfiguration.getGames().containsKey(game)) {
+            InstanceGameConfiguration instance = instanceConfiguration.getGames().get(game);
+            List<World> worlds = instance.getWorlds();
+
+            if (worlds.size() > 0) {
+                world = worlds.get(random.nextInt(worlds.size()));
+            }
+        }
+
+        Server server = Server.builder()
+                .id(type.generateId())
+                .type(type)
+                .host(null)
+                .port(25565)
+                .game(game)
+                .world(type == Server.Type.INSTANCE ? world : World.LOBBY)
+                .players(0)
+                .maxPlayers(game.getMaxPlayers())
+                .state(Server.State.PENDING)
+                .metadata(metadata)
+                .build();
+
+        if (kubeApi.createPod(server)) {
+            serverManager.add(server, true);
+            return true;
+        }
+
+        return false;
     }
 
-    public void createInstance(@NonNull Server.Type type, @NonNull Game game, int amount, @NonNull Reason reason) {
+    public int create(@NonNull Server.Type type, @NonNull Game game, int amount) {
+        int created = 0;
         for (int i = 0; i < amount; i++) {
-            pendingInstanceCreation.add(new InstanceDetail(type, game));
+            if (create(type, game)) {
+                created++;
+            }
         }
+        return created;
     }
 
-    public void createInstance(@NonNull Server.Type type, @NonNull Game game, @NonNull Reason reason) {
-        createInstance(type, game, 1, reason);
-    }
-
-    public void removeInstance(@NonNull Server server, @NonNull Reason reason) {
-        serverManager.remove(server.getId(), false);
+    public void remove(@NonNull String id) {
+        serverManager.remove(id, false);
         if (kubeConfiguration.isKubernetes()) {
-            kubeApi.deletePod(server.getId());
+            kubeApi.deletePod(id);
         }
     }
 
-    private static class InstanceRunnable implements Runnable {
+    @Log
+    private static class InstancePoolThread extends Thread {
 
         @Inject
         private InstanceManager instanceManager;
         @Inject
         private ServerManager serverManager;
-        @Inject
-        private Kube kubeApi;
+        @Inject @InjectConfig
+        private InstanceConfiguration instanceConfiguration;
 
-        @Override
         public void run() {
-            Queue<InstanceDetail> pendingInstanceCreation = instanceManager.getPendingInstanceCreation();
-            while (!pendingInstanceCreation.isEmpty()) {
-                InstanceDetail instanceDetail = pendingInstanceCreation.poll();
+            while (true) {
+                for (Game game : instanceConfiguration.getGames().keySet()) {
+                    InstanceGameConfiguration config = instanceConfiguration.getGames().get(game);
+                    long count = serverManager.findAllAvailableCount(Server.Type.INSTANCE, game);
 
-                Server.Type type = instanceDetail.getType();
-                Game game = instanceDetail.getGame();
-
-                Map<String, String> metadata = new HashMap<>();
-                if (type.isAssignId()) {
-                    metadata.put(ServerHelper.SERVER_METADATA_ID_KEY, String.valueOf(serverManager.findNextAvailableID(type, game)));
+                    if (count < config.getPool().getMin()) {
+                        int amountToMeetMin = config.getPool().getMin() - (int) count;
+                        instanceManager.create(Server.Type.INSTANCE, game, amountToMeetMin);
+                        log.info(String.format("Starting instances (%s, %s)", game, amountToMeetMin));
+                    }
                 }
 
-                Server server = Server.builder()
-                        .id(type.generateId())
-                        .type(type)
-                        .host(null)
-                        .port(25565)
-                        .game(game)
-                        .world(type == Server.Type.INSTANCE ? World.getRandomWorld(game) : World.LOBBY)
-                        .players(0)
-                        .maxPlayers(game.getMaxPlayers())
-                        .state(Server.State.PENDING)
-                        .metadata(metadata)
-                        .build();
-
-                if (kubeApi.createPod(server)) {
-                    serverManager.add(server, true);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
 
-    }
-
-    // TODO: priority queue for some creation reasons
-    public enum Reason {
-        QUEUE,
-        HEARTBEAT,
-        COMMAND
     }
 
 }

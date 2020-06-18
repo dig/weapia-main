@@ -76,7 +76,7 @@ public class InstanceManager implements Facet, Enableable {
                 InstanceGameConfiguration instance = instanceConfiguration.getGames().get(game);
                 List<World> worlds = instance.getWorlds();
 
-                if (worlds.size() > 0) {
+                if (worlds != null && worlds.size() > 0) {
                     world = worlds.get(random.nextInt(worlds.size()));
                 }
             }

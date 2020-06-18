@@ -81,7 +81,7 @@ public class Server implements RedisSerializable {
         LOBBY ("lobby", "respects/wep-infrastructure:lobby", "respects/wep-infrastructure-dev:lobby", true),
         INSTANCE ("instance");
 
-        private String prefix;
+        private final String prefix;
         private boolean heartbeatCheck;
 
         private String prodImageUri;
@@ -118,11 +118,11 @@ public class Server implements RedisSerializable {
         public String generateId() {
             StringBuilder sb = new StringBuilder(4);
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++) {
                 sb.append(secureRandom.nextInt(9));
+            }
 
             sb.append(AB.charAt(secureRandom.nextInt(AB.length())));
-
             return this.prefix + sb.toString();
         }
     }

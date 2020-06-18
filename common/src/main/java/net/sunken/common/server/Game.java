@@ -8,10 +8,11 @@ import lombok.Getter;
 public enum Game {
 
     NONE ("None", 80, null, null),
+
     ICE_RUNNER_SOLO ("Ice Runner (Solo)", 4, "respects/wep-infrastructure:icerunner-solo", "respects/wep-infrastructure-dev:icerunner-solo"),
 
-    ORE_WARS_SOLO ("Ore Wars (Solo)", 6, "respects/wep-infrastructure:ore-wars-solo", "respects/wep-infrastructure-dev:ore-wars-solo"),
-    ORE_WARS_TEAM ("Ore Wars (Teams)", 12, "respects/wep-infrastructure:ore-wars-team", "respects/wep-infrastructure-dev:ore-wars-team");
+    SURVIVAL_REALMS ("Survival Realms", 50, "respects/wep-infrastructure:survival-realms", "respects/wep-infrastructure-dev:survival-realms"),
+    SURVIVAL_REALMS_ADVENTURE ("Survival Realms (Adventure)", 100, "respects/wep-infrastructure:survival-realms-adventure", "respects/wep-infrastructure-dev:survival-realms-adventure");
 
     private String friendlyName;
     private int maxPlayers;

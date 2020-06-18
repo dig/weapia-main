@@ -3,6 +3,7 @@ package net.sunken.bungeecord.player;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.java.Log;
 import net.md_5.bungee.api.ChatColor;
@@ -75,12 +76,15 @@ public class ConnectHandler implements Facet, Listener, Enableable {
 
         event.registerIntent(plugin);
         AsyncHelper.executor().submit(() -> {
-            MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-            Document document = collection.find(eq("uuid", pendingConnection.getUniqueId().toString())).first();
-
             boolean loadState = true;
-            if (document != null) {
-                loadState = bungeePlayer.fromDocument(document);
+            try {
+                MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+                Document document = collection.find(eq("uuid", pendingConnection.getUniqueId().toString())).first();
+                if (document != null) {
+                    loadState = bungeePlayer.fromDocument(document);
+                }
+            } catch (MongoException e) {
+                loadState = false;
             }
 
             packetUtil.sendSync(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));

@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import lombok.Getter;
 import lombok.extern.java.Log;
@@ -76,12 +77,15 @@ public class ConnectHandler implements Facet, Listener {
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
         AbstractPlayer abstractPlayer = engineManager.getGameMode().getPlayerMapper().apply(new Tuple<>(event.getUniqueId(), event.getName()));
 
-        MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-        Document document = collection.find(eq("uuid", event.getUniqueId().toString())).first();
-
         boolean loadState = true;
-        if (document != null) {
-            loadState = abstractPlayer.fromDocument(document);
+        try {
+            MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+            Document document = collection.find(eq("uuid", event.getUniqueId().toString())).first();
+            if (document != null) {
+                loadState = abstractPlayer.fromDocument(document);
+            }
+        } catch (MongoException e) {
+            loadState = false;
         }
 
         if (loadState) {

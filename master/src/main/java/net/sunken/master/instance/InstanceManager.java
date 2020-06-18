@@ -53,8 +53,10 @@ public class InstanceManager implements Facet, Enableable {
         }
 
         // debug
-        log.info(String.format("DEBUG: %s", instanceConfiguration.getGames().keySet().toString()));
-        log.info(String.format("DEBUG: %s", instanceConfiguration.getTypes().keySet().toString()));
+        for (Game game : instanceConfiguration.getGames().keySet()) {
+            InstanceGameConfiguration config = instanceConfiguration.getGames().get(game);
+            log.info(String.format("Game %s: %s", game, config.getWorlds().toString()));
+        }
     }
 
     @Override

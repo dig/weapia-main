@@ -7,6 +7,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.sunken.bungeecord.inject.BungeeFacetLoader;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.database.RedisConnection;
 
 public class BungeeMain extends Plugin {
@@ -14,6 +15,7 @@ public class BungeeMain extends Plugin {
     @Getter
     private Injector injector;
     private RedisConnection redisConnection;
+    private MongoConnection mongoConnection;
     private BungeeFacetLoader bungeeFacetLoader;
     private BungeeInform bungeeInform;
 
@@ -22,6 +24,8 @@ public class BungeeMain extends Plugin {
         injector = Guice.createInjector(new BungeePluginModule(this));
 
         redisConnection = injector.getInstance(RedisConnection.class);
+        mongoConnection = injector.getInstance(MongoConnection.class);
+
         bungeeInform = injector.getInstance(BungeeInform.class);
         bungeeFacetLoader = injector.getInstance(BungeeFacetLoader.class);
         bungeeFacetLoader.start();
@@ -48,6 +52,7 @@ public class BungeeMain extends Plugin {
 
         bungeeInform.remove();
         redisConnection.disconnect();
+        mongoConnection.disconnect();
     }
 
 }

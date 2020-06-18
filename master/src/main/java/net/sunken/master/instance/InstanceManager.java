@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+@Log
 @Singleton
 public class InstanceManager implements Facet, Enableable {
 
@@ -50,6 +51,10 @@ public class InstanceManager implements Facet, Enableable {
         if (kubeConfiguration.isKubernetes()) {
             instancePoolThread.start();
         }
+
+        // debug
+        log.info(String.format("DEBUG: %s", instanceConfiguration.getGames().keySet().toString()));
+        log.info(String.format("DEBUG: %s", instanceConfiguration.getTypes().keySet().toString()));
     }
 
     @Override

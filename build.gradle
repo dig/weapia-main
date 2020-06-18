@@ -75,8 +75,9 @@ subprojects {
         included group: 'com.google.inject', name: 'guice', version: '4.2.2'
         included group: 'com.google.inject.extensions', name: 'guice-multibindings', version: '4.2.2'
 
-        //--- Jedis
+        //--- Database
         included group: 'redis.clients', name: 'jedis', version: '3.1.0'
+        included group: 'org.mongodb', name: 'mongodb-driver', version: '3.6.3'
 
         //--- Configurate
         included 'org.spongepowered:configurate-hocon:3.6'

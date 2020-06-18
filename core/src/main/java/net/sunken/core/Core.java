@@ -3,6 +3,7 @@ package net.sunken.core;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import lombok.Getter;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.database.RedisConnection;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.PlayerRequestServerPacket;
@@ -17,6 +18,7 @@ public abstract class Core extends JavaPlugin {
     @Getter
     protected Injector injector;
     protected RedisConnection redisConnection;
+    protected MongoConnection mongoConnection;
     protected PluginFacetLoader pluginFacetLoader;
 
     protected PluginInform pluginInform;
@@ -26,6 +28,8 @@ public abstract class Core extends JavaPlugin {
         injector = Guice.createInjector(pluginModule);
 
         redisConnection = injector.getInstance(RedisConnection.class);
+        mongoConnection = injector.getInstance(MongoConnection.class);
+
         pluginFacetLoader = injector.getInstance(PluginFacetLoader.class);
         pluginFacetLoader.start();
 
@@ -45,7 +49,7 @@ public abstract class Core extends JavaPlugin {
             pluginInform.setState(Server.State.CLOSED);
         }
 
-        Bukkit.getOnlinePlayers().forEach(player -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
+        Bukkit.getOnlinePlayers().forEach(player -> packetUtil.sendSync(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
 
         int iterations = 0;
         while (!Bukkit.getOnlinePlayers().isEmpty()) {
@@ -64,6 +68,7 @@ public abstract class Core extends JavaPlugin {
 
         pluginInform.remove();
         redisConnection.disconnect();
+        mongoConnection.disconnect();
     }
 
 }

@@ -128,7 +128,7 @@ public class InstanceManager implements Facet, Enableable {
             while (true) {
                 for (Server.Type type : instanceConfiguration.getTypes().keySet()) {
                     InstanceGameConfiguration config = instanceConfiguration.getTypes().get(type);
-                    long count = serverManager.findAllAvailableCount(type, Game.NONE);
+                    long count = serverManager.findAllAvailableCount(type, Game.NONE) + serverManager.findAllPendingCount(type, Game.NONE);
 
                     if (count < config.getPool().getMin()) {
                         int amountToMeetMin = config.getPool().getMin() - (int) count;
@@ -139,7 +139,7 @@ public class InstanceManager implements Facet, Enableable {
 
                 for (Game game : instanceConfiguration.getGames().keySet()) {
                     InstanceGameConfiguration config = instanceConfiguration.getGames().get(game);
-                    long count = serverManager.findAllAvailableCount(Server.Type.INSTANCE, game);
+                    long count = serverManager.findAllAvailableCount(Server.Type.INSTANCE, game) + serverManager.findAllPendingCount(Server.Type.INSTANCE, game);
 
                     if (count < config.getPool().getMin()) {
                         int amountToMeetMin = config.getPool().getMin() - (int) count;

@@ -171,6 +171,13 @@ public class ServerManager implements Facet, Enableable {
                 .collect(Collectors.toSet());
     }
 
+    public long findAllPendingCount(@NonNull Server.Type type, @NonNull Game game) {
+        return servers.values().stream()
+                .filter(server -> server.getType() == type && server.getGame() == game)
+                .filter(server -> server.getState() == Server.State.PENDING)
+                .count();
+    }
+
     public long findPendingConnectionCount(@NonNull String id) {
         return pendingPlayerConnection.asMap().values().stream()
                 .filter(serverDetail -> serverDetail.getId().equals(id))

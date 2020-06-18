@@ -58,37 +58,39 @@ public class InstanceManager implements Facet, Enableable {
     }
 
     public boolean create(@NonNull Server.Type type, @NonNull Game game) {
-        Map<String, String> metadata = Maps.newHashMap();
-        if (type.isAssignId()) {
-            metadata.put(ServerHelper.SERVER_METADATA_ID_KEY, String.valueOf(serverManager.findNextAvailableID(type, game)));
-        }
-
-        World world = World.NONE;
-        if (instanceConfiguration.getGames().containsKey(game)) {
-            InstanceGameConfiguration instance = instanceConfiguration.getGames().get(game);
-            List<World> worlds = instance.getWorlds();
-
-            if (worlds.size() > 0) {
-                world = worlds.get(random.nextInt(worlds.size()));
+        if (kubeConfiguration.isKubernetes()) {
+            Map<String, String> metadata = Maps.newHashMap();
+            if (type.isAssignId()) {
+                metadata.put(ServerHelper.SERVER_METADATA_ID_KEY, String.valueOf(serverManager.findNextAvailableID(type, game)));
             }
-        }
 
-        Server server = Server.builder()
-                .id(type.generateId())
-                .type(type)
-                .host(null)
-                .port(25565)
-                .game(game)
-                .world(type == Server.Type.INSTANCE ? world : World.LOBBY)
-                .players(0)
-                .maxPlayers(game.getMaxPlayers())
-                .state(Server.State.PENDING)
-                .metadata(metadata)
-                .build();
+            World world = World.NONE;
+            if (instanceConfiguration.getGames().containsKey(game)) {
+                InstanceGameConfiguration instance = instanceConfiguration.getGames().get(game);
+                List<World> worlds = instance.getWorlds();
 
-        if (kubeApi.createPod(server)) {
-            serverManager.add(server, true);
-            return true;
+                if (worlds.size() > 0) {
+                    world = worlds.get(random.nextInt(worlds.size()));
+                }
+            }
+
+            Server server = Server.builder()
+                    .id(type.generateId())
+                    .type(type)
+                    .host(null)
+                    .port(25565)
+                    .game(game)
+                    .world(type == Server.Type.INSTANCE ? world : World.LOBBY)
+                    .players(0)
+                    .maxPlayers(game.getMaxPlayers())
+                    .state(Server.State.PENDING)
+                    .metadata(metadata)
+                    .build();
+
+            if (kubeApi.createPod(server)) {
+                serverManager.add(server, true);
+                return true;
+            }
         }
 
         return false;

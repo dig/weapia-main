@@ -98,8 +98,9 @@ public class BarSettings implements Facet, Enableable, Listener {
         @Override
         public void run() {
             if (barSettings.getAction().isPresent()) {
-                for (Player player : Bukkit.getOnlinePlayers())
+                for (Player player : Bukkit.getOnlinePlayers()) {
                     ActionBarUtil.sendMessage(player, barSettings.getAction().get());
+                }
             }
         }
 

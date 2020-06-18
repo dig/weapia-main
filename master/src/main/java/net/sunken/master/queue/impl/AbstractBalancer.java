@@ -5,9 +5,11 @@ import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.PlayerSendToServerPacket;
+import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
 import net.sunken.common.server.module.ServerManager;
+import net.sunken.master.instance.InstanceManager;
 import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
 import net.sunken.master.queue.QueueDetail;
@@ -22,13 +24,15 @@ public abstract class AbstractBalancer {
 
     protected final PartyManager partyManager;
     protected final ServerManager serverManager;
+    protected final InstanceManager instanceManager;
     protected final PacketUtil packetUtil;
 
     protected final Queue<QueueDetail> queue = Queues.newConcurrentLinkedQueue();
 
-    public AbstractBalancer(PartyManager partyManager, ServerManager serverManager, PacketUtil packetUtil) {
+    public AbstractBalancer(PartyManager partyManager, ServerManager serverManager, InstanceManager instanceManager, PacketUtil packetUtil) {
         this.partyManager = partyManager;
         this.serverManager = serverManager;
+        this.instanceManager = instanceManager;
         this.packetUtil = packetUtil;
     }
 
@@ -62,9 +66,36 @@ public abstract class AbstractBalancer {
             if (handle(queueDetail.getUuid(), serverManager.findAllAvailable(queueDetail.getType(), queueDetail.getGame()))) {
                 queue.poll();
             } else {
-                log.info("Break out of balancer due to no available servers");
+                handleInstanceCreation(queueDetail.getType(), queueDetail.getGame());
                 break;
             }
+        }
+    }
+
+    protected void handleInstanceCreation(@NonNull Server.Type type, @NonNull Game game) {
+        Set<Server> availableInstances = serverManager.findAllAvailable(type, game);
+
+        long pendingInstancesCount = serverManager.findAll().stream()
+                .filter(server -> server.getType() == type && server.getGame() == game && server.getState() == Server.State.PENDING)
+                .count() + instanceManager.findPendingCount(type, game);
+
+        long availableInstanceSlots = 0;
+        for (Server server : availableInstances) {
+            availableInstanceSlots += (server.getMaxPlayers() - (server.getPlayers() + serverManager.findPendingConnectionCount(server)));
+        }
+
+        long totalAmountOfSlotsAvailable = (availableInstanceSlots + (pendingInstancesCount * game.getMaxPlayers()));
+        int amountOfQueuedPlayers = queue.size();
+
+        if (totalAmountOfSlotsAvailable < amountOfQueuedPlayers) {
+            long amountOfInstancesNeeded = (long) Math.ceil(((double) amountOfQueuedPlayers - (double) totalAmountOfSlotsAvailable) / (double) game.getMaxPlayers());
+            instanceManager.createInstance(type, game, (int) amountOfInstancesNeeded, InstanceManager.Reason.QUEUE);
+
+            log.info(String.format("Starting instances. (%s, %s, %s)", type.toString(), game.toString(), amountOfInstancesNeeded));
+            log.info(String.format("totalAmountOfSlotsAvailable = %s", totalAmountOfSlotsAvailable));
+            log.info(String.format("availableInstanceSlots = %s", availableInstanceSlots));
+            log.info(String.format("pendingInstancesCount = %s (%s slots)", pendingInstancesCount, pendingInstancesCount * game.getMaxPlayers()));
+            log.info(String.format("amountOfQueuedPlayers = %s", amountOfQueuedPlayers));
         }
     }
 

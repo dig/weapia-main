@@ -16,6 +16,7 @@ import net.sunken.common.player.packet.PlayerSaveStatePacket;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.module.ServerManager;
+import net.sunken.master.instance.InstanceManager;
 import net.sunken.master.party.PartyManager;
 import net.sunken.master.queue.handler.PlayerRequestServerHandler;
 import net.sunken.master.queue.handler.PlayerSaveStateHandler;
@@ -37,6 +38,8 @@ public class QueueManager implements Facet, Enableable {
     @Inject
     private ServerManager serverManager;
     @Inject
+    private InstanceManager instanceManager;
+    @Inject
     private PacketUtil packetUtil;
 
     @Inject
@@ -53,8 +56,8 @@ public class QueueManager implements Facet, Enableable {
 
     @Override
     public void enable() {
-        lobbyBalancer = new LobbyBalancer(partyManager, serverManager, packetUtil);
-        gameBalancers.put(Game.ICE_RUNNER_SOLO, new SimpleBalancer(partyManager, serverManager, packetUtil));
+        lobbyBalancer = new LobbyBalancer(partyManager, serverManager, instanceManager, packetUtil);
+        gameBalancers.put(Game.ICE_RUNNER_SOLO, new SimpleBalancer(partyManager, serverManager, instanceManager, packetUtil));
 
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
@@ -70,9 +73,7 @@ public class QueueManager implements Facet, Enableable {
     public boolean queue(@NonNull UUID uuid, @NonNull Server.Type type, @NonNull Game game) {
         if ((gameBalancers.containsKey(game) || type == Server.Type.LOBBY) && !inQueue(uuid)) {
             AbstractBalancer balancer = type == Server.Type.LOBBY ? lobbyBalancer : gameBalancers.get(game);
-            if (balancer.add(new QueueDetail(uuid, type, game))) {
-                return true;
-            }
+            return balancer.add(new QueueDetail(uuid, type, game));
         }
 
         return false;

@@ -7,6 +7,7 @@ import net.sunken.common.player.packet.PlayerSendToServerPacket;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
 import net.sunken.common.server.module.ServerManager;
+import net.sunken.master.instance.InstanceManager;
 import net.sunken.master.party.PartyManager;
 import net.sunken.master.queue.QueueDetail;
 
@@ -17,8 +18,8 @@ import java.util.UUID;
 @Log
 public class LobbyBalancer extends AbstractBalancer {
 
-    public LobbyBalancer(PartyManager partyManager, ServerManager serverManager, PacketUtil packetUtil) {
-        super(partyManager, serverManager, packetUtil);
+    public LobbyBalancer(PartyManager partyManager, ServerManager serverManager, InstanceManager instanceManager, PacketUtil packetUtil) {
+        super(partyManager, serverManager, instanceManager, packetUtil);
     }
 
     @Override

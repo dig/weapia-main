@@ -76,7 +76,12 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         event.registerIntent(plugin);
         AsyncHelper.executor().submit(() -> {
             MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-            boolean loadState = bungeePlayer.fromDocument(collection.find(eq("uuid", pendingConnection.getUniqueId().toString())).first());
+            Document document = collection.find(eq("uuid", pendingConnection.getUniqueId().toString())).first();
+
+            boolean loadState = true;
+            if (document != null) {
+                loadState = bungeePlayer.fromDocument(document);
+            }
 
             packetUtil.sendSync(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
             boolean success = expectationFactory.waitFor(packet -> {

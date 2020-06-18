@@ -212,8 +212,9 @@ public class LobbyState extends EventGameState {
 
                     int i = 0;
                     for (String line : npcConfiguration.getDisplayName()) {
-                        if (line.indexOf("%players") >= 0)
+                        if (line.indexOf("%players") >= 0) {
                             npc.getHologram().update(i, line.replaceAll("%players", String.valueOf(count)));
+                        }
 
                         i++;
                     }

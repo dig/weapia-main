@@ -10,7 +10,6 @@ import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
-import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.packet.PlayerRequestServerPacket;
 import net.sunken.common.player.packet.PlayerSaveStatePacket;
 import net.sunken.common.server.Game;

@@ -3,6 +3,7 @@ package net.sunken.bungeecord.player;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
+import com.mongodb.client.MongoCollection;
 import lombok.extern.java.Log;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -14,6 +15,8 @@ import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.sunken.bungeecord.Constants;
+import net.sunken.common.database.DatabaseHelper;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.network.NetworkManager;
@@ -29,11 +32,14 @@ import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.util.AsyncHelper;
+import org.bson.Document;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import static com.mongodb.client.model.Filters.eq;
 
 @Log
 public class ConnectHandler implements Facet, Listener, Enableable {
@@ -50,6 +56,8 @@ public class ConnectHandler implements Facet, Listener, Enableable {
     private PacketUtil packetUtil;
     @Inject
     private ExpectationFactory expectationFactory;
+    @Inject
+    private MongoConnection mongoConnection;
 
     @Inject
     private PacketHandlerRegistry packetHandlerRegistry;
@@ -65,20 +73,10 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         PendingConnection pendingConnection = event.getConnection();
         BungeePlayer bungeePlayer = new BungeePlayer(pendingConnection.getUniqueId(), pendingConnection.getName());
 
-        //--- TODO: Move to database, will hardcode until we have decided on a database (MongoDB, Cassandra..)
-        switch (pendingConnection.getUniqueId().toString()) {
-            case "db073964-3bae-4efb-ba82-24a8de5ecec9":
-            case "c83bc38d-11ae-4973-9d7c-5c77d6dcfb86":
-                bungeePlayer.setRank(Rank.OWNER);
-                break;
-            case "5190d5d8-0792-4ea0-a1da-d28d4d3af97a":
-                bungeePlayer.setRank(Rank.DEVELOPER);
-                break;
-        }
-
         event.registerIntent(plugin);
         AsyncHelper.executor().submit(() -> {
-            boolean loadState = bungeePlayer.load();
+            MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+            boolean loadState = bungeePlayer.fromDocument(collection.find(eq("uuid", pendingConnection.getUniqueId().toString())).first());
 
             packetUtil.sendSync(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
             boolean success = expectationFactory.waitFor(packet -> {

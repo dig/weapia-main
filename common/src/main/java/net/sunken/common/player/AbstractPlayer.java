@@ -1,15 +1,15 @@
 package net.sunken.common.player;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
+import net.sunken.common.database.MongoSerializable;
+import org.bson.Document;
 
 import java.util.UUID;
 
 @Data
 @ToString
-public abstract class AbstractPlayer {
+public abstract class AbstractPlayer implements MongoSerializable {
 
     protected final UUID uuid;
     protected final String username;
@@ -21,15 +21,18 @@ public abstract class AbstractPlayer {
         this.rank = Rank.PLAYER;
     }
 
-    /**
-     * Blocking method to load player.
-     */
-    public abstract boolean load();
+    public boolean fromDocument(Document document) {
+        rank = Rank.valueOf(document.getString("rank"));
+        return true;
+    }
 
-    /**
-     * Blocking method to save player.
-     */
-    public abstract boolean save();
+    public Document toDocument() {
+        Document document = new Document()
+                .append("uuid", uuid.toString())
+                .append("username", username)
+                .append("rank", rank.toString());
+        return document;
+    }
 
     /**
      * Called on successful join.

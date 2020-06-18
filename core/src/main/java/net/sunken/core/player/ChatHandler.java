@@ -1,7 +1,6 @@
 package net.sunken.core.player;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import lombok.extern.java.Log;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.player.AbstractPlayer;
@@ -42,8 +41,6 @@ public class ChatHandler implements Facet, Listener {
         } else {
             player.sendMessage(Constants.FAILED_LOAD_DATA);
             event.setCancelled(true);
-
-            log.severe(String.format("onPlayerChat: Attempted to chat with no data loaded? (%s)", player.getUniqueId().toString()));
         }
     }
 

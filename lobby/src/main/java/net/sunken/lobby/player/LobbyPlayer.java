@@ -9,6 +9,7 @@ import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.CustomScoreboard;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.ColourUtil;
+import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -26,16 +27,6 @@ public class LobbyPlayer extends CorePlayer {
         super(uuid, username, scoreboardRegistry);
         this.serverManager = serverManager;
         this.pluginInform = pluginInform;
-    }
-
-    @Override
-    public boolean load() {
-        return true;
-    }
-
-    @Override
-    public boolean save() {
-        return true;
     }
 
     @Override

@@ -6,8 +6,11 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoCollection;
+import lombok.NonNull;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.common.database.config.MongoConfiguration;
+import org.bson.Document;
 
 import java.util.Arrays;
 
@@ -23,6 +26,10 @@ public class MongoConnection extends Database<MongoClient> {
                 .build();
 
         mongoClient = new MongoClient(new ServerAddress(mongoConfiguration.getHost(), mongoConfiguration.getPort()), credential, options);
+    }
+
+    public MongoCollection<Document> getCollection(@NonNull String database, @NonNull String collection) {
+        return mongoClient.getDatabase(DatabaseHelper.DATABASE_MAIN).getCollection(DatabaseHelper.COLLECTION_PLAYER);
     }
 
     @Override

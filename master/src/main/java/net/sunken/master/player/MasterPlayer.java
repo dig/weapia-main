@@ -16,16 +16,6 @@ public class MasterPlayer extends AbstractPlayer {
     }
 
     @Override
-    public boolean load() {
-        return true;
-    }
-
-    @Override
-    public boolean save() {
-        return false;
-    }
-
-    @Override
     public void setup() {
     }
 

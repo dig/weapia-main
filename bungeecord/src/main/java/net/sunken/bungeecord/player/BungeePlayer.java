@@ -34,16 +34,6 @@ public class BungeePlayer extends AbstractPlayer {
     }
 
     @Override
-    public boolean load() {
-        return true;
-    }
-
-    @Override
-    public boolean save() {
-        return true;
-    }
-
-    @Override
     public void setup() {
     }
 

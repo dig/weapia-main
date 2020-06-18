@@ -1,7 +1,6 @@
 package net.sunken.bungeecord;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;

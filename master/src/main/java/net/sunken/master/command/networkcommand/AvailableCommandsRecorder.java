@@ -1,5 +1,6 @@
 package net.sunken.master.command.networkcommand;
 
+import lombok.extern.java.Log;
 import net.sunken.common.command.impl.*;
 import net.sunken.common.database.*;
 import net.sunken.common.inject.*;
@@ -10,6 +11,7 @@ import javax.inject.*;
 import java.util.*;
 
 // Persists available commands to Redis when Master boots up so that servers can fetch these on startup
+@Log
 @Singleton
 public class AvailableCommandsRecorder implements Facet, Enableable {
 
@@ -30,6 +32,7 @@ public class AvailableCommandsRecorder implements Facet, Enableable {
 
             if (commandNames.size() > 0) {
                 connection.sadd(NetworkCommandConstants.COMMAND_LIST_KEY, commandNames.toArray(new String[]{}));
+                log.info(String.format("Adding commands to cache %s", commandNames.toString()));
             }
         }
     }

@@ -30,9 +30,10 @@ public class AvailableCommandsRecorder implements Facet, Enableable {
             Set<String> commandNames = new HashSet<>();
             registeredCommands.forEach(command -> commandNames.addAll(Arrays.asList(command.getCommand().aliases())));
 
+            log.info(String.format("Adding commands to cache %s", commandNames.toString()));
+
             if (commandNames.size() > 0) {
                 connection.sadd(NetworkCommandConstants.COMMAND_LIST_KEY, commandNames.toArray(new String[]{}));
-                log.info(String.format("Adding commands to cache %s", commandNames.toString()));
             }
         }
     }

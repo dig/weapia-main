@@ -4,6 +4,8 @@ import lombok.NonNull;
 
 public class StringUtil {
 
+    public static final int CHAT_WIDTH = 154; // px
+
     public static String center(@NonNull String message, int center) {
         int messagePxSize = 0;
 

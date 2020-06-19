@@ -47,7 +47,6 @@ public class NetworkCommandListener implements Listener, Facet {
 
                     if (commandMap.getCommand(commandName) == null && isRegisteredOnMaster) {
                         event.setCancelled(true);
-                        log.info("after cancel");
                         playerManager.get(player.getUniqueId())
                                 .map(AbstractPlayer::toPlayerDetail)
                                 .ifPresent(playerDetail -> {
@@ -57,8 +56,6 @@ public class NetworkCommandListener implements Listener, Facet {
                                     }
                                     cooldowns.create(COOLDOWN_KEY, player.getUniqueId(), System.currentTimeMillis() + GLOBAL_COOLDOWN_MILLIS);
 
-                                    log.info("getting closer");
-
                                     String[] args = splitByWord.length > 1 ?
                                             (String[]) ArrayUtils.subarray(splitByWord, 1, splitByWord.length) :
                                             new String[]{};
@@ -66,8 +63,6 @@ public class NetworkCommandListener implements Listener, Facet {
                                     NetworkCommandPacket networkCommand =
                                             new NetworkCommandPacket(commandName, args, playerDetail);
                                     packetUtil.send(networkCommand);
-
-                                    log.info("I hope it gets here");
                                 });
                     }
                 });

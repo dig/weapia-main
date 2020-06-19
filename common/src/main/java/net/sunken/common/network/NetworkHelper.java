@@ -1,11 +1,13 @@
 package net.sunken.common.network;
 
+import lombok.experimental.UtilityClass;
 import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.Rank;
 
 import java.util.Map;
 import java.util.UUID;
 
+@UtilityClass
 public class NetworkHelper {
 
     public static final String NETWORK_PLAYER_STORAGE_KEY = "player";

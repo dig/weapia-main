@@ -1,10 +1,12 @@
 package net.sunken.common.server;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
+import java.security.SecureRandom;
+import java.util.*;
+
+@UtilityClass
 public class ServerHelper {
 
     public static final String SERVER_STORAGE_KEY = "instance";
@@ -47,6 +49,16 @@ public class ServerHelper {
                 .state(Server.State.valueOf(kv.get(SERVER_STATE_KEY)))
                 .metadata(metadata)
                 .build();
+    }
+
+    private static final String AB = "abcdefghijklmnopqrstuvwxyz";
+    private static Random random = new Random();
+    public static String generate(@NonNull Server.Type type) {
+        StringBuilder sb = new StringBuilder(4);
+        for (int i = 0; i < 3; i++)
+            sb.append(random.nextInt(9));
+        sb.append(AB.charAt(random.nextInt(AB.length())));
+        return type.getPrefix() + sb.toString();
     }
 
 }

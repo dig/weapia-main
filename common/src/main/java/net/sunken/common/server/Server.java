@@ -101,20 +101,6 @@ public class Server implements RedisSerializable {
             this(prefix);
             this.heartbeatCheck = heartbeatCheck;
         }
-
-        private static final String AB = "abcdefghijklmnopqrstuvwxyz";
-        private static SecureRandom secureRandom = new SecureRandom();
-
-        public String generateId() {
-            StringBuilder sb = new StringBuilder(4);
-
-            for (int i = 0; i < 3; i++) {
-                sb.append(secureRandom.nextInt(9));
-            }
-
-            sb.append(AB.charAt(secureRandom.nextInt(AB.length())));
-            return this.prefix + sb.toString();
-        }
     }
 
     public enum State {

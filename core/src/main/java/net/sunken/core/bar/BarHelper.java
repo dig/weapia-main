@@ -1,5 +1,8 @@
 package net.sunken.core.bar;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class BarHelper {
 
     public static String BAR_STORAGE_KEY = "bar";

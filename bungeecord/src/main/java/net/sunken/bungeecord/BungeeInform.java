@@ -12,6 +12,7 @@ import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
+import net.sunken.common.server.ServerHelper;
 import net.sunken.common.server.World;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.util.AsyncHelper;
@@ -32,7 +33,7 @@ public class BungeeInform implements Facet, Enableable, Listener {
     @Override
     public void enable() {
         server = Server.builder()
-            .id(Server.Type.BUNGEE.generateId())
+            .id(ServerHelper.generate(Server.Type.BUNGEE))
             .type(Server.Type.BUNGEE)
             .host("0.0.0.0")
             .port(25565)

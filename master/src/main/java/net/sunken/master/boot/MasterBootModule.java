@@ -1,14 +1,14 @@
-package net.sunken.master.reboot;
+package net.sunken.master.boot;
 
 import com.google.inject.*;
 import net.sunken.common.inject.*;
 
-public class MasterRebootModule extends AbstractModule {
+public class MasterBootModule extends AbstractModule {
 
     @Override
     public void configure() {
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(MasterRebootNotifier.class);
+        pluginFacetBinder.addBinding(MasterBootNotifier.class);
     }
 
 }

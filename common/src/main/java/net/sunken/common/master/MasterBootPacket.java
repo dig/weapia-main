@@ -5,5 +5,5 @@ import net.sunken.common.packet.*;
 
 @Getter
 @AllArgsConstructor
-public class MasterRebootPacket extends Packet {
+public class MasterBootPacket extends Packet {
 }

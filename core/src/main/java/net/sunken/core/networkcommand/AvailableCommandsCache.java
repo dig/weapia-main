@@ -12,7 +12,7 @@ import javax.inject.*;
 import java.util.*;
 
 @Singleton
-public class AvailableCommandsCache extends PacketHandler<MasterRebootPacket> implements Facet, Enableable {
+public class AvailableCommandsCache extends PacketHandler<MasterBootPacket> implements Facet, Enableable {
 
     @Getter
     private Set<String> availableCommmands = new HashSet<>();
@@ -23,7 +23,7 @@ public class AvailableCommandsCache extends PacketHandler<MasterRebootPacket> im
     private PacketHandlerRegistry packetHandlerRegistry;
 
     @Override
-    public void onReceive(MasterRebootPacket packet) {
+    public void onReceive(MasterBootPacket packet) {
         fetch();
     }
 
@@ -37,7 +37,7 @@ public class AvailableCommandsCache extends PacketHandler<MasterRebootPacket> im
             availableCommmands = connection.smembers(NetworkCommandConstants.COMMAND_LIST_KEY);
         }
 
-        packetHandlerRegistry.registerHandler(MasterRebootPacket.class, this);
+        packetHandlerRegistry.registerHandler(MasterBootPacket.class, this);
     }
 
     @Override

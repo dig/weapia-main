@@ -30,14 +30,14 @@ public class AvailableCommandsCache extends PacketHandler<MasterBootPacket> impl
     @Override
     public void enable() {
         fetch();
+
+        packetHandlerRegistry.registerHandler(MasterBootPacket.class, this);
     }
 
     private void fetch() {
         try (Jedis connection = redisConnection.getJedisPool().getResource()) {
             availableCommmands = connection.smembers(NetworkCommandConstants.COMMAND_LIST_KEY);
         }
-
-        packetHandlerRegistry.registerHandler(MasterBootPacket.class, this);
     }
 
     @Override

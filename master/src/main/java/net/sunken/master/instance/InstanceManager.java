@@ -155,7 +155,5 @@ public class InstanceManager implements Facet, Enableable {
                 }
             }
         }
-
     }
-
 }

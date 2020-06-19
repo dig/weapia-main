@@ -198,12 +198,10 @@ public class ServerManager implements Facet, Enableable {
 
     public int getPlayersOnline(@NonNull Server.Type type, @NonNull Game game) {
         int playersOnline = 0;
-
         Set<Server> serversWithType = findAll(type, game);
         for (Server srv : serversWithType) {
             playersOnline += srv.getPlayers();
         }
-
         return playersOnline;
     }
 
@@ -262,5 +260,4 @@ public class ServerManager implements Facet, Enableable {
     @Override
     public void disable() {
     }
-
 }

@@ -10,6 +10,7 @@ import net.sunken.common.command.impl.BaseCommand;
 import net.sunken.common.command.impl.BaseCommandRegistry;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.inject.annotation.PreInit;
 import net.sunken.core.*;
 import net.sunken.core.util.*;
 import org.bukkit.command.SimpleCommandMap;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Log
+@PreInit
 @Singleton
 public class CommandRegistry extends BaseCommandRegistry implements Facet, Enableable, Listener {
 

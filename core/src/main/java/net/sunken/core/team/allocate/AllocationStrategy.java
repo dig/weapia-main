@@ -7,5 +7,5 @@ import java.util.*;
 
 public interface AllocationStrategy {
 
-    Allocation allocate(Set<AbstractPlayer> players, Set<Team> teams);
+    Allocation allocate(Collection<AbstractPlayer> players, Set<Team> teams);
 }

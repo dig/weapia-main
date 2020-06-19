@@ -10,7 +10,7 @@ import java.util.*;
 public class GreedyAllocationStrategy implements AllocationStrategy {
 
     @Override
-    public Allocation allocate(Set<AbstractPlayer> players, Set<Team> teams) {
+    public Allocation allocate(Collection<AbstractPlayer> players, Set<Team> teams) {
         Set<Team> resultantTeams = new HashSet<>();
         Queue<AbstractPlayer> unallocatedPlayers = new LinkedList<>(players);
 

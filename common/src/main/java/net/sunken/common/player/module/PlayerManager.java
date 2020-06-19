@@ -1,7 +1,6 @@
 package net.sunken.common.player.module;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.NonNull;
@@ -44,8 +43,7 @@ public class PlayerManager implements Facet, Enableable {
         onlinePlayers.remove(uuid);
     }
 
-    public Set<AbstractPlayer> getOnlinePlayers() {
-        return Sets.newHashSet(onlinePlayers.values());
+    public Collection<AbstractPlayer> getOnlinePlayers() {
+        return onlinePlayers.values();
     }
-
 }

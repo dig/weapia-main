@@ -44,11 +44,8 @@ public class EngineManager implements Facet, Listener {
     public void setGameMode(@NonNull GameMode gameMode) throws GameModeAlreadySetException {
         if (this.gameMode == null) {
             this.gameMode = gameMode;
-
-            //--- Set state
             this.setState(this.gameMode.getInitialState().get());
 
-            //--- State tick
             if (gameMode.isStateTicking()) {
                 Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                     currentGameState.tick(tickCount);
@@ -128,13 +125,11 @@ public class EngineManager implements Facet, Listener {
         if (currentGameState != null && currentGameState instanceof EventGameState) {
             EventGameState eventGameState = (EventGameState) currentGameState;
 
-            //--- Take damage
             if (event.getEntity() instanceof Player) {
                 Player target = (Player) event.getEntity();
                 event.setCancelled(!eventGameState.canTakeEntityDamage(target, event.getDamager(), event.getCause()));
             }
 
-            //--- Deal damage
             if (event.getDamager() instanceof Player) {
                 Player instigator = (Player) event.getDamager();
                 event.setCancelled(!eventGameState.canDealEntityDamage(instigator, event.getEntity(), event.getCause()));

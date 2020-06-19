@@ -19,7 +19,7 @@ public class ServerHeartbeatHandler extends PacketHandler<ServerHeartbeatPacket>
     @Override
     public void onReceive(ServerHeartbeatPacket packet) {
         if (packet.getReason() == ServerHeartbeatPacket.Reason.REQUEST) {
-            bukkitSyncExecutor.execute(() -> packetUtil.sendSync(new ServerHeartbeatPacket(pluginInform.getServer().getId(), ServerHeartbeatPacket.Reason.RESPOND)));
+            bukkitSyncExecutor.execute(() -> packetUtil.send(new ServerHeartbeatPacket(pluginInform.getServer().getId(), ServerHeartbeatPacket.Reason.RESPOND)));
         }
     }
 

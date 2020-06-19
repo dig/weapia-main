@@ -47,7 +47,7 @@ public class NetworkManager implements Facet, Enableable {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.hmset(NetworkHelper.NETWORK_PLAYER_STORAGE_KEY + ":" + playerDetail.getUuid().toString(), playerDetail.toRedis());
             }
-            packetUtil.sendSync(new NetworkJoinPacket(playerDetail));
+            packetUtil.send(new NetworkJoinPacket(playerDetail));
         }
     }
 
@@ -59,7 +59,7 @@ public class NetworkManager implements Facet, Enableable {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.del(NetworkHelper.NETWORK_PLAYER_STORAGE_KEY + ":" + playerDetail.getUuid().toString());
             }
-            packetUtil.sendSync(new NetworkQuitPacket(playerDetail));
+            packetUtil.send(new NetworkQuitPacket(playerDetail));
         }
     }
 
@@ -85,8 +85,6 @@ public class NetworkManager implements Facet, Enableable {
 
                 playerCache.put(playerDetail.getUuid(), playerDetail);
                 nameCache.put(playerDetail.getDisplayName(), playerDetail.getUuid());
-
-                log.info(String.format("Loaded player %s", playerDetail.toRedis()));
             }
         }
 

@@ -16,17 +16,21 @@ public abstract class AbstractFacetLoader {
     }
 
     protected void enableAllFacets() {
-        pluginFacets.forEach(facet -> {
-            if (facet instanceof Enableable)
-                ((Enableable) facet).enable();
-        });
+        pluginFacets.stream()
+                .filter(facet -> facet instanceof Enableable)
+                .forEach(facet -> {
+                    Enableable enableableFacet = (Enableable) facet;
+                    enableableFacet.enable();
+                });
     }
 
     protected void disableAllFacets() {
-        pluginFacets.forEach(facet -> {
-            if (facet instanceof Enableable)
-                ((Enableable) facet).disable();
-        });
+        pluginFacets.stream()
+                .filter(facet -> facet instanceof Enableable)
+                .forEach(facet -> {
+                    Enableable enableableFacet = (Enableable) facet;
+                    enableableFacet.disable();
+                });
     }
 
     public abstract void start();

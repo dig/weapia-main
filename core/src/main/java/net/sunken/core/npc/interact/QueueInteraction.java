@@ -7,6 +7,7 @@ import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.PlayerRequestServerPacket;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
+import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.Constants;
 import org.bukkit.entity.Player;
 
@@ -23,7 +24,7 @@ public class QueueInteraction implements NPCInteraction {
         if ((enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK || enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT)
                 && enumHand == EnumHand.MAIN_HAND) {
             player.sendMessage(String.format(Constants.SEND_TO_GAME, game.getFriendlyName()));
-            packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), type, game, save));
+            AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), type, game, save)));
         }
     }
 

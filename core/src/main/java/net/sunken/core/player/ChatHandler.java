@@ -7,7 +7,6 @@ import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.Rank;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.core.Constants;
-import net.sunken.core.util.ColourUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,10 +32,10 @@ public class ChatHandler implements Facet, Listener {
 
             switch (abstractPlayer.getRank()) {
                 case PLAYER:
-                    event.setFormat(ColourUtil.fromColourCode(rank.getColourCode()) + "%s" + ChatColor.WHITE + ": %s");
+                    event.setFormat(ChatColor.valueOf(rank.getColour()) + "%s" + ChatColor.WHITE + ": %s");
                     break;
                 default:
-                    event.setFormat(ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + "%s" + ChatColor.WHITE + ": %s");
+                    event.setFormat(ChatColor.valueOf(rank.getColour()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + "%s" + ChatColor.WHITE + ": %s");
             }
         } else {
             player.sendMessage(Constants.FAILED_LOAD_DATA);

@@ -39,7 +39,7 @@ public class LobbyBalancer extends AbstractBalancer {
             Server server = serverOptional.get();
             ServerDetail serverDetail = server.toServerDetail();
 
-            packetUtil.sendSync(new PlayerSendToServerPacket(uuid, serverDetail));
+            packetUtil.send(new PlayerSendToServerPacket(uuid, serverDetail));
             log.info(String.format("Sending player to lobby. (%s, %s)", uuid, server.getId()));
             return true;
         }

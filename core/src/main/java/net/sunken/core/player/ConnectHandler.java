@@ -15,6 +15,7 @@ import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.common.server.packet.ServerConnectedPacket;
+import net.sunken.common.util.AsyncHelper;
 import net.sunken.common.util.Tuple;
 import net.sunken.core.Constants;
 import net.sunken.core.PluginInform;
@@ -59,15 +60,15 @@ public class ConnectHandler implements Facet, Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        AbstractPlayer abstractPlayer = pendingConnection.getIfPresent(player.getUniqueId());
+        event.setJoinMessage("");
 
-        packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
+        AbstractPlayer abstractPlayer = pendingConnection.getIfPresent(player.getUniqueId());
         if (abstractPlayer != null) {
             playerManager.add(abstractPlayer);
             pendingConnection.invalidate(player.getUniqueId());
 
-            event.setJoinMessage("");
             abstractPlayer.setup();
+            AsyncHelper.executor().submit(() -> packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), pluginInform.getServer().getId())));
         } else {
             player.kickPlayer(Constants.FAILED_LOAD_DATA);
         }

@@ -151,7 +151,7 @@ public class Kube {
             config = instanceConfiguration.getGames().get(game);
         }
 
-        return kubeConfiguration.getBranch() == "develop" ? config.getInfrastructure().getDevelopment() : config.getInfrastructure().getProduction();
+        return kubeConfiguration.getBranch().equals("develop") ? config.getInfrastructure().getDevelopment() : config.getInfrastructure().getProduction();
     }
 
 }

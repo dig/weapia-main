@@ -5,30 +5,26 @@ import lombok.Getter;
 @Getter
 public enum Rank {
 
-    PLAYER (0, 4, "Player", "&7"),
-    MOD (5, 3, "Mod", "&2"),
-    ADMIN (6, 2, "Admin", "&4"),
-    DEVELOPER (7, 1, "Developer", "&c"),
-    OWNER (8, 0, "Owner", "&4");
+    PLAYER (0, 4, "Player", "GRAY"),
+    MOD (5, 3, "Mod", "GREEN"),
+    ADMIN (6, 2, "Admin", "DARK_RED"),
+    DEVELOPER (7, 1, "Developer", "RED"),
+    OWNER (8, 0, "Owner", "DARK_RED");
 
     private int index;
     private int order;
     private String friendlyName;
-    private String colourCode;
+    private String colour;
 
-    Rank(int index, int order, String friendlyName, String colourCode) {
+    Rank(int index, int order, String friendlyName, String colour) {
         this.index = index;
         this.order = order;
         this.friendlyName = friendlyName;
-        this.colourCode = colourCode;
+        this.colour = colour;
     }
 
     public boolean has(Rank rank) {
         return index >= rank.getIndex();
-    }
-
-    public String constructName() {
-        return this.colourCode + this.friendlyName;
     }
 
 }

@@ -57,7 +57,7 @@ public class TeamManager implements Facet, Enableable, Listener {
         }
     }
 
-    public Optional<Team> getById(String id) {
+    public Optional<Team> get(@NonNull String id) {
         return teamsList.stream()
                 .filter(team -> team.getId().equals(id))
                 .findFirst();

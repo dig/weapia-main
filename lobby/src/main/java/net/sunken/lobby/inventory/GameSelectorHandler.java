@@ -15,6 +15,7 @@ import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.server.module.event.ServerAddedEvent;
 import net.sunken.common.server.module.event.ServerRemovedEvent;
 import net.sunken.common.server.module.event.ServerUpdatedEvent;
+import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.Constants;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.inventory.ItemBuilder;
@@ -107,7 +108,7 @@ public class GameSelectorHandler implements Facet, Enableable, Listener, SunkenL
                         Game game = Game.valueOf(selectorInteractionConfiguration.getData().get(1));
 
                         observer.sendMessage(String.format(Constants.SEND_TO_GAME, game.getFriendlyName()));
-                        packetUtil.send(new PlayerRequestServerPacket(observer.getUniqueId(),type, game, true));
+                        AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(observer.getUniqueId(),type, game, true)));
                         break;
                     case MESSAGE:
                         selectorInteractionConfiguration.getData().forEach(message -> observer.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));

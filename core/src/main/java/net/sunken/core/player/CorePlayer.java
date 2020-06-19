@@ -5,8 +5,7 @@ import net.sunken.common.player.AbstractPlayer;
 import net.sunken.core.Constants;
 import net.sunken.core.engine.state.impl.BasePlayerState;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
-import net.sunken.core.util.ColourUtil;
-import net.sunken.core.util.TabListUtil;
+import net.sunken.core.util.TabList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -36,7 +35,7 @@ public abstract class CorePlayer extends AbstractPlayer {
         Optional<? extends Player> playerOptional = toPlayer();
         if (playerOptional.isPresent()) {
             Player player = playerOptional.get();
-            TabListUtil.send(player, ChatColor.translateAlternateColorCodes('&', Constants.TAB_TOP), ChatColor.translateAlternateColorCodes('&', Constants.TAB_BOTTOM));
+            TabList.send(player, ChatColor.translateAlternateColorCodes('&', Constants.TAB_TOP), ChatColor.translateAlternateColorCodes('&', Constants.TAB_BOTTOM));
         }
     }
 
@@ -46,12 +45,12 @@ public abstract class CorePlayer extends AbstractPlayer {
             Player player = playerOptional.get();
             switch (rank) {
                 case PLAYER:
-                    player.setPlayerListName(ColourUtil.fromColourCode(rank.getColourCode()) + player.getName());
-                    scoreboardRegistry.changeName(this, "", "", ColourUtil.fromColourCode(rank.getColourCode()), rank.getOrder());
+                    player.setPlayerListName(ChatColor.valueOf(rank.getColour()) + player.getName());
+                    scoreboardRegistry.changeName(this, "", "", ChatColor.valueOf(rank.getColour()), rank.getOrder());
                     break;
                 default:
-                    player.setPlayerListName(ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + player.getName());
-                    scoreboardRegistry.changeName(this, ColourUtil.fromColourCode(rank.getColourCode()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ColourUtil.fromColourCode(rank.getColourCode()), rank.getOrder());
+                    player.setPlayerListName(ChatColor.valueOf(rank.getColour()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + player.getName());
+                    scoreboardRegistry.changeName(this, ChatColor.valueOf(rank.getColour()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ChatColor.valueOf(rank.getColour()), rank.getOrder());
             }
         }
     }

@@ -8,11 +8,10 @@ import net.sunken.common.database.RedisConnection;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
-import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.Constants;
 import net.sunken.core.bar.module.BarUpdateHandler;
 import net.sunken.core.bar.packet.BarUpdatePacket;
-import net.sunken.core.util.ActionBarUtil;
+import net.sunken.core.util.ActionBar;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
@@ -23,7 +22,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 
@@ -98,8 +96,9 @@ public class BarSettings implements Facet, Enableable, Listener {
         @Override
         public void run() {
             if (barSettings.getAction().isPresent()) {
-                for (Player player : Bukkit.getOnlinePlayers())
-                    ActionBarUtil.sendMessage(player, barSettings.getAction().get());
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    ActionBar.sendMessage(player, barSettings.getAction().get());
+                }
             }
         }
 

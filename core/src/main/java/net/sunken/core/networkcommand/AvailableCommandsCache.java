@@ -12,10 +12,10 @@ import javax.inject.*;
 import java.util.*;
 
 @Singleton
-public class AvailableCommandsCache extends PacketHandler<MasterRebootPacket> implements Facet, Enableable {
+public class AvailableCommandsCache extends PacketHandler<MasterBootPacket> implements Facet, Enableable {
 
     @Getter
-    private Set<String> availableCommmands = new HashSet<>();
+    private Set<String> availableCommands = new HashSet<>();
 
     @Inject
     private RedisConnection redisConnection;
@@ -23,21 +23,21 @@ public class AvailableCommandsCache extends PacketHandler<MasterRebootPacket> im
     private PacketHandlerRegistry packetHandlerRegistry;
 
     @Override
-    public void onReceive(MasterRebootPacket packet) {
+    public void onReceive(MasterBootPacket packet) {
         fetch();
     }
 
     @Override
     public void enable() {
         fetch();
+
+        packetHandlerRegistry.registerHandler(MasterBootPacket.class, this);
     }
 
     private void fetch() {
         try (Jedis connection = redisConnection.getJedisPool().getResource()) {
-            availableCommmands = connection.smembers(NetworkCommandConstants.COMMAND_LIST_KEY);
+            availableCommands = connection.smembers(NetworkCommandConstants.COMMAND_LIST_KEY);
         }
-
-        packetHandlerRegistry.registerHandler(MasterRebootPacket.class, this);
     }
 
     @Override

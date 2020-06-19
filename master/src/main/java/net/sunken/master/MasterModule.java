@@ -8,10 +8,9 @@ import net.sunken.common.server.module.*;
 import net.sunken.master.command.*;
 import net.sunken.master.instance.*;
 import net.sunken.master.kube.*;
-import net.sunken.master.command.networkcommand.*;
 import net.sunken.master.party.*;
 import net.sunken.master.queue.*;
-import net.sunken.master.reboot.*;
+import net.sunken.master.boot.*;
 
 import java.io.*;
 
@@ -29,9 +28,8 @@ public class MasterModule extends AbstractModule {
         install(new ServerModule());
         install(new PartyModule());
 
-        install(new MasterRebootModule());
+        install(new MasterBootModule());
         install(new CommandModule());
-        install(new NetworkCommandModule());
     }
 
 }

@@ -52,7 +52,7 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
                 String cooldownKey = "cmd:" + name;
 
                 if (!cooldowns.canProceed(cooldownKey, abstractPlayer.getUuid())) {
-                    packetUtil.send(new PlayerProxyMessagePacket(uuid, "&4" + commandAnnotation.errorCooldown()));
+                    packetUtil.send(new PlayerProxyMessagePacket(uuid, "&c" + commandAnnotation.errorCooldown()));
                     return;
                 }
             }
@@ -82,10 +82,10 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
             } else {
                 switch (commandResponse) {
                     case INVALID_RANK:
-                        packetUtil.send(new PlayerProxyMessagePacket(uuid, "&4" + commandAnnotation.errorPermission()));
+                        packetUtil.send(new PlayerProxyMessagePacket(uuid, "&c" + commandAnnotation.errorPermission()));
                         break;
                     case INVALID_ARGS:
-                        packetUtil.send(new PlayerProxyMessagePacket(uuid, "&4Usage: " + commandAnnotation.usage()));
+                        packetUtil.send(new PlayerProxyMessagePacket(uuid, "&cUsage: " + commandAnnotation.usage()));
                         break;
                     case SUCCESS:
                         if (baseCommand instanceof BasicCommand) {

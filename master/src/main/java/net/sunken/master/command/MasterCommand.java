@@ -8,6 +8,6 @@ import java.util.*;
 
 public abstract class MasterCommand extends BaseCommand implements Facet {
 
-    public abstract boolean onCommand(Optional<AbstractPlayer> abstractPlayer, String[] args);
+    public abstract boolean onCommand(Optional<AbstractPlayer> abstractPlayerOptional, String[] args);
 
 }

@@ -3,6 +3,7 @@ package net.sunken.master.command;
 import com.google.inject.*;
 import net.sunken.common.command.impl.*;
 import net.sunken.common.inject.*;
+import net.sunken.master.command.example.ExampleCommand;
 
 public class CommandModule extends AbstractModule {
 
@@ -12,6 +13,7 @@ public class CommandModule extends AbstractModule {
 
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(CommandRegistry.class);
+        pluginFacetBinder.addBinding(ExampleCommand.class);
     }
 
 }

@@ -43,11 +43,10 @@ public class NetworkCommandListener implements Listener, Facet {
                     boolean isRegisteredOnMaster = availableCommands.getAvailableCommmands().contains(commandName);
 
                     if (commandMap.getCommand(commandName) == null && isRegisteredOnMaster) {
+                        event.setCancelled(true);
                         playerManager.get(playerId)
                                 .map(AbstractPlayer::toPlayerDetail)
                                 .ifPresent(playerDetail -> {
-                                    event.setCancelled(true);
-
                                     if (!cooldowns.canProceed(COOLDOWN_KEY, playerId)) {
                                         return;
                                     }

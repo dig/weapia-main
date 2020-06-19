@@ -3,7 +3,6 @@ package net.sunken.master.command;
 import com.google.inject.*;
 import net.sunken.common.command.impl.*;
 import net.sunken.common.inject.*;
-import net.sunken.core.command.commands.*;
 
 public class CommandModule extends AbstractModule {
 

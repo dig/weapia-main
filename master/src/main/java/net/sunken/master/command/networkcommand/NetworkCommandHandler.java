@@ -36,6 +36,8 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
         String[] args = packet.getArgs();
         Optional<BaseCommand> baseCommandOptional = baseCommandRegistry.findCommandByName(name);
 
+        log.info(String.format("new network command %s %s %s", name, args.toString(), packet.getSender().getDisplayName()));
+
         boolean success = false;
         if (baseCommandOptional.isPresent()) {
             BaseCommand baseCommand = baseCommandOptional.get();

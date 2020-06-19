@@ -1,7 +1,9 @@
 package net.sunken.common.util;
 
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class StringUtil {
 
     public static final int CHAT_WIDTH = 154; // px

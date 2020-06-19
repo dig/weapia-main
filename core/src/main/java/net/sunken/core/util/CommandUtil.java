@@ -1,11 +1,13 @@
 package net.sunken.core.util;
 
+import lombok.experimental.UtilityClass;
 import org.bukkit.*;
 import org.bukkit.command.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 
+@UtilityClass
 public final class CommandUtil {
 
     public static Optional<SimpleCommandMap> findSimpleCommandMap() {
@@ -22,7 +24,4 @@ public final class CommandUtil {
         return Optional.empty();
     }
 
-    private CommandUtil() {
-        throw new UnsupportedOperationException("cannot instantiate");
-    }
 }

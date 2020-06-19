@@ -1,10 +1,12 @@
 package net.sunken.core.util;
 
+import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.util.Random;
 
+@UtilityClass
 public class LocationUtil {
 
     private static Random random = new Random();

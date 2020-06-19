@@ -1,6 +1,7 @@
 package net.sunken.core.util;
 
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import net.minecraft.server.v1_15_R1.IChatBaseComponent;
 import net.minecraft.server.v1_15_R1.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.server.v1_15_R1.PlayerConnection;
@@ -9,7 +10,8 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
 
-public class TabListUtil {
+@UtilityClass
+public class TabList {
 
     public static void send(@NonNull Player player, @NonNull String header, @NonNull String footer) {
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;

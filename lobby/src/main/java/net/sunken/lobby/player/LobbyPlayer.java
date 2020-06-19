@@ -2,18 +2,14 @@ package net.sunken.lobby.player;
 
 import lombok.extern.java.Log;
 import net.sunken.common.player.Rank;
-import net.sunken.common.server.ServerHelper;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.core.PluginInform;
 import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.CustomScoreboard;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
-import net.sunken.core.util.ColourUtil;
-import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,7 +38,7 @@ public class LobbyPlayer extends CorePlayer {
             customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
 
             customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
-            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank /join" : ColourUtil.fromColourCode(rank.getColourCode()) + "" + rank.getFriendlyName(), 9);
+            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
             customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
 
             customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);

@@ -3,12 +3,14 @@ package net.sunken.common.util;
 import static redis.clients.jedis.ScanParams.SCAN_POINTER_START;
 import com.google.common.collect.Sets;
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.ScanResult;
 
 import java.util.Set;
 
+@UtilityClass
 public class RedisUtil {
 
     public static Set<String> scanAll(@NonNull Jedis jedis, @NonNull String pattern) {

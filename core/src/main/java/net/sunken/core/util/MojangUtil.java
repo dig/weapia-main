@@ -3,6 +3,7 @@ package net.sunken.core.util;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 import net.minecraft.server.v1_15_R1.EntityPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+@UtilityClass
 public class MojangUtil {
 
     public static GameProfile toGameProfile(@NonNull String displayName, @NonNull String texture, @NonNull String signature) {

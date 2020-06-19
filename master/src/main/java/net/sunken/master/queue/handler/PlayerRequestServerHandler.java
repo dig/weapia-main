@@ -27,11 +27,11 @@ public class PlayerRequestServerHandler extends PacketHandler<PlayerRequestServe
     @Inject
     private PacketUtil packetUtil;
 
-    private Cache<UUID, InstanceDetail> pendingSaveBeforeConnect;
+    private final Cache<UUID, InstanceDetail> pendingSaveBeforeConnect;
 
     public PlayerRequestServerHandler() {
-        pendingSaveBeforeConnect = CacheBuilder.newBuilder()
-                .expireAfterWrite(10L, TimeUnit.SECONDS)
+        this.pendingSaveBeforeConnect = CacheBuilder.newBuilder()
+                .expireAfterWrite(30L, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class PlayerRequestServerHandler extends PacketHandler<PlayerRequestServe
                 pendingSaveBeforeConnect.put(packet.getUuid(), new InstanceDetail(packet.getType(), packet.getGame()));
                 packetUtil.send(new PlayerSaveStatePacket(packet.getUuid(), PlayerSaveStatePacket.Reason.REQUEST));
             } else {
-                log.info(String.format("PlayerRequestServerHandler: Tried to save player again? skipping. (%s)", packet.getUuid().toString()));
+                log.info(String.format("Tried to save player again? skipping. (%s)", packet.getUuid().toString()));
             }
         } else {
             queueManager.queue(packet.getUuid(), packet.getType(), packet.getGame());
@@ -60,7 +60,7 @@ public class PlayerRequestServerHandler extends PacketHandler<PlayerRequestServe
                     log.info(String.format("PlayerSaveStatePacket: Complete (%s)", uuid.toString()));
 
                     pendingSaveBeforeConnect.invalidate(uuid);
-                    queueManager.queue(uuid, instanceDetail);
+                    queueManager.queue(uuid, instanceDetail.getType(), instanceDetail.getGame());
                     break;
                 case FAIL:
                     log.severe(String.format("PlayerSaveStatePacket: Fail (%s)", uuid.toString()));

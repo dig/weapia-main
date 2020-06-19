@@ -1,5 +1,7 @@
 package net.sunken.master.instance.heartbeat;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.Getter;
@@ -14,11 +16,9 @@ import net.sunken.common.server.packet.ServerHeartbeatPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.master.instance.InstanceManager;
 
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Log
@@ -37,9 +37,8 @@ public class HeartbeatManager implements Facet, Enableable {
 
     @Override
     public void enable() {
-        heartbeatServerAttempt = new ConcurrentHashMap<>();
+        heartbeatServerAttempt = Maps.newConcurrentMap();
         packetHandlerRegistry.registerHandler(ServerHeartbeatPacket.class, serverHeartbeatHandler);
-
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(heartbeatRunnable, 1L, 1L, TimeUnit.MINUTES);
     }
 
@@ -65,9 +64,9 @@ public class HeartbeatManager implements Facet, Enableable {
         @Override
         public void run() {
             Map<String, Integer> heartbeatServerAttempt = heartbeatManager.getHeartbeatServerAttempt();
-            Queue<String> serversToClose = new LinkedList<>();
+            Queue<String> serversToClose = Queues.newLinkedBlockingQueue();
 
-            serverManager.getServerList().stream()
+            serverManager.findAll().stream()
                     .filter(Server::canHeartbeatCheck)
                     .forEach(server -> {
                         int heartbeatCount = 0;
@@ -86,21 +85,18 @@ public class HeartbeatManager implements Facet, Enableable {
 
             packetUtil.send(new ServerHeartbeatPacket(null, ServerHeartbeatPacket.Reason.REQUEST));
 
-            //--- Close unresponsive instances
-            while (serversToClose.size() > 0) {
+            while (!serversToClose.isEmpty()) {
                 String serverToCloseId = serversToClose.poll();
                 Optional<Server> serverToCloseOptional = serverManager.findServerById(serverToCloseId);
 
                 if (serverToCloseOptional.isPresent()) {
                     heartbeatServerAttempt.remove(serverToCloseId);
-                    instanceManager.removeInstance(serverToCloseOptional.get(), InstanceManager.Reason.HEARTBEAT);
+                    instanceManager.remove(serverToCloseOptional.get().getId());
                     log.info(String.format("HeartbeatRunnable: Removing instance due to heartbeat check. (%s)", serverToCloseId));
                 } else {
                     log.severe(String.format("HeartbeatRunnable: Tried to close non-existent server? huh (%s)", serverToCloseId));
                 }
             }
-
-            log.info("HeartbeatRunnable: Sent heartbeat request to all servers.");
         }
 
     }

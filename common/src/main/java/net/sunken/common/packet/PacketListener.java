@@ -12,6 +12,7 @@ import redis.clients.jedis.Jedis;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 
 public class PacketListener implements Facet, Enableable {
 
@@ -38,22 +39,19 @@ public class PacketListener implements Facet, Enableable {
     @Override
     public void enable() {
         subscriber = redisConnection.getConnection();
-
-        //--- Start subscriber thread
         subscriberThread = new Thread(() -> subscriber.subscribe(new Listener(), packetChannel.getBytes()));
         subscriberThread.start();
     }
 
     @Override
     public void disable() {
-        //--- Close
         subscriberThread.interrupt();
         // subscriber.close();
     }
 
     private class Listener extends BinaryJedisPubSub {
 
-        private Map<Class<? extends Packet>, PacketHandler> handlers = packetHandlerRegistry.getHandlers();
+        private Map<Class<? extends Packet>, Set<PacketHandler>> handlers = packetHandlerRegistry.getHandlers();
 
         @Override
         public void onMessage(byte[] channel, byte[] message) {
@@ -61,9 +59,8 @@ public class PacketListener implements Facet, Enableable {
                 Packet deserialized = Packet.fromBytes(message);
 
                 if (deserialized != null && handlers.containsKey(deserialized.getClass())) {
-                    PacketHandler handler = handlers.get(deserialized.getClass());
-
-                    handler.onReceive(deserialized);
+                    Set<PacketHandler> packetHandlers = handlers.get(deserialized.getClass());
+                    packetHandlers.forEach(handler -> handler.onReceive(deserialized));
                 }
 
                 eventManager.callEvent(new PacketReceivedEvent(deserialized));

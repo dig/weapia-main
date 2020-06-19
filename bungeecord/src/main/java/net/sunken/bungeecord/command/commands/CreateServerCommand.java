@@ -12,6 +12,7 @@ import net.sunken.common.player.Rank;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.packet.RequestServerCreationPacket;
+import net.sunken.common.util.AsyncHelper;
 
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public class CreateServerCommand extends BungeeCommand {
             Server.Type type = Server.Type.valueOf(args[0]);
             Game game = Game.valueOf(args[1]);
 
-            packetUtil.send(new RequestServerCreationPacket(type, game));
+            AsyncHelper.executor().submit(() -> packetUtil.send(new RequestServerCreationPacket(type, game)));
             commandSender.sendMessage(TextComponent.fromLegacyText(Constants.COMMAND_CREATESERVER_SUCCESS));
             return true;
         } catch (IllegalArgumentException e) {

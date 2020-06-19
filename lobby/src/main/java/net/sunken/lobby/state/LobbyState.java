@@ -8,17 +8,17 @@ import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.server.module.event.ServerUpdatedEvent;
-import net.sunken.core.Constants;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.npc.NPC;
-import net.sunken.core.npc.NPCManager;
+import net.sunken.core.npc.NPCRegistry;
+import net.sunken.core.npc.config.InteractionConfiguration;
 import net.sunken.core.npc.config.NPCServerConfiguration;
+import net.sunken.core.npc.interact.MessageInteraction;
+import net.sunken.core.npc.interact.QueueInteraction;
 import net.sunken.core.util.*;
 import net.sunken.lobby.config.*;
-import net.sunken.lobby.player.LobbyPlayer;
-import net.sunken.lobby.player.LobbyPlayerFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
@@ -30,7 +30,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -47,11 +46,7 @@ public class LobbyState extends EventGameState {
     @Inject @InjectConfig
     private LobbyConfiguration lobbyConfiguration;
     @Inject
-    private net.sunken.core.player.ConnectHandler connectHandler;
-    @Inject
-    private LobbyPlayerFactory lobbyPlayerFactory;
-    @Inject
-    private NPCManager npcManager;
+    private NPCRegistry npcRegistry;
     @Inject
     private ServerManager serverManager;
     @Inject
@@ -67,16 +62,30 @@ public class LobbyState extends EventGameState {
             for (String line : npcConfiguration.getDisplayName())
                 displayNameFormatted.add(line.replaceAll("%players", String.valueOf(count)));
 
-            NPC npc = npcManager.create(
+            NPC npc = npcRegistry.register(
                     npcConfiguration.getId(), displayNameFormatted, npcConfiguration.getLocationConfiguration().toLocation(),
-                    npcConfiguration.getSkinConfiguration().getTexture(), npcConfiguration.getSkinConfiguration().getSignature(), true);
-            npc.setInteraction(npcConfiguration.getInteractionConfiguration());
+                    npcConfiguration.getSkinConfiguration().getTexture(), npcConfiguration.getSkinConfiguration().getSignature());
+
+            InteractionConfiguration interactionConfiguration = npcConfiguration.getInteractionConfiguration();
+            switch (interactionConfiguration.getType()) {
+                case MESSAGE:
+                    npc.setInteraction(new MessageInteraction(interactionConfiguration.getValues()));
+                    break;
+                case QUEUE:
+                    npc.setInteraction(new QueueInteraction(
+                            Server.Type.valueOf(interactionConfiguration.getValues().get(0)),
+                            Game.valueOf(interactionConfiguration.getValues().get(1)),
+                            Boolean.valueOf(interactionConfiguration.getValues().get(2)),
+                            packetUtil
+                    ));
+                    break;
+            }
         });
     }
 
     @Override
     public void stop(BaseGameState next) {
-        lobbyConfiguration.getNpcConfigurations().forEach(npcConfiguration -> npcManager.remove(npcConfiguration.getId()));
+        lobbyConfiguration.getNpcConfigurations().forEach(npcConfiguration -> npcRegistry.unregister(npcConfiguration.getId()));
     }
 
     @Override
@@ -117,7 +126,7 @@ public class LobbyState extends EventGameState {
     }
 
     @Override
-    public boolean canTakeDamage(Player target, Entity instigator, EntityDamageEvent.DamageCause damageCause) {
+    public boolean canTakeEntityDamage(Player target, Entity instigator, EntityDamageEvent.DamageCause damageCause) {
         if (instigator instanceof Player)
             return ((Player) instigator).getGameMode() == GameMode.CREATIVE;
 
@@ -125,8 +134,13 @@ public class LobbyState extends EventGameState {
     }
 
     @Override
-    public boolean canDealDamage(Player instigator, Entity target, EntityDamageEvent.DamageCause damageCause) {
+    public boolean canDealEntityDamage(Player instigator, Entity target, EntityDamageEvent.DamageCause damageCause) {
         return instigator.getGameMode() == GameMode.CREATIVE;
+    }
+
+    @Override
+    public boolean canTakeDamage(Player instigator, double finalDamage, double damage) {
+        return false;
     }
 
     @Override
@@ -137,24 +151,17 @@ public class LobbyState extends EventGameState {
     }
 
     @EventHandler
-    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        LobbyPlayer lobbyPlayer = lobbyPlayerFactory.createPlayer(event.getUniqueId(), event.getName());
-
-        if (connectHandler.handlePreLogin(lobbyPlayer)) {
-            event.allow();
-        } else {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Constants.FAILED_LOAD_DATA);
-        }
-    }
-
-    @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
         event.setCancelled(true);
     }
 
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent event) {
-        event.setCancelled(event.toWeatherState());
+        if (event.toWeatherState()) {
+            event.setCancelled(true);
+            event.getWorld().setWeatherDuration(0);
+            event.getWorld().setThundering(false);
+        }
     }
 
     @EventHandler
@@ -198,15 +205,16 @@ public class LobbyState extends EventGameState {
         if (server.getGame() != Game.NONE) {
             bukkitSyncExecutor.execute(() -> {
                 lobbyConfiguration.getNpcConfigurations().forEach(npcConfiguration -> {
-                    NPC npc = npcManager.get(npcConfiguration.getId());
+                    NPC npc = npcRegistry.get(npcConfiguration.getId());
 
                     NPCServerConfiguration serverConfiguration = npcConfiguration.getServerConfiguration();
                     long count = serverManager.getPlayersOnline(serverConfiguration.getType(), serverConfiguration.getGame());
 
                     int i = 0;
                     for (String line : npcConfiguration.getDisplayName()) {
-                        if (line.indexOf("%players") >= 0)
+                        if (line.indexOf("%players") >= 0) {
                             npc.getHologram().update(i, line.replaceAll("%players", String.valueOf(count)));
+                        }
 
                         i++;
                     }

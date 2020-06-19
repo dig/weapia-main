@@ -7,14 +7,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Game {
 
-    NONE ("None", 80, null, null),
-    SPACE_GAMES_SOLO ("Space Games (Solo)", 12, "respects/mv-infrastructure:spacegames", "respects/mv-infrastructure-dev:spacegames"),
-    SPACE_GAMES_DUO ("Space Games (Duo)", 24, "respects/mv-infrastructure:spacegames", "respects/mv-infrastructure-dev:spacegames"),
-    NATURAL_DISASTER ("Natural Disaster", 12, "respects/mv-infrastructure:naturaldisaster", "respects/mv-infrastructure-dev:naturaldisaster");
+    UNKNOWN ("Unknown", 0),
+    NONE ("None", 80),
+
+    ICE_RUNNER_SOLO ("Ice Runner (Solo)", 4),
+
+    SURVIVAL_REALMS ("Survival Realms", 50),
+    SURVIVAL_REALMS_ADVENTURE ("Survival Realms (Adventure)", 100);
 
     private String friendlyName;
     private int maxPlayers;
-    private String prodImageUri;
-    private String devImageUri;
 
 }

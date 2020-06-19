@@ -1,5 +1,8 @@
 package net.sunken.bungeecord.proxy;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class ProxyHelper {
 
     public static String PROXY_STORAGE_KEY = "proxy";

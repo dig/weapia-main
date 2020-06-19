@@ -1,6 +1,9 @@
 package net.sunken.common.inject;
 
+import java.lang.annotation.Annotation;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractFacetLoader {
@@ -15,18 +18,31 @@ public abstract class AbstractFacetLoader {
         return ((Stream<? extends T>) pluginFacets.stream().filter(type::isInstance));
     }
 
+    protected Set<Enableable> getEnableableFacets() {
+        return pluginFacets.stream()
+                .filter(facet -> facet instanceof Enableable)
+                .map(Enableable.class::cast)
+                .collect(Collectors.toSet());
+    }
+
     protected void enableAllFacets() {
-        pluginFacets.forEach(facet -> {
-            if (facet instanceof Enableable)
-                ((Enableable) facet).enable();
-        });
+        getEnableableFacets().forEach(Enableable::enable);
+    }
+
+    protected void enableAllFacets(Predicate<? super Enableable> filter) {
+        getEnableableFacets().stream()
+                .filter(filter)
+                .forEach(Enableable::enable);
     }
 
     protected void disableAllFacets() {
-        pluginFacets.forEach(facet -> {
-            if (facet instanceof Enableable)
-                ((Enableable) facet).disable();
-        });
+        getEnableableFacets().forEach(Enableable::disable);
+    }
+
+    protected void disableAllFacets(Predicate<? super Enableable> filter) {
+        getEnableableFacets().stream()
+                .filter(filter)
+                .forEach(Enableable::disable);
     }
 
     public abstract void start();

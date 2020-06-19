@@ -27,15 +27,12 @@ public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
 
     @Override
     public void onReceive(ServerUpdatePacket packet) {
-        Optional<Server> serverToUpdateOpt = serverManager.getServerList()
-                .stream()
-                .filter(server -> server.getId().equals(packet.getId()))
-                .findFirst();
+        AsyncHelper.executor().submit(() -> {
+            Optional<Server> serverToUpdateOptional = serverManager.findServerById(packet.getId());
 
-        if (serverToUpdateOpt.isPresent()) {
-            Server serverToUpdate = serverToUpdateOpt.get();
+            if (serverToUpdateOptional.isPresent()) {
+                Server serverToUpdate = serverToUpdateOptional.get();
 
-            AsyncHelper.executor().submit(() -> {
                 try (Jedis jedis = redisConnection.getConnection()) {
                     Map<String, String> kv = jedis.hgetAll(ServerHelper.SERVER_STORAGE_KEY + ":" + packet.getId());
 
@@ -44,14 +41,13 @@ public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
                             serverToUpdate.setPlayers(Integer.parseInt(kv.get(ServerHelper.SERVER_PLAYERS_KEY)));
                             serverToUpdate.setMaxPlayers(Integer.parseInt(kv.get(ServerHelper.SERVER_MAXPLAYERS_KEY)));
                             serverToUpdate.setState(Server.State.valueOf(kv.get(ServerHelper.SERVER_STATE_KEY)));
-
                             break;
                         case METADATA:
                             for (String key : ServerHelper.SERVER_METADATA_KEYS) {
-                                if (kv.containsKey(key))
+                                if (kv.containsKey(key)) {
                                     serverToUpdate.getMetadata().put(key, kv.get(key));
+                                }
                             }
-
                             break;
                     }
 
@@ -59,10 +55,8 @@ public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
                 }
 
                 log.info(String.format("ServerUpdatePacket (%s, %s)", packet.getId(), packet.getType().toString()));
-            });
-        } else {
-            log.severe(String.format("ServerUpdatePacket: Attempted to update non-existent server? (%s)", packet.getId()));
-        }
+            }
+        });
     }
 
 }

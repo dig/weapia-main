@@ -10,22 +10,21 @@ import net.sunken.common.command.impl.BaseCommand;
 import net.sunken.common.command.impl.BaseCommandRegistry;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
-import net.sunken.core.Constants;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandMap;
+import net.sunken.common.inject.annotation.PreInit;
+import net.sunken.core.*;
+import net.sunken.core.util.*;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 @Log
+@PreInit
 @Singleton
 public class CommandRegistry extends BaseCommandRegistry implements Facet, Enableable, Listener {
 
@@ -56,28 +55,16 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     public void unregister(BaseCommand baseCommand) {
         registeredCommands.remove(baseCommand);
 
-        //--- TODO: remove from commandMap
-    }
-
-    private Optional<CommandMap> findCommandMap() {
-        try {
-            Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            bukkitCommandMap.setAccessible(true);
-            CommandMap commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
-
-            return Optional.of(commandMap);
-        } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-        }
-
-        return Optional.empty();
+        Class<? extends BaseCommand> clazz = baseCommand.getClass();
+        Command commandAnnotation = clazz.getAnnotation(Command.class);
+        unregisterCommand(commandAnnotation.aliases()[0]);
     }
 
     private void registerCommand(String fallback, BukkitCommand command) {
-        Optional<CommandMap> commandMapOptional = findCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.getCommandMap();
 
         if (commandMapOptional.isPresent()) {
-            CommandMap commandMap = commandMapOptional.get();
+            SimpleCommandMap commandMap = commandMapOptional.get();
             commandMap.register(fallback, command);
         } else {
             log.severe("Unable to find commandMap via reflection.");
@@ -85,20 +72,18 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void unregisterCommand(@NonNull String name) {
-        Optional<CommandMap> commandMapOptional = findCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.getCommandMap();
 
         if (commandMapOptional.isPresent()) {
-            CommandMap commandMap = commandMapOptional.get();
+            SimpleCommandMap commandMap = commandMapOptional.get();
 
             try {
-                final Field knownCommands = commandMap.getClass().getDeclaredField("knownCommands");
+                final Method knownCommands = commandMap.getClass().getDeclaredMethod("getKnownCommands");
                 knownCommands.setAccessible(true);
 
-                Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.get(commandMap);
+                Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.invoke(commandMap);
                 cmds.remove(name);
-
-                knownCommands.set(commandMap, cmds);
-            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
+            } catch (IllegalAccessException | IllegalArgumentException | SecurityException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         } else {
@@ -107,20 +92,18 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void unregisterAllCommands() {
-        Optional<CommandMap> commandMapOptional = findCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.getCommandMap();
 
         if (commandMapOptional.isPresent()) {
-            CommandMap commandMap = commandMapOptional.get();
+            SimpleCommandMap commandMap = commandMapOptional.get();
 
             try {
-                final Field knownCommands = commandMap.getClass().getDeclaredField("knownCommands");
+                final Method knownCommands = commandMap.getClass().getDeclaredMethod("getKnownCommands");
                 knownCommands.setAccessible(true);
 
-                Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.get(commandMap);
+                Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.invoke(commandMap);
                 cmds.keySet().removeIf(label -> !Constants.WHITELISTED_DEFAULT_COMMANDS.contains(label));
-
-                knownCommands.set(commandMap, cmds);
-            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
+            } catch (IllegalAccessException | IllegalArgumentException | SecurityException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         } else {

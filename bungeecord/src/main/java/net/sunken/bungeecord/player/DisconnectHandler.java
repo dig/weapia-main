@@ -1,21 +1,25 @@
 package net.sunken.bungeecord.player;
 
 import com.google.inject.Inject;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.UpdateOptions;
 import lombok.extern.java.Log;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.sunken.bungeecord.BungeeInform;
+import net.sunken.common.database.DatabaseHelper;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.inject.Facet;
-import net.sunken.common.packet.PacketUtil;
+import net.sunken.common.network.NetworkManager;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.module.PlayerManager;
-import net.sunken.common.player.packet.PlayerProxyQuitPacket;
-import net.sunken.common.server.packet.ServerDisconnectedPacket;
 import net.sunken.common.util.AsyncHelper;
+import org.bson.Document;
 
 import java.util.Optional;
+
+import static com.mongodb.client.model.Filters.eq;
 
 @Log
 public class DisconnectHandler implements Facet, Listener {
@@ -23,29 +27,25 @@ public class DisconnectHandler implements Facet, Listener {
     @Inject
     private PlayerManager playerManager;
     @Inject
-    private PacketUtil packetUtil;
+    private NetworkManager networkManager;
     @Inject
-    private BungeeInform bungeeInform;
+    private MongoConnection mongoConnection;
 
     @EventHandler
     public void onDisconnect(PlayerDisconnectEvent event) {
         ProxiedPlayer player = event.getPlayer();
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
 
-        packetUtil.send(new PlayerProxyQuitPacket(player.getUniqueId()));
-        packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), bungeeInform.getServer().getId()));
-
         if (abstractPlayerOptional.isPresent()) {
-            BungeePlayer bungeePlayer = (BungeePlayer) abstractPlayerOptional.get();
-
             AsyncHelper.executor().submit(() -> {
-               boolean saveState = bungeePlayer.save();
+                BungeePlayer bungeePlayer = (BungeePlayer) abstractPlayerOptional.get();
 
-               if (!saveState) {
-                   log.severe(String.format("Unable to save data. (%s)", bungeePlayer.getUuid().toString()));
-               }
+                networkManager.remove(bungeePlayer.toPlayerDetail(), false);
+                playerManager.remove(bungeePlayer.getUuid());
 
-               playerManager.remove(bungeePlayer.getUuid());
+                MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+                collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, bungeePlayer.getUuid().toString()),
+                        new Document("$set", bungeePlayer.toDocument()), new UpdateOptions().upsert(true));
             });
         }
     }

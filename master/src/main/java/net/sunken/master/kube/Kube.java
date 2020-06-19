@@ -13,8 +13,12 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.config.InjectConfig;
+import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerHelper;
+import net.sunken.master.instance.config.InstanceConfiguration;
+import net.sunken.master.instance.config.InstanceGameConfiguration;
+
 import java.io.*;
 
 @Log
@@ -25,40 +29,41 @@ public class Kube {
     private Gson gson;
     @Inject @InjectConfig
     private KubeConfiguration kubeConfiguration;
+    @Inject @InjectConfig
+    private InstanceConfiguration instanceConfiguration;
 
     private static String KUBERNETES_API_URL = "https://kubernetes.default.svc";
     private String serviceAccountBearer;
 
-    public Kube() {
-        try {
-            BufferedReader bearerBuffer = new BufferedReader(new FileReader("/var/run/secrets/kubernetes.io/serviceaccount/token"));
-            serviceAccountBearer = bearerBuffer.readLine();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Inject
+    public Kube(@InjectConfig KubeConfiguration kubeConfiguration) {
+        if (kubeConfiguration.isKubernetes()) {
+            try {
+                BufferedReader bearerBuffer = new BufferedReader(new FileReader("/var/run/secrets/kubernetes.io/serviceaccount/token"));
+                serviceAccountBearer = bearerBuffer.readLine();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public boolean createPod(@NonNull Server server) {
-        String imageUri = getImageUri(server);
+        String imageUri = getImageUri(server.getType(), server.getGame());
         Preconditions.checkNotNull(imageUri, "Failed to create pod, null image URI.");
 
         try {
             JsonReader reader = new JsonReader(new FileReader("/home/minecraft/templates/base-pod.json"));
             JsonObject templateObject = gson.fromJson(reader, JsonObject.class);
 
-            //--- Change pod name to ID
             templateObject.getAsJsonObject("metadata").addProperty("name", server.getId());
 
             JsonArray containerArray = templateObject.getAsJsonObject("spec").getAsJsonArray("containers");
             for (int i = 0; i < containerArray.size(); i++) {
                 JsonObject containerObject = containerArray.get(i).getAsJsonObject();
 
-                //--- Name
                 containerObject.addProperty("name", "container" + i);
-
-                //--- Image
                 containerObject.addProperty("image", imageUri);
 
                 //--- Setup environment variables
@@ -119,7 +124,6 @@ public class Kube {
     }
 
     public boolean deletePod(@NonNull String podId) {
-        //--- Attempt delete request
         try {
             HttpResponse<String> response = Unirest.delete(String.format("%s/api/v1/namespaces/default/pods/%s", KUBERNETES_API_URL, podId))
                     .header("Authorization", String.format("Bearer %s", serviceAccountBearer))
@@ -139,13 +143,15 @@ public class Kube {
         return true;
     }
 
-    private String getImageUri(@NonNull Server server) {
-        switch (kubeConfiguration.getBranch()) {
-            case "develop":
-                return (server.getType().getDevImageUri() != null ? server.getType().getDevImageUri() : server.getGame().getDevImageUri());
-            default:
-                return (server.getType().getProdImageUri() != null ? server.getType().getProdImageUri() : server.getGame().getProdImageUri());
+    private String getImageUri(@NonNull Server.Type type, @NonNull Game game) {
+        InstanceGameConfiguration config;
+        if (instanceConfiguration.getTypes().containsKey(type)) {
+            config = instanceConfiguration.getTypes().get(type);
+        } else {
+            config = instanceConfiguration.getGames().get(game);
         }
+
+        return kubeConfiguration.getBranch().equals("develop") ? config.getInfrastructure().getDevelopment() : config.getInfrastructure().getProduction();
     }
 
 }

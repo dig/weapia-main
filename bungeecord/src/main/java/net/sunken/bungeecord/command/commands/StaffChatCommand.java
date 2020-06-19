@@ -11,7 +11,7 @@ import net.sunken.common.player.Rank;
 
 import java.util.Optional;
 
-@Command(aliases = {"adminchat", "a", "ac", "staffchat", "sc"}, rank = Rank.RECRUIT, usage = "/adminchat <message>", min = 1)
+@Command(aliases = {"adminchat", "a", "ac", "staffchat", "sc"}, rank = Rank.MOD, usage = "/adminchat <message>", min = 1)
 public class StaffChatCommand extends BungeeCommand {
 
     @Inject
@@ -22,7 +22,7 @@ public class StaffChatCommand extends BungeeCommand {
         if (abstractPlayerOptional.isPresent()) {
             AbstractPlayer abstractPlayer = abstractPlayerOptional.get();
 
-            packetUtil.send(new StaffMessagePacket(abstractPlayer.toPlayerDetail(), Rank.RECRUIT, String.join(" ", args)));
+            packetUtil.send(new StaffMessagePacket(abstractPlayer.toPlayerDetail(), Rank.MOD, String.join(" ", args)));
             return true;
         }
 

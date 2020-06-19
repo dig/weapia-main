@@ -6,7 +6,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.sunken.bungeecord.chat.packet.StaffMessagePacket;
 import net.sunken.bungeecord.player.BungeePlayer;
-import net.sunken.bungeecord.util.ColourUtil;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandler;
@@ -32,7 +31,7 @@ public class StaffMessageHandler extends PacketHandler<StaffMessagePacket> imple
                     BungeePlayer bungeePlayer = (BungeePlayer) player;
                     ProxiedPlayer proxiedPlayer = bungeePlayer.toProxiedPlayer().get();
 
-                    proxiedPlayer.sendMessage(TextComponent.fromLegacyText(ChatColor.DARK_GREEN + "[" + ColourUtil.fromColourCode(sender.getRank().getColourCode()) + sender.getDisplayName() + ChatColor.DARK_GREEN + "] " + ChatColor.GREEN + packet.getMessage()));
+                    proxiedPlayer.sendMessage(TextComponent.fromLegacyText(ChatColor.DARK_AQUA + "[" + ChatColor.valueOf(sender.getRank().getColour()) + sender.getDisplayName() + ChatColor.DARK_AQUA + "] " + ChatColor.AQUA + packet.getMessage()));
                 });
     }
 

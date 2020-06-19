@@ -8,14 +8,14 @@ import net.sunken.common.player.Rank;
 @Command(aliases = {"example", "examplecommand"})
 public class ExampleCommand extends BasicCommand {
 
-    //--- /example or /examplecommand
+    // /example or /examplecommand
     @Override
     public boolean onCommand(String[] args) {
         System.out.println("Example parent");
         return true;
     }
 
-    //--- /example sum 1 1
+    // /example sum 1 1
     @SubCommand(
        aliases = {"sum", "calc"},
        rank = Rank.DEVELOPER,

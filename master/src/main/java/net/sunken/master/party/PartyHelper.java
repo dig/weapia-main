@@ -1,5 +1,8 @@
 package net.sunken.master.party;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class PartyHelper {
 
     public static String PARTY_STORAGE_KEY = "party";

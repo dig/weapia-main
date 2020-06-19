@@ -8,6 +8,8 @@ import net.sunken.common.event.EventManager;
 import net.sunken.common.event.SunkenListener;
 import net.sunken.common.inject.AbstractFacetLoader;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.inject.annotation.PostInit;
+import net.sunken.common.inject.annotation.PreInit;
 import org.bukkit.event.*;
 import org.bukkit.plugin.java.*;
 
@@ -31,10 +33,13 @@ public class PluginFacetLoader extends AbstractFacetLoader {
 
     @Override
     public void start() {
-        super.enableAllFacets();
+        super.enableAllFacets(facet -> facet.getClass().isAnnotationPresent(PreInit.class));
         registerCommands();
         registerListeners();
         registerSunkenListeners();
+        super.enableAllFacets(facet -> facet.getClass().isAnnotationPresent(PostInit.class)
+                || !facet.getClass().isAnnotationPresent(PreInit.class));
+
     }
 
     @Override
@@ -54,5 +59,4 @@ public class PluginFacetLoader extends AbstractFacetLoader {
        // super.find(BukkitCommand.class).forEach(command -> plugin.getCommand(command.getCommandName()).setExecutor(command));
         super.find(BaseCommand.class).forEach(baseCommand -> baseCommandRegistry.register(baseCommand));
     }
-
 }

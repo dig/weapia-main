@@ -1,13 +1,12 @@
 package net.sunken.master.party.handler;
 
 import com.google.inject.Inject;
+import net.sunken.common.network.NetworkManager;
 import net.sunken.common.packet.PacketHandler;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.party.packet.PartyKickPacket;
 import net.sunken.common.party.packet.PartyKickResponsePacket;
-import net.sunken.common.party.packet.PartySetLeaderResponsePacket;
 import net.sunken.common.player.PlayerDetail;
-import net.sunken.master.network.NetworkManager;
 import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
 

@@ -1,8 +1,8 @@
 package net.sunken.common.player.module;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import lombok.Getter;
 import lombok.NonNull;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
@@ -11,7 +11,6 @@ import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.packet.PlayerSaveStatePacket;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
 public class PlayerManager implements Facet, Enableable {
@@ -21,12 +20,7 @@ public class PlayerManager implements Facet, Enableable {
     @Inject
     private PlayerSaveStateHandler playerSaveStateHandler;
 
-    @Getter
-    private Set<AbstractPlayer> onlinePlayers;
-
-    public PlayerManager() {
-        this.onlinePlayers = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    }
+    private final Map<UUID, AbstractPlayer> onlinePlayers = Maps.newConcurrentMap();
 
     @Override
     public void enable() {
@@ -38,17 +32,18 @@ public class PlayerManager implements Facet, Enableable {
     }
 
     public void add(@NonNull AbstractPlayer abstractPlayer) {
-        onlinePlayers.add(abstractPlayer);
+        onlinePlayers.put(abstractPlayer.getUuid(), abstractPlayer);
     }
 
     public Optional<AbstractPlayer> get(@NonNull UUID uuid) {
-        return onlinePlayers.stream()
-                .filter(abstractPlayer -> abstractPlayer.getUuid().equals(uuid))
-                .findFirst();
+        return Optional.ofNullable(onlinePlayers.get(uuid));
     }
 
     public void remove(@NonNull UUID uuid) {
-        onlinePlayers.removeIf(abstractPlayer -> abstractPlayer.getUuid().equals(uuid));
+        onlinePlayers.remove(uuid);
     }
 
+    public Collection<AbstractPlayer> getOnlinePlayers() {
+        return onlinePlayers.values();
+    }
 }

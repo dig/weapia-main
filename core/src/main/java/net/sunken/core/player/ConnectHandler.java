@@ -4,29 +4,34 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoCollection;
 import lombok.Getter;
 import lombok.extern.java.Log;
+import net.sunken.common.database.DatabaseHelper;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.Rank;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.common.server.packet.ServerConnectedPacket;
-import net.sunken.common.util.DummyObject;
+import net.sunken.common.util.AsyncHelper;
+import net.sunken.common.util.Tuple;
 import net.sunken.core.Constants;
 import net.sunken.core.PluginInform;
-import net.sunken.core.util.ColourUtil;
-import net.sunken.core.util.TabListUtil;
-import org.bukkit.ChatColor;
+import net.sunken.core.engine.EngineManager;
+import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import static com.mongodb.client.model.Filters.eq;
 
 @Log
 @Singleton
@@ -38,6 +43,10 @@ public class ConnectHandler implements Facet, Listener {
     private PluginInform pluginInform;
     @Inject
     private PacketUtil packetUtil;
+    @Inject
+    private EngineManager engineManager;
+    @Inject
+    private MongoConnection mongoConnection;
 
     @Getter
     private Cache<UUID, AbstractPlayer> pendingConnection;
@@ -48,46 +57,44 @@ public class ConnectHandler implements Facet, Listener {
                 .build();
     }
 
-    //--- Event is called before any other join event.
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        event.setJoinMessage("");
+
         AbstractPlayer abstractPlayer = pendingConnection.getIfPresent(player.getUniqueId());
-
-        packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
-        log.info(String.format("onPlayerJoin (%s)", player.getUniqueId().toString()));
-
         if (abstractPlayer != null) {
-            log.info(String.format("onPlayerJoin: Successful join (%s)", player.getUniqueId().toString()));
-
             playerManager.add(abstractPlayer);
             pendingConnection.invalidate(player.getUniqueId());
 
-            event.setJoinMessage("");
-
             abstractPlayer.setup();
+            AsyncHelper.executor().submit(() -> packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), pluginInform.getServer().getId())));
         } else {
-            log.severe(String.format("onPlayerJoin: Attempted to join with no data loaded? (%s)", player.getUniqueId().toString()));
             player.kickPlayer(Constants.FAILED_LOAD_DATA);
         }
     }
 
-    public boolean handlePreLogin(AbstractPlayer abstractPlayer) {
-        log.info(String.format("handlePreLogin (%s)", abstractPlayer.getUuid().toString()));
+    @EventHandler
+    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
+        AbstractPlayer abstractPlayer = engineManager.getGameMode().getPlayerMapper().apply(new Tuple<>(event.getUniqueId(), event.getName()));
 
-        boolean loadState = abstractPlayer.load();
-        log.info(String.format("handlePreLogin: Finish load (%s)", abstractPlayer.getUuid().toString()));
-
-        //--- TODO: Move to database, will hardcode until we have decided on a database (MongoDB, Cassandra..)
-        switch (abstractPlayer.getUuid().toString()) {
-            case "db073964-3bae-4efb-ba82-24a8de5ecec9":
-            case "c83bc38d-11ae-4973-9d7c-5c77d6dcfb86":
-                abstractPlayer.setRank(Rank.OWNER);
-                break;
+        boolean loadState = true;
+        try {
+            MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+            Document document = collection.find(eq(DatabaseHelper.PLAYER_UUID_KEY, event.getUniqueId().toString())).first();
+            if (document != null) {
+                loadState = abstractPlayer.fromDocument(document);
+            }
+        } catch (MongoException e) {
+            loadState = false;
         }
 
-        if (loadState) pendingConnection.put(abstractPlayer.getUuid(), abstractPlayer);
-        return loadState;
+        if (loadState) {
+            pendingConnection.put(abstractPlayer.getUuid(), abstractPlayer);
+            event.allow();
+        } else {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Constants.FAILED_LOAD_DATA);
+        }
     }
 
 }

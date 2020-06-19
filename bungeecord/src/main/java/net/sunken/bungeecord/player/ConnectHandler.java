@@ -3,8 +3,8 @@ package net.sunken.bungeecord.player;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
-import lombok.Getter;
-import lombok.NonNull;
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoCollection;
 import lombok.extern.java.Log;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -15,16 +15,16 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.sunken.bungeecord.BungeeInform;
 import net.sunken.bungeecord.Constants;
-import net.sunken.common.config.InjectConfig;
+import net.sunken.common.database.DatabaseHelper;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
+import net.sunken.common.network.NetworkManager;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.packet.expectation.ExpectationFactory;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.Rank;
 import net.sunken.common.player.module.PlayerManager;
 import net.sunken.common.player.packet.*;
@@ -32,20 +32,23 @@ import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
 import net.sunken.common.server.ServerDetail;
 import net.sunken.common.server.module.ServerManager;
-import net.sunken.common.server.packet.ServerConnectedPacket;
 import net.sunken.common.util.AsyncHelper;
-import net.sunken.common.util.StringUtil;
+import org.bson.Document;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static com.mongodb.client.model.Filters.eq;
+
 @Log
 public class ConnectHandler implements Facet, Listener, Enableable {
 
     @Inject
     private PlayerManager playerManager;
+    @Inject
+    private NetworkManager networkManager;
     @Inject
     private ServerManager serverManager;
     @Inject
@@ -55,7 +58,7 @@ public class ConnectHandler implements Facet, Listener, Enableable {
     @Inject
     private ExpectationFactory expectationFactory;
     @Inject
-    private BungeeInform bungeeInform;
+    private MongoConnection mongoConnection;
 
     @Inject
     private PacketHandlerRegistry packetHandlerRegistry;
@@ -71,26 +74,20 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         PendingConnection pendingConnection = event.getConnection();
         BungeePlayer bungeePlayer = new BungeePlayer(pendingConnection.getUniqueId(), pendingConnection.getName());
 
-        //--- TODO: Move to database, will hardcode until we have decided on a database (MongoDB, Cassandra..)
-        switch (pendingConnection.getUniqueId().toString()) {
-            case "db073964-3bae-4efb-ba82-24a8de5ecec9":
-            case "c83bc38d-11ae-4973-9d7c-5c77d6dcfb86":
-                bungeePlayer.setRank(Rank.OWNER);
-                break;
-        }
-
-        log.info(String.format("onLogin (%s)", pendingConnection.getUniqueId().toString()));
-
         event.registerIntent(plugin);
         AsyncHelper.executor().submit(() -> {
-            log.info(String.format("onLogin: AsyncHelper start (%s)", pendingConnection.getUniqueId().toString()));
+            boolean loadState = true;
+            try {
+                MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+                Document document = collection.find(eq(DatabaseHelper.PLAYER_UUID_KEY, pendingConnection.getUniqueId().toString())).first();
+                if (document != null) {
+                    loadState = bungeePlayer.fromDocument(document);
+                }
+            } catch (MongoException e) {
+                loadState = false;
+            }
 
-            boolean loadState = bungeePlayer.load();
-
-            //--- Send request
             packetUtil.send(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
-
-            //--- Wait for packet
             boolean success = expectationFactory.waitFor(packet -> {
                 if (packet instanceof PlayerSendToServerPacket) {
                     PlayerSendToServerPacket playerSendToServerPacket = (PlayerSendToServerPacket) packet;
@@ -103,8 +100,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
 
                 return false;
             }, 15 * 10, 100);
-
-            log.info(String.format("onLogin: Finish waiting (%s)", pendingConnection.getUniqueId().toString()));
 
             if (!loadState) {
                 event.setCancelReason(TextComponent.fromLegacyText(Constants.FAILED_LOAD_DATA));
@@ -121,8 +116,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
             }
 
             event.completeIntent(plugin);
-
-            log.info(String.format("onLogin: completeIntent (%s)", pendingConnection.getUniqueId().toString()));
         });
     }
 
@@ -132,17 +125,12 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         if (pendingPlayerConnection.getIfPresent(player.getUniqueId()) != null) {
             BungeePlayer bungeePlayer = pendingPlayerConnection.getIfPresent(player.getUniqueId());
 
+            AsyncHelper.executor().submit(() -> networkManager.add(bungeePlayer.toPlayerDetail(), false));
             playerManager.add(bungeePlayer);
             pendingPlayerConnection.invalidate(player.getUniqueId());
-
-            packetUtil.send(new PlayerProxyJoinPacket(bungeePlayer.toPlayerDetail()));
-            packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), bungeeInform.getServer().getId()));
         }
 
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
-
-        log.info(String.format("onServerConnect (%s)", player.getUniqueId().toString()));
-
         if (!abstractPlayerOptional.isPresent()) {
             player.disconnect(TextComponent.fromLegacyText(Constants.FAILED_LOAD_DATA));
         } else {
@@ -164,7 +152,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                     } else {
                         player.disconnect(TextComponent.fromLegacyText(Constants.FAILED_FIND_SERVER));
                     }
-
                     break;
                 case SERVER_DOWN_REDIRECT:
                 case LOBBY_FALLBACK:
@@ -179,7 +166,6 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                     } else {
                         player.disconnect(TextComponent.fromLegacyText(Constants.FAILED_FIND_SERVER));
                     }
-
                     break;
                 case PLUGIN_MESSAGE:
                 case UNKNOWN:
@@ -191,11 +177,8 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                     Optional<Server> serverOptional = serverManager.findServerById(event.getTarget().getName());
                     if (serverOptional.isPresent()) {
                         Server server = serverOptional.get();
-
                         bungeePlayer.setServerConnectedTo(Optional.of(server.toServerDetail()));
-                        log.info(String.format("Changed serverConnectedTo. (%s)", server.getId()));
                     }
-
                     break;
             }
 
@@ -229,8 +212,9 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         ServerInfo serverInfo = event.getServer().getInfo();
         Optional<Server> serverOptional = serverManager.findServerById(serverInfo.getName());
 
-        if (serverOptional.isPresent() && serverOptional.get().getType() == Server.Type.INSTANCE)
+        if (serverOptional.isPresent() && serverOptional.get().getType() == Server.Type.INSTANCE) {
             player.sendMessage(TextComponent.fromLegacyText(String.format(Constants.PLAYER_SEND_SERVER, serverInfo.getName())));
+        }
     }
 
     @EventHandler

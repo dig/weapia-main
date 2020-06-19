@@ -12,8 +12,9 @@ import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
-import net.sunken.common.server.ServerInformer;
+import net.sunken.common.server.ServerHelper;
 import net.sunken.common.server.World;
+import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.util.AsyncHelper;
 
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 public class BungeeInform implements Facet, Enableable, Listener {
 
     @Inject
-    private ServerInformer serverInformer;
+    private ServerManager serverManager;
     @Inject
     private ProxyServer proxyServer;
 
@@ -32,36 +33,38 @@ public class BungeeInform implements Facet, Enableable, Listener {
     @Override
     public void enable() {
         server = Server.builder()
-                .id(Server.Type.BUNGEE.generateId())
-                .type(Server.Type.BUNGEE)
-                .host("0.0.0.0")
-                .port(25565)
-                .game(Game.NONE)
-                .world(World.NONE)
-                .players(proxyServer.getOnlineCount())
-                .maxPlayers(500)
-                .state(Server.State.OPEN)
-                .metadata(new HashMap<>())
-                .build();
-
-        serverInformer.add(server, true);
+            .id(ServerHelper.generate(Server.Type.BUNGEE))
+            .type(Server.Type.BUNGEE)
+            .host("0.0.0.0")
+            .port(25565)
+            .game(Game.NONE)
+            .world(World.NONE)
+            .players(proxyServer.getOnlineCount())
+            .maxPlayers(500)
+            .state(Server.State.OPEN)
+            .metadata(new HashMap<>())
+            .build();
+        serverManager.add(server, false);
     }
 
     @Override
     public void disable() {
-        serverInformer.remove(server.getId(), true);
     }
 
     @EventHandler
     public void onPlayerLogin(PostLoginEvent event) {
         server.setPlayers(proxyServer.getOnlineCount());
-        AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
+        AsyncHelper.executor().submit(() -> serverManager.update(server, true));
     }
 
     @EventHandler
     public void onPlayerDisconnect(PlayerDisconnectEvent event) {
         server.setPlayers(proxyServer.getOnlineCount() - 1);
-        AsyncHelper.executor().submit(() -> serverInformer.update(server, true));
+        AsyncHelper.executor().submit(() -> serverManager.update(server, true));
+    }
+
+    public void remove() {
+        serverManager.remove(server.getId(), false);
     }
 
 }

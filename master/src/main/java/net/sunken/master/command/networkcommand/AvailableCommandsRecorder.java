@@ -23,7 +23,7 @@ public class AvailableCommandsRecorder implements Facet, Enableable {
 
     @Override
     public void enable() {
-        try (Jedis connection = redisConnection.getJedisPool().getResource()) {
+        try (Jedis connection = redisConnection.getConnection()) {
             // get rid of what was there before (master could reboot and possibly remove commands)
             connection.del(NetworkCommandConstants.COMMAND_LIST_KEY);
 

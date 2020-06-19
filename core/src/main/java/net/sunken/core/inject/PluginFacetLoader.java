@@ -54,5 +54,4 @@ public class PluginFacetLoader extends AbstractFacetLoader {
        // super.find(BukkitCommand.class).forEach(command -> plugin.getCommand(command.getCommandName()).setExecutor(command));
         super.find(BaseCommand.class).forEach(baseCommand -> baseCommandRegistry.register(baseCommand));
     }
-
 }

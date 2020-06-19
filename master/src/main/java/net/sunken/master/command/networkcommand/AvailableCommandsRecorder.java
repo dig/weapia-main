@@ -5,7 +5,6 @@ import net.sunken.common.command.impl.*;
 import net.sunken.common.database.*;
 import net.sunken.common.inject.*;
 import net.sunken.common.networkcommand.*;
-import net.sunken.master.command.CommandRegistry;
 import redis.clients.jedis.*;
 
 import javax.inject.*;
@@ -19,7 +18,7 @@ public class AvailableCommandsRecorder implements Facet, Enableable {
     @Inject
     private RedisConnection redisConnection;
     @Inject
-    private CommandRegistry commandRegistry;
+    private BaseCommandRegistry commandRegistry;
 
     @Override
     public void enable() {

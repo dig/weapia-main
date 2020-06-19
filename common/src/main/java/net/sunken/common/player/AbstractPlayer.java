@@ -31,7 +31,6 @@ public abstract class AbstractPlayer implements MongoSerializable {
     public boolean fromDocument(Document document) {
         rank = Rank.valueOf(document.getString(DatabaseHelper.PLAYER_RANK_KEY));
         firstLoginMillis = document.getLong(DatabaseHelper.PLAYER_FIRSTLOGIN_KEY);
-        lastLoginMillis = document.getLong(DatabaseHelper.PLAYER_LASTLOGIN_KEY);
         return true;
     }
 

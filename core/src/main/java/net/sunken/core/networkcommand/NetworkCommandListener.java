@@ -40,7 +40,7 @@ public class NetworkCommandListener implements Listener, Facet {
                 String commandName = firstWord.substring(1);
 
                 CommandUtil.getCommandMap().ifPresent(commandMap -> {
-                    boolean isRegisteredOnMaster = availableCommands.getAvailableCommmands().contains(commandName);
+                    boolean isRegisteredOnMaster = availableCommands.getAvailableCommands().contains(commandName);
 
                     if (commandMap.getCommand(commandName) == null && isRegisteredOnMaster) {
                         playerManager.get(playerId)

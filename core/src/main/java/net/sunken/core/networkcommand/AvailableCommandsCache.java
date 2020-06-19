@@ -15,7 +15,7 @@ import java.util.*;
 public class AvailableCommandsCache extends PacketHandler<MasterBootPacket> implements Facet, Enableable {
 
     @Getter
-    private Set<String> availableCommmands = new HashSet<>();
+    private Set<String> availableCommands = new HashSet<>();
 
     @Inject
     private RedisConnection redisConnection;
@@ -36,7 +36,7 @@ public class AvailableCommandsCache extends PacketHandler<MasterBootPacket> impl
 
     private void fetch() {
         try (Jedis connection = redisConnection.getJedisPool().getResource()) {
-            availableCommmands = connection.smembers(NetworkCommandConstants.COMMAND_LIST_KEY);
+            availableCommands = connection.smembers(NetworkCommandConstants.COMMAND_LIST_KEY);
         }
     }
 

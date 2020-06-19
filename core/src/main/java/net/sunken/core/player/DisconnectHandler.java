@@ -3,7 +3,6 @@ package net.sunken.core.player;
 import com.google.inject.Inject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.result.UpdateResult;
 import lombok.extern.java.Log;
 import net.sunken.common.database.DatabaseHelper;
 import net.sunken.common.database.MongoConnection;
@@ -42,20 +41,19 @@ public class DisconnectHandler implements Facet, Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        event.setQuitMessage("");
+
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
-
-        packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
-        log.info(String.format("onPlayerQuit (%s)", player.getUniqueId().toString()));
-
         if (abstractPlayerOptional.isPresent()) {
             AbstractPlayer abstractPlayer = abstractPlayerOptional.get();
-            connectHandler.getPendingConnection().invalidate(abstractPlayer);
-
-            event.setQuitMessage("");
             abstractPlayer.destroy();
+
+            connectHandler.getPendingConnection().invalidate(abstractPlayer.getUuid());
             playerManager.remove(player.getUniqueId());
 
             AsyncHelper.executor().submit(() -> {
+                packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
+
                 MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
                 collection.updateOne(eq("uuid", abstractPlayer.getUuid().toString()),
                         new Document("$set", abstractPlayer.toDocument()), new UpdateOptions().upsert(true));

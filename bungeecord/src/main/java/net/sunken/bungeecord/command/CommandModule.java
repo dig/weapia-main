@@ -19,7 +19,6 @@ public class CommandModule extends AbstractModule {
         pluginFacetBinder.addBinding(LobbyCommand.class);
         pluginFacetBinder.addBinding(ServerCommand.class);
         pluginFacetBinder.addBinding(CreateServerCommand.class);
-        pluginFacetBinder.addBinding(GoToServerCommand.class);
     }
 
 }

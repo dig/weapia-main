@@ -39,17 +39,6 @@ public class BungeeMain extends Plugin {
     }
 
     private void handleGraceShutdown() {
-        ProxyServer proxy = getProxy();
-        if (!proxy.getPlayers().isEmpty()) {
-            proxy.broadcast(TextComponent.fromLegacyText(Constants.PROXY_RESTART));
-
-            try {
-                Thread.sleep(30 * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
         bungeeInform.remove();
         redisConnection.disconnect();
         mongoConnection.disconnect();

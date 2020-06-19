@@ -22,20 +22,7 @@ public class PacketUtil {
     }
 
     public void send(Packet packet) {
-        AsyncHelper.executor().submit(() -> {
-            Jedis jedis = redisConnection.getConnection();
-
-            try {
-                jedis.publish(packetChannel.getBytes(), packet.toBytes());
-            } finally {
-                jedis.close();
-            }
-        });
-    }
-
-    public void sendSync(Packet packet) {
         Jedis jedis = redisConnection.getConnection();
-
         try {
             jedis.publish(packetChannel.getBytes(), packet.toBytes());
         } finally {

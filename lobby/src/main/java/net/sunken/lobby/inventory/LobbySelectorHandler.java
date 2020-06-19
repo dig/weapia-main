@@ -16,6 +16,7 @@ import net.sunken.common.server.module.ServerManager;
 import net.sunken.common.server.module.event.ServerAddedEvent;
 import net.sunken.common.server.module.event.ServerRemovedEvent;
 import net.sunken.common.server.module.event.ServerUpdatedEvent;
+import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.inventory.ItemBuilder;
 import net.sunken.core.inventory.Page;
@@ -185,7 +186,7 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
 
                     Optional<Server> serverOptional = serverManager.findServerById(serverId);
                     if (serverOptional.isPresent()) {
-                        packetUtil.send(new PlayerSendToServerPacket(observer.getUniqueId(), serverOptional.get().toServerDetail()));
+                        AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerSendToServerPacket(observer.getUniqueId(), serverOptional.get().toServerDetail())));
                         observer.closeInventory();
                     }
 

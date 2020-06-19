@@ -49,22 +49,7 @@ public abstract class Core extends JavaPlugin {
             pluginInform.setState(Server.State.CLOSED);
         }
 
-        Bukkit.getOnlinePlayers().forEach(player -> packetUtil.sendSync(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
-
-        int iterations = 0;
-        while (!Bukkit.getOnlinePlayers().isEmpty()) {
-            if (iterations >= (20 * 10)) {
-                break;
-            }
-
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            iterations++;
-        }
+        Bukkit.getOnlinePlayers().forEach(player -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
 
         pluginInform.remove();
         redisConnection.disconnect();

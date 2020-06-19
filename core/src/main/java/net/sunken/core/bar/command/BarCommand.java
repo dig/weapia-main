@@ -49,7 +49,7 @@ public class BarCommand extends BukkitCommand {
                 jedis.hmset(BarHelper.BAR_STORAGE_KEY + ":" + BarHelper.BAR_SETTINGS_KEY, barSettingsBuilder.build());
             }
 
-            packetUtil.sendSync(new BarUpdatePacket());
+            packetUtil.send(new BarUpdatePacket());
         });
 
         commandSender.sendMessage(Constants.BAR_SUCCESS_CHANGE);
@@ -71,7 +71,7 @@ public class BarCommand extends BukkitCommand {
                 jedis.hmset(BarHelper.BAR_STORAGE_KEY + ":" + BarHelper.BAR_SETTINGS_KEY, barSettingsBuilder.build());
             }
 
-            packetUtil.sendSync(new BarUpdatePacket());
+            packetUtil.send(new BarUpdatePacket());
         });
 
         commandSender.sendMessage(Constants.BAR_SUCCESS_CHANGE);
@@ -85,7 +85,7 @@ public class BarCommand extends BukkitCommand {
                 jedis.del(BarHelper.BAR_STORAGE_KEY + ":" + BarHelper.BAR_SETTINGS_KEY);
             }
 
-            packetUtil.sendSync(new BarUpdatePacket());
+            packetUtil.send(new BarUpdatePacket());
         });
 
         commandSender.sendMessage(Constants.BAR_CLEARED);

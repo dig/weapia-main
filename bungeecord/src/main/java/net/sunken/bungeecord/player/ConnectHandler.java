@@ -87,7 +87,7 @@ public class ConnectHandler implements Facet, Listener, Enableable {
                 loadState = false;
             }
 
-            packetUtil.sendSync(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
+            packetUtil.send(new PlayerRequestServerPacket(pendingConnection.getUniqueId(), Server.Type.LOBBY, false));
             boolean success = expectationFactory.waitFor(packet -> {
                 if (packet instanceof PlayerSendToServerPacket) {
                     PlayerSendToServerPacket playerSendToServerPacket = (PlayerSendToServerPacket) packet;

@@ -63,7 +63,7 @@ public class ServerManager implements Facet, Enableable {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), server.toRedis());
             }
-            packetUtil.sendSync(new ServerAddPacket(server.getId()));
+            packetUtil.send(new ServerAddPacket(server.getId()));
         }
     }
 
@@ -74,7 +74,7 @@ public class ServerManager implements Facet, Enableable {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.del(ServerHelper.SERVER_STORAGE_KEY + ":" + id);
             }
-            packetUtil.sendSync(new ServerRemovePacket(id));
+            packetUtil.send(new ServerRemovePacket(id));
         }
     }
 

@@ -13,7 +13,7 @@ public class Constants {
     public static final String TAB_TOP = "\n" + ChatColor.AQUA + ""  + ChatColor.BOLD + "WEAPIA\n";
     public static final String TAB_BOTTOM = "\n" + ChatColor.WHITE + "Join the VIP Club\n    and get glossy perks    \n" + ChatColor.DARK_AQUA + "/join\n";
 
-    public static final String INTERACTION_COOLDOWN = ChatColor.RED + "Please wait before doing that again.";
+    public static final String NETWORKCOMMAND_COOLDOWN = ChatColor.RED + "Please wait before trying this command again.";
 
     public static final List<String> WHITELISTED_DEFAULT_COMMANDS = Arrays.asList("packet_filter", "filter", "protocol", "packetlog", "packet");
 

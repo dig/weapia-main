@@ -7,7 +7,6 @@ import net.sunken.common.inject.*;
 import net.sunken.common.networkcommand.*;
 import net.sunken.common.packet.*;
 import net.sunken.common.player.*;
-import net.sunken.common.player.module.*;
 import net.sunken.common.player.packet.*;
 import net.sunken.common.util.cooldown.*;
 import net.sunken.master.command.*;
@@ -21,8 +20,6 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
 
     @Inject
     private BaseCommandRegistry baseCommandRegistry;
-    @Inject
-    private PlayerManager playerManager;
     @Inject
     private Cooldowns cooldowns;
     @Inject
@@ -44,20 +41,15 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
             Command commandAnnotation = clazz.getAnnotation(Command.class);
 
             UUID uuid = packet.getSender().getUuid();
-            Optional<AbstractPlayer> abstractPlayerOpt = playerManager.get(uuid);
 
             //--- Cooldown
-            if (abstractPlayerOpt.isPresent()) {
-                AbstractPlayer abstractPlayer = abstractPlayerOpt.get();
-                String cooldownKey = "cmd:" + name;
-
-                if (!cooldowns.canProceed(cooldownKey, abstractPlayer.getUuid())) {
-                    packetUtil.send(new PlayerProxyMessagePacket(uuid, "&c" + commandAnnotation.errorCooldown()));
-                    return;
-                }
+            String cooldownKey = "cmd:" + name;
+            if (!cooldowns.canProceed(cooldownKey, uuid)) {
+                packetUtil.send(new PlayerProxyMessagePacket(uuid, "&c" + commandAnnotation.errorCooldown()));
+                return;
             }
 
-            Rank rank = (abstractPlayerOpt.isPresent() ? abstractPlayerOpt.get().getRank() : Rank.PLAYER);
+            Rank rank = packet.getSender().getRank();
             CommandResponse commandResponse = baseCommandRegistry.matchCommandRequirements(commandAnnotation, rank, args);
             Optional<Method> subCommandMethodOptional = (args.length > 0 ? baseCommandRegistry.findSubCommandInCommand(clazz, rank, args) : Optional.empty());
 
@@ -73,7 +65,7 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
                     } else if (baseCommand instanceof MasterCommand) {
                         MasterCommand masterCommand = (MasterCommand) baseCommand;
 
-                        success = (Boolean) subCommandMethod.invoke(masterCommand, abstractPlayerOpt, Arrays.copyOfRange(args, 1, args.length));
+                        success = (Boolean) subCommandMethod.invoke(masterCommand, packet.getSender(), Arrays.copyOfRange(args, 1, args.length));
                     }
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     log.severe(String.format("Command parameters wrong for %s %s.", name, subCommandMethod.getName()));
@@ -91,7 +83,7 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
                         if (baseCommand instanceof BasicCommand) {
                             success = ((BasicCommand) baseCommand).onCommand(args);
                         } else if (baseCommand instanceof MasterCommand) {
-                            success = ((MasterCommand) baseCommand).onCommand(abstractPlayerOpt, args);
+                            success = ((MasterCommand) baseCommand).onCommand(packet.getSender(), args);
                         } else {
                             log.severe(String.format("Command not handled for %s.", name));
                         }
@@ -100,9 +92,8 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
                 }
             }
 
-            if (success && abstractPlayerOpt.isPresent()) {
-                AbstractPlayer abstractPlayer = abstractPlayerOpt.get();
-                cooldowns.create("cmd:" + name, abstractPlayer.getUuid(), System.currentTimeMillis() + commandAnnotation.cooldown());
+            if (success) {
+                cooldowns.create("cmd:" + name, uuid, System.currentTimeMillis() + commandAnnotation.cooldown());
             }
         }
     }

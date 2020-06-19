@@ -25,9 +25,9 @@ public class BungeeFacetLoader extends AbstractFacetLoader {
 
     @Override
     public void start() {
-        super.enableAllFacets();
         registerCommands();
         registerListeners();
+        super.enableAllFacets();
     }
 
     @Override

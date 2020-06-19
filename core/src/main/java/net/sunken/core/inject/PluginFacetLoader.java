@@ -31,10 +31,10 @@ public class PluginFacetLoader extends AbstractFacetLoader {
 
     @Override
     public void start() {
-        super.enableAllFacets();
         registerCommands();
         registerListeners();
         registerSunkenListeners();
+        super.enableAllFacets();
     }
 
     @Override

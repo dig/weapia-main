@@ -66,5 +66,4 @@ public class BungeeInform implements Facet, Enableable, Listener {
     public void remove() {
         serverManager.remove(server.getId(), false);
     }
-
 }

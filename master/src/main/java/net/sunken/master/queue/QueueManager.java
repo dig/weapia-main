@@ -57,6 +57,7 @@ public class QueueManager implements Facet, Enableable {
     public void enable() {
         lobbyBalancer = new LobbyBalancer(partyManager, serverManager, instanceManager, packetUtil);
         gameBalancers.put(Game.ICE_RUNNER_SOLO, new SimpleBalancer(partyManager, serverManager, instanceManager, packetUtil));
+        gameBalancers.put(Game.SURVIVAL_REALMS, new LobbyBalancer(partyManager, serverManager, instanceManager, packetUtil));
 
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);

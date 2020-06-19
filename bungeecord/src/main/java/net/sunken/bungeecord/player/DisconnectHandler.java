@@ -44,7 +44,7 @@ public class DisconnectHandler implements Facet, Listener {
                 playerManager.remove(bungeePlayer.getUuid());
 
                 MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                collection.updateOne(eq("uuid", bungeePlayer.getUuid().toString()),
+                collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, bungeePlayer.getUuid().toString()),
                         new Document("$set", bungeePlayer.toDocument()), new UpdateOptions().upsert(true));
             });
         }

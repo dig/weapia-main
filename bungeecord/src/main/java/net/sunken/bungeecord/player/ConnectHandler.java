@@ -79,7 +79,7 @@ public class ConnectHandler implements Facet, Listener, Enableable {
             boolean loadState = true;
             try {
                 MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                Document document = collection.find(eq("uuid", pendingConnection.getUniqueId().toString())).first();
+                Document document = collection.find(eq(DatabaseHelper.PLAYER_UUID_KEY, pendingConnection.getUniqueId().toString())).first();
                 if (document != null) {
                     loadState = bungeePlayer.fromDocument(document);
                 }

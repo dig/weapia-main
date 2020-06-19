@@ -81,7 +81,7 @@ public class ConnectHandler implements Facet, Listener {
         boolean loadState = true;
         try {
             MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-            Document document = collection.find(eq("uuid", event.getUniqueId().toString())).first();
+            Document document = collection.find(eq(DatabaseHelper.PLAYER_UUID_KEY, event.getUniqueId().toString())).first();
             if (document != null) {
                 loadState = abstractPlayer.fromDocument(document);
             }

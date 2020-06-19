@@ -55,7 +55,7 @@ public class DisconnectHandler implements Facet, Listener {
                 packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
 
                 MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                collection.updateOne(eq("uuid", abstractPlayer.getUuid().toString()),
+                collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, abstractPlayer.getUuid().toString()),
                         new Document("$set", abstractPlayer.toDocument()), new UpdateOptions().upsert(true));
             });
         } else {

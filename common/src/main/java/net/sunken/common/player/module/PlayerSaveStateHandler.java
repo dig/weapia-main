@@ -40,7 +40,7 @@ public class PlayerSaveStateHandler extends PacketHandler<PlayerSaveStatePacket>
                 log.info(String.format("PlayerSaveStateHandler: Saving player (%s)", abstractPlayer.getUuid().toString()));
                 AsyncHelper.executor().submit(() -> {
                     MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                    UpdateResult result = collection.updateOne(eq("uuid", abstractPlayer.getUuid().toString()),
+                    UpdateResult result = collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, abstractPlayer.getUuid().toString()),
                             new Document("$set", abstractPlayer.toDocument()), new UpdateOptions().upsert(true));
 
                     packetUtil.send(new PlayerSaveStatePacket(abstractPlayer.getUuid(), (result.wasAcknowledged() ? PlayerSaveStatePacket.Reason.COMPLETE : PlayerSaveStatePacket.Reason.FAIL)));

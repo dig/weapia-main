@@ -9,7 +9,7 @@ import net.sunken.common.inject.*;
 
 @Log
 @Singleton
-public class CommandRegistry extends BaseCommandRegistry implements Facet, Enableable {
+public class CommandRegistry extends BaseCommandRegistry implements Facet {
 
     CommandRegistry() { registeredCommands = Sets.newLinkedHashSet(); }
 
@@ -27,14 +27,6 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     @Override
     public void unregister(BaseCommand baseCommand) {
         registeredCommands.remove(baseCommand);
-    }
-
-    @Override
-    public void enable() {
-    }
-
-    @Override
-    public void disable() {
     }
 
 }

@@ -59,7 +59,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void registerCommand(String fallback, BukkitCommand command) {
-        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.findSimpleCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.getCommandMap();
 
         if (commandMapOptional.isPresent()) {
             SimpleCommandMap commandMap = commandMapOptional.get();
@@ -70,7 +70,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void unregisterCommand(@NonNull String name) {
-        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.findSimpleCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.getCommandMap();
 
         if (commandMapOptional.isPresent()) {
             SimpleCommandMap commandMap = commandMapOptional.get();
@@ -90,7 +90,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     }
 
     private void unregisterAllCommands() {
-        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.findSimpleCommandMap();
+        Optional<SimpleCommandMap> commandMapOptional = CommandUtil.getCommandMap();
 
         if (commandMapOptional.isPresent()) {
             SimpleCommandMap commandMap = commandMapOptional.get();

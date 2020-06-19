@@ -40,7 +40,7 @@ public class CoreModule extends AbstractModule {
         install(new ConfigModule(new File("config/common.conf"), InstanceConfiguration.class));
         install(new CommandModule());
         install(new BarModule());
-        // install(new NetworkCommandModule());
+        install(new NetworkCommandModule());
 
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(ChatHandler.class);

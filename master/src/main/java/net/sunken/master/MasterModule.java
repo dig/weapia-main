@@ -1,16 +1,19 @@
 package net.sunken.master;
 
-import com.google.inject.AbstractModule;
-import net.sunken.common.CommonModule;
-import net.sunken.common.config.ConfigModule;
-import net.sunken.common.network.NetworkModule;
-import net.sunken.master.instance.InstanceModule;
-import net.sunken.master.kube.KubeConfiguration;
-import net.sunken.master.party.PartyModule;
-import net.sunken.master.queue.QueueModule;
-import net.sunken.common.server.module.ServerModule;
+import com.google.inject.*;
+import net.sunken.common.*;
+import net.sunken.common.config.*;
+import net.sunken.common.network.*;
+import net.sunken.common.server.module.*;
+import net.sunken.master.command.*;
+import net.sunken.master.instance.*;
+import net.sunken.master.kube.*;
+import net.sunken.master.command.networkcommand.*;
+import net.sunken.master.party.*;
+import net.sunken.master.queue.*;
+import net.sunken.master.reboot.*;
 
-import java.io.File;
+import java.io.*;
 
 public class MasterModule extends AbstractModule {
 
@@ -25,6 +28,10 @@ public class MasterModule extends AbstractModule {
         install(new QueueModule());
         install(new ServerModule());
         install(new PartyModule());
+
+        install(new MasterRebootModule());
+        install(new CommandModule());
+        install(new NetworkCommandModule());
     }
 
 }

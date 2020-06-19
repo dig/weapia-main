@@ -8,7 +8,7 @@ import java.util.*;
 
 public final class CommandUtil {
 
-    public static Optional<SimpleCommandMap> findSimpleCommandMap() {
+    public static Optional<SimpleCommandMap> getCommandMap() {
         try {
             Field bukkitCommandMap = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
             bukkitCommandMap.setAccessible(true);

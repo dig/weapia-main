@@ -1,6 +1,6 @@
 package net.sunken.common.command.impl;
 
-import lombok.NonNull;
+import lombok.*;
 import net.sunken.common.command.Command;
 import net.sunken.common.command.CommandResponse;
 import net.sunken.common.command.SubCommand;
@@ -12,6 +12,7 @@ import java.util.Set;
 
 public abstract class BaseCommandRegistry {
 
+    @Getter
     protected Set<BaseCommand> registeredCommands;
 
     public abstract void register(BaseCommand baseCommand);

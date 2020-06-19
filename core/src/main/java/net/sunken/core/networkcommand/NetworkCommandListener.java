@@ -25,6 +25,8 @@ public class NetworkCommandListener implements Listener, Facet {
     private PacketUtil packetUtil;
     @Inject
     private Cooldowns cooldowns;
+    @Inject
+    private AvailableCommandsCache availableCommands;
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
@@ -37,8 +39,10 @@ public class NetworkCommandListener implements Listener, Facet {
             if (firstWord.length() > 1) {
                 String commandName = firstWord.substring(1);
 
-                CommandUtil.findSimpleCommandMap().ifPresent(commandMap -> {
-                    if (commandMap.getCommand(commandName) == null) {
+                CommandUtil.getCommandMap().ifPresent(commandMap -> {
+                    boolean isRegisteredOnMaster = availableCommands.getAvailableCommmands().contains(commandName);
+
+                    if (commandMap.getCommand(commandName) == null && isRegisteredOnMaster) {
                         playerManager.get(playerId)
                                 .map(AbstractPlayer::toPlayerDetail)
                                 .ifPresent(playerDetail -> {

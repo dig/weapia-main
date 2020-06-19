@@ -76,7 +76,7 @@ public class InstanceManager implements Facet, Enableable {
             }
 
             Server server = Server.builder()
-                    .id(type.generateId())
+                    .id(ServerHelper.generate(type))
                     .type(type)
                     .host(null)
                     .port(25565)

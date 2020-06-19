@@ -35,7 +35,7 @@ public class DebugCommand extends BukkitCommand {
 
         commandSender.sendMessage("---- SERVER MANAGER ----");
         commandSender.sendMessage(String.format("servers count: %s", serverManager.findAll().size()));
-        commandSender.sendMessage(String.format("servers: %s", serverManager.findAll().toArray()));
+        commandSender.sendMessage(String.format("servers: %s", serverManager.findAll().toString()));
         return true;
     }
 

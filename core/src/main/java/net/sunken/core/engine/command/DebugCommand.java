@@ -32,6 +32,10 @@ public class DebugCommand extends BukkitCommand {
         commandSender.sendMessage("---- PLAYER MANAGER ----");
         commandSender.sendMessage(String.format("onlinePlayers count: %s", playerManager.getOnlinePlayers().size()));
         commandSender.sendMessage(String.format("onlinePlayers: %s", playerManager.getOnlinePlayers().toString()));
+
+        commandSender.sendMessage("---- SERVER MANAGER ----");
+        commandSender.sendMessage(String.format("servers count: %s", serverManager.findAll().size()));
+        commandSender.sendMessage(String.format("servers: %s", serverManager.findAll().toArray()));
         return true;
     }
 

@@ -5,6 +5,7 @@ import net.sunken.common.command.impl.*;
 import net.sunken.common.database.*;
 import net.sunken.common.inject.*;
 import net.sunken.common.networkcommand.*;
+import net.sunken.master.command.CommandRegistry;
 import redis.clients.jedis.*;
 
 import javax.inject.*;
@@ -18,7 +19,7 @@ public class AvailableCommandsRecorder implements Facet, Enableable {
     @Inject
     private RedisConnection redisConnection;
     @Inject
-    private BaseCommandRegistry commandRegistry;
+    private CommandRegistry commandRegistry;
 
     @Override
     public void enable() {
@@ -30,10 +31,8 @@ public class AvailableCommandsRecorder implements Facet, Enableable {
             Set<String> commandNames = new HashSet<>();
             registeredCommands.forEach(command -> commandNames.addAll(Arrays.asList(command.getCommand().aliases())));
 
-            log.info(String.format("Adding commands to cache %s", commandNames.toString()));
-
             if (commandNames.size() > 0) {
-                connection.sadd(NetworkCommandConstants.COMMAND_LIST_KEY, commandNames.toArray(new String[]{}));
+                connection.sadd(NetworkCommandConstants.COMMAND_LIST_KEY, commandNames.toArray(new String[commandNames.size()]));
             }
         }
     }

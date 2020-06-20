@@ -41,31 +41,28 @@ public class NetworkCommandListener implements Listener, Facet {
             String firstWord = splitByWord[0];
             if (firstWord.length() > 1) {
                 String commandName = firstWord.substring(1);
+                boolean isRegisteredOnMaster = availableCommands.getAvailableCommands().contains(commandName);
 
-                CommandUtil.getCommandMap().ifPresent(commandMap -> {
-                    boolean isRegisteredOnMaster = availableCommands.getAvailableCommands().contains(commandName);
+                if (isRegisteredOnMaster) {
+                    event.setCancelled(true);
+                    playerManager.get(player.getUniqueId())
+                            .map(AbstractPlayer::toPlayerDetail)
+                            .ifPresent(playerDetail -> {
+                                if (!cooldowns.canProceed(COOLDOWN_KEY, player.getUniqueId())) {
+                                    player.sendMessage(Constants.NETWORKCOMMAND_COOLDOWN);
+                                    return;
+                                }
+                                cooldowns.create(COOLDOWN_KEY, player.getUniqueId(), System.currentTimeMillis() + GLOBAL_COOLDOWN_MILLIS);
 
-                    if (commandMap.getCommand(commandName) == null && isRegisteredOnMaster) {
-                        event.setCancelled(true);
-                        playerManager.get(player.getUniqueId())
-                                .map(AbstractPlayer::toPlayerDetail)
-                                .ifPresent(playerDetail -> {
-                                    if (!cooldowns.canProceed(COOLDOWN_KEY, player.getUniqueId())) {
-                                        player.sendMessage(Constants.NETWORKCOMMAND_COOLDOWN);
-                                        return;
-                                    }
-                                    cooldowns.create(COOLDOWN_KEY, player.getUniqueId(), System.currentTimeMillis() + GLOBAL_COOLDOWN_MILLIS);
+                                String[] args = splitByWord.length > 1 ?
+                                        (String[]) ArrayUtils.subarray(splitByWord, 1, splitByWord.length) :
+                                        new String[]{};
 
-                                    String[] args = splitByWord.length > 1 ?
-                                            (String[]) ArrayUtils.subarray(splitByWord, 1, splitByWord.length) :
-                                            new String[]{};
-
-                                    NetworkCommandPacket networkCommand =
-                                            new NetworkCommandPacket(commandName, args, playerDetail);
-                                    packetUtil.send(networkCommand);
-                                });
-                    }
-                });
+                                NetworkCommandPacket networkCommand =
+                                        new NetworkCommandPacket(commandName, args, playerDetail);
+                                packetUtil.send(networkCommand);
+                            });
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ import net.sunken.common.server.module.event.ServerUpdatedEvent;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.executor.BukkitSyncExecutor;
+import net.sunken.core.hologram.Hologram;
 import net.sunken.core.npc.NPC;
 import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.npc.config.InteractionConfiguration;
@@ -210,13 +211,15 @@ public class LobbyState extends EventGameState {
                     NPCServerConfiguration serverConfiguration = npcConfiguration.getServerConfiguration();
                     long count = serverManager.getPlayersOnline(serverConfiguration.getType(), serverConfiguration.getGame());
 
-                    int i = 0;
-                    for (String line : npcConfiguration.getDisplayName()) {
-                        if (line.indexOf("%players") >= 0) {
-                            npc.getHologram().update(i, line.replaceAll("%players", String.valueOf(count)));
+                    if (npcConfiguration.getDisplayName().size() > 1) {
+                        int i = 0;
+                        for (String line : npcConfiguration.getDisplayName()) {
+                            Hologram hologram = npc.getHologram();
+                            if (hologram != null && line.indexOf("%players") >= 0) {
+                                hologram.update(i, line.replaceAll("%players", String.valueOf(count)));
+                            }
+                            i++;
                         }
-
-                        i++;
                     }
                 });
             });

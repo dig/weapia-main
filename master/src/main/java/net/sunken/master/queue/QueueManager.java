@@ -9,17 +9,14 @@ import lombok.extern.java.Log;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
-import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.PlayerRequestServerPacket;
 import net.sunken.common.player.packet.PlayerSaveStatePacket;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
-import net.sunken.common.server.module.ServerManager;
-import net.sunken.master.instance.InstanceManager;
-import net.sunken.master.party.PartyManager;
 import net.sunken.master.queue.handler.PlayerRequestServerHandler;
 import net.sunken.master.queue.handler.PlayerSaveStateHandler;
 import net.sunken.master.queue.impl.AbstractBalancer;
+import net.sunken.master.queue.impl.BalancerFactory;
 import net.sunken.master.queue.impl.LobbyBalancer;
 import net.sunken.master.queue.impl.SimpleBalancer;
 
@@ -33,13 +30,7 @@ public class QueueManager implements Facet, Enableable {
     @Inject
     private QueueThread queueThread;
     @Inject
-    private PartyManager partyManager;
-    @Inject
-    private ServerManager serverManager;
-    @Inject
-    private InstanceManager instanceManager;
-    @Inject
-    private PacketUtil packetUtil;
+    private BalancerFactory balancerFactory;
 
     @Inject
     private PacketHandlerRegistry packetHandlerRegistry;
@@ -55,11 +46,11 @@ public class QueueManager implements Facet, Enableable {
 
     @Override
     public void enable() {
-        lobbyBalancer = new LobbyBalancer(partyManager, serverManager, instanceManager, packetUtil);
-        gameBalancers.put(Game.ICE_RUNNER_SOLO, new SimpleBalancer(partyManager, serverManager, instanceManager, packetUtil));
+        lobbyBalancer = (LobbyBalancer) balancerFactory.create(LobbyBalancer.class);
+        gameBalancers.put(Game.ICE_RUNNER_SOLO, balancerFactory.create(SimpleBalancer.class));
 
-        gameBalancers.put(Game.SURVIVAL_REALMS, new LobbyBalancer(partyManager, serverManager, instanceManager, packetUtil));
-        gameBalancers.put(Game.SURVIVAL_REALMS_ADVENTURE, new LobbyBalancer(partyManager, serverManager, instanceManager, packetUtil));
+        gameBalancers.put(Game.SURVIVAL_REALMS, balancerFactory.create(LobbyBalancer.class));
+        gameBalancers.put(Game.SURVIVAL_REALMS_ADVENTURE, balancerFactory.create(LobbyBalancer.class));
 
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);

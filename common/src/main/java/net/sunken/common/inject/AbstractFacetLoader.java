@@ -1,6 +1,5 @@
 package net.sunken.common.inject;
 
-import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;

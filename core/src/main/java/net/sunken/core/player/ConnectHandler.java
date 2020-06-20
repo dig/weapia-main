@@ -62,12 +62,12 @@ public class ConnectHandler implements Facet, Listener {
         Player player = event.getPlayer();
         event.setJoinMessage("");
 
-        AbstractPlayer abstractPlayer = pendingConnection.getIfPresent(player.getUniqueId());
-        if (abstractPlayer != null) {
-            playerManager.add(abstractPlayer);
+        CorePlayer corePlayer = (CorePlayer) pendingConnection.getIfPresent(player.getUniqueId());
+        if (corePlayer != null) {
+            playerManager.add(corePlayer);
             pendingConnection.invalidate(player.getUniqueId());
 
-            abstractPlayer.setup();
+            corePlayer.setup(player);
             AsyncHelper.executor().submit(() -> packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), pluginInform.getServer().getId())));
         } else {
             player.kickPlayer(Constants.FAILED_LOAD_DATA);

@@ -46,7 +46,7 @@ public abstract class BaseTeamState {
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
         if (abstractPlayerOptional.isPresent()) {
             CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
-            corePlayer.setNametagAndTabList();
+            corePlayer.setNametagAndTabList(corePlayer.toPlayer().get());
         }
     }
 

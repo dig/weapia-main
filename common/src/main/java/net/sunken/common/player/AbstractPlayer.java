@@ -44,16 +44,6 @@ public abstract class AbstractPlayer implements MongoSerializable {
         return document;
     }
 
-    /**
-     * Called on successful join.
-     */
-    public abstract void setup();
-
-    /**
-     * Called on successful leave.
-     */
-    public abstract void destroy();
-
     public PlayerDetail toPlayerDetail() {
         return new PlayerDetail(uuid, username, rank);
     }

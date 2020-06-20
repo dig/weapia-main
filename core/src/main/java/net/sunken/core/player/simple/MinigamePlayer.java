@@ -10,5 +10,4 @@ public class MinigamePlayer extends CorePlayer {
     public MinigamePlayer(UUID uuid, String username, ScoreboardRegistry scoreboardRegistry) {
         super(uuid, username, scoreboardRegistry);
     }
-
 }

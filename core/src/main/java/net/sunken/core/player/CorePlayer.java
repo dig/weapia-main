@@ -1,6 +1,7 @@
 package net.sunken.core.player;
 
 import lombok.Getter;
+import lombok.NonNull;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.core.Constants;
 import net.sunken.core.engine.state.impl.BasePlayerState;
@@ -25,44 +26,32 @@ public abstract class CorePlayer extends AbstractPlayer {
         this.scoreboardRegistry = scoreboardRegistry;
     }
 
-    @Override
-    public void setup() {
-        setTabList();
-        setNametagAndTabList();
+    public void setup(@NonNull Player player) {
+        setTabList(player);
+        setNametagAndTabList(player);
     }
 
-    public void setTabList() {
-        Optional<? extends Player> playerOptional = toPlayer();
-        if (playerOptional.isPresent()) {
-            Player player = playerOptional.get();
-            TabList.send(player, ChatColor.translateAlternateColorCodes('&', Constants.TAB_TOP), ChatColor.translateAlternateColorCodes('&', Constants.TAB_BOTTOM));
+    public void destroy(@NonNull Player player) {
+    }
+
+    public void setTabList(@NonNull Player player) {
+        TabList.send(player, ChatColor.translateAlternateColorCodes('&', Constants.TAB_TOP), ChatColor.translateAlternateColorCodes('&', Constants.TAB_BOTTOM));
+    }
+
+    public void setNametagAndTabList(@NonNull Player player) {
+        switch (rank) {
+            case PLAYER:
+                player.setPlayerListName(ChatColor.valueOf(rank.getColour()) + player.getName());
+                scoreboardRegistry.changeName(this, "", "", ChatColor.valueOf(rank.getColour()), rank.getOrder());
+                break;
+            default:
+                player.setPlayerListName(ChatColor.valueOf(rank.getColour()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + player.getName());
+                scoreboardRegistry.changeName(this, ChatColor.valueOf(rank.getColour()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ChatColor.valueOf(rank.getColour()), rank.getOrder());
         }
-    }
-
-    public void setNametagAndTabList() {
-        Optional<? extends Player> playerOptional = toPlayer();
-        if (playerOptional.isPresent()) {
-            Player player = playerOptional.get();
-            switch (rank) {
-                case PLAYER:
-                    player.setPlayerListName(ChatColor.valueOf(rank.getColour()) + player.getName());
-                    scoreboardRegistry.changeName(this, "", "", ChatColor.valueOf(rank.getColour()), rank.getOrder());
-                    break;
-                default:
-                    player.setPlayerListName(ChatColor.valueOf(rank.getColour()) + "[" + rank.getFriendlyName().toUpperCase() + "] " + player.getName());
-                    scoreboardRegistry.changeName(this, ChatColor.valueOf(rank.getColour()) + "[" + rank.getFriendlyName().toUpperCase() + "] ", "", ChatColor.valueOf(rank.getColour()), rank.getOrder());
-            }
-        }
-    }
-
-    @Override
-    public void destroy() {
     }
 
     public Optional<? extends Player> toPlayer() {
-        return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> player.getUniqueId().equals(uuid))
-                .findFirst();
+        return Optional.ofNullable(Bukkit.getPlayer(uuid));
     }
 
     public void setState(BasePlayerState newState) {
@@ -73,9 +62,4 @@ public abstract class CorePlayer extends AbstractPlayer {
         newState.start(this, state);
         state = newState;
     }
-
-    public boolean hasState() {
-        return state != null;
-    }
-
 }

@@ -45,18 +45,18 @@ public class DisconnectHandler implements Facet, Listener {
 
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
         if (abstractPlayerOptional.isPresent()) {
-            AbstractPlayer abstractPlayer = abstractPlayerOptional.get();
-            abstractPlayer.destroy();
+            CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
+            corePlayer.destroy(player);
 
-            connectHandler.getPendingConnection().invalidate(abstractPlayer.getUuid());
+            connectHandler.getPendingConnection().invalidate(corePlayer.getUuid());
             playerManager.remove(player.getUniqueId());
 
             AsyncHelper.executor().submit(() -> {
                 packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
 
                 MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, abstractPlayer.getUuid().toString()),
-                        new Document("$set", abstractPlayer.toDocument()), new UpdateOptions().upsert(true));
+                collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, corePlayer.getUuid().toString()),
+                        new Document("$set", corePlayer.toDocument()), new UpdateOptions().upsert(true));
             });
         } else {
             log.severe(String.format("onPlayerQuit: Attempted to quit with no data loaded? (%s)", player.getUniqueId().toString()));

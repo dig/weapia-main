@@ -33,14 +33,6 @@ public class BungeePlayer extends AbstractPlayer {
         super(proxiedPlayer.getUniqueId(), proxiedPlayer.getDisplayName());
     }
 
-    @Override
-    public void setup() {
-    }
-
-    @Override
-    public void destroy() {
-    }
-
     public Optional<ProxiedPlayer> toProxiedPlayer() {
         return ProxyServer.getInstance().getPlayers().stream()
                 .filter(proxiedPlayer -> proxiedPlayer.getUniqueId().equals(uuid))

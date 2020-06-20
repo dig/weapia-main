@@ -25,4 +25,6 @@ public class DatabaseHelper {
     public final static String PLAYER_SURVIVAL_REALMS_WORLD_KEY = "world";
     public final static String PLAYER_SURVIVAL_REALMS_LOCATION_KEY = "location";
 
+    public final static String GRIDFS_BUCKET_SURVIVAL_REALMS = "srbucket";
+
 }

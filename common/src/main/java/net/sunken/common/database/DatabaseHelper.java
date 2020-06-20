@@ -14,7 +14,15 @@ public class DatabaseHelper {
     public final static String PLAYER_FIRSTLOGIN_KEY = "firstlogin";
     public final static String PLAYER_LASTLOGIN_KEY = "lastlogin";
 
+    public final static String LOCATION_WORLD_KEY = "world";
+    public final static String LOCATION_X_KEY = "x";
+    public final static String LOCATION_Y_KEY = "y";
+    public final static String LOCATION_Z_KEY = "z";
+    public final static String LOCATION_YAW_KEY = "yaw";
+    public final static String LOCATION_PITCH_KEY = "pitch";
+
     public final static String PLAYER_SURVIVAL_REALMS_KEY = "survivalrealms";
     public final static String PLAYER_SURVIVAL_REALMS_WORLD_KEY = "world";
+    public final static String PLAYER_SURVIVAL_REALMS_LOCATION_KEY = "location";
 
 }

@@ -118,7 +118,7 @@ public class ZipUtility {
     public static void unzip(String zipFilePath, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
-            destDir.mkdir();
+            destDir.mkdirs();
         }
         ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFilePath));
         ZipEntry entry = zipIn.getNextEntry();

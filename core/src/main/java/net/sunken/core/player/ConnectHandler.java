@@ -14,6 +14,7 @@ import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.packet.PlayerProxyMessagePacket;
 import net.sunken.common.server.packet.ServerConnectedPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.common.util.Tuple;
@@ -93,6 +94,7 @@ public class ConnectHandler implements Facet, Listener {
             pendingConnection.put(abstractPlayer.getUuid(), abstractPlayer);
             event.allow();
         } else {
+            packetUtil.send(new PlayerProxyMessagePacket(event.getUniqueId(), Constants.FAILED_LOAD_DATA));
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Constants.FAILED_LOAD_DATA);
         }
     }

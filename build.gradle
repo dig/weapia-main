@@ -82,6 +82,9 @@ subprojects {
         //--- Configurate
         included 'org.spongepowered:configurate-hocon:3.6'
 
+        //--- Zip Utils
+        included 'org.zeroturnaround:zt-zip:1.14'
+
         configurations.compile.extendsFrom(configurations.included)
     }
 

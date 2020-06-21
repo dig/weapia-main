@@ -125,6 +125,7 @@ public class ZipUtility {
         while (entry != null) {
             String filePath = destDirectory + File.separator + entry.getName();
             if (!entry.isDirectory()) {
+                new File(filePath).getParentFile().mkdirs();
                 extractFile(zipIn, filePath);
             } else {
                 File dir = new File(filePath);

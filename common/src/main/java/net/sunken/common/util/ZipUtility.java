@@ -134,7 +134,7 @@ public class ZipUtility {
                     Files.createDirectories(path);
                 } else {
                     try (OutputStream os = Files.newOutputStream(path)) {
-                        byte[] buffer = new byte[1024];
+                        byte[] buffer = new byte[BUFFER_SIZE];
                         int len;
                         while ((len = zis.read(buffer)) > 0) {
                             os.write(buffer, 0, len);

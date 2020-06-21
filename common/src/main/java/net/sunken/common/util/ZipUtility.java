@@ -128,7 +128,7 @@ public class ZipUtility {
                 extractFile(zipIn, filePath);
             } else {
                 File dir = new File(filePath);
-                dir.mkdir();
+                dir.mkdirs();
             }
             zipIn.closeEntry();
             entry = zipIn.getNextEntry();

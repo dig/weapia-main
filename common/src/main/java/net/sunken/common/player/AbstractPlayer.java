@@ -35,7 +35,7 @@ public abstract class AbstractPlayer implements MongoSerializable {
 
     public void save(@NonNull MongoConnection mongoConnection) {
         MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-        collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, uuid),
+        collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, uuid.toString()),
                 new Document("$set", toDocument()), new UpdateOptions().upsert(true));
     }
 

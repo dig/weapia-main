@@ -22,6 +22,7 @@ public class Constants {
     public static final List<String> PLAYER_WELCOME_MESSAGE = Arrays.asList(
             " ",
             StringUtil.center(ChatColor.AQUA + "" + ChatColor.BOLD + "Weapia", StringUtil.CHAT_WIDTH),
+            " ",
             StringUtil.center(ChatColor.GOLD + "Click a game on the compass to start playing.", StringUtil.CHAT_WIDTH),
             " "
     );

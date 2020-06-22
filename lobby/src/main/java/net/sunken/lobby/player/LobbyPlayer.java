@@ -37,7 +37,7 @@ public class LobbyPlayer extends CorePlayer {
             scoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
 
             scoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
-            scoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline() + " " + Symbol.BLACK_SMILING_FACE, 3);
+            scoreboard.createEntry("PlayersValue", ChatColor.YELLOW + Symbol.BLACK_SMILING_FACE + serverManager.getTotalPlayersOnline(), 3);
             scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
         });
     }

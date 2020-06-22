@@ -6,7 +6,6 @@ import net.sunken.common.CommonModule;
 import net.sunken.common.config.ConfigModule;
 import net.sunken.common.inject.PluginFacetBinder;
 import net.sunken.common.player.module.PlayerModule;
-import net.sunken.core.bar.module.BarModule;
 import net.sunken.core.command.CommandModule;
 import net.sunken.core.config.InstanceConfiguration;
 import net.sunken.core.config.InstanceConfigurationSerializer;
@@ -39,7 +38,6 @@ public class CoreModule extends AbstractModule {
         install(new PlayerModule());
         install(new ConfigModule(new File("config/common.conf"), InstanceConfiguration.class));
         install(new CommandModule());
-        install(new BarModule());
         install(new NetworkCommandModule());
 
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
@@ -64,5 +62,4 @@ public class CoreModule extends AbstractModule {
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(InstanceConfiguration.class), new InstanceConfigurationSerializer());
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(ItemAttributeConfiguration.class), new ItemAttributeConfigurationSerializer());
     }
-
 }

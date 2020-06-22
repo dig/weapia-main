@@ -33,12 +33,11 @@ public class PlayerSaveStateHandler extends PacketHandler<PlayerSaveStatePacket>
     @Override
     public void onReceive(PlayerSaveStatePacket packet) {
         if (packet.getReason() == PlayerSaveStatePacket.Reason.REQUEST) {
-            log.info(String.format("PlayerSaveStateHandler for %s", packet.getUuid()));
-
             playerManager.get(packet.getUuid()).ifPresent(abstractPlayer ->
                 AsyncHelper.executor().execute(() -> {
                     boolean success = true;
                     if (!abstractPlayer.isSaved()) {
+                        log.info("Saved via PlayerSaveStateHandler");
                         try {
                             MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
                             collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, abstractPlayer.getUuid().toString()),

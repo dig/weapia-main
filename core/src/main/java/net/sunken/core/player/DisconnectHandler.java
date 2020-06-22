@@ -47,13 +47,13 @@ public class DisconnectHandler implements Facet, Listener {
                 .map(CorePlayer.class::cast)
                 .ifPresent(corePlayer -> {
                     corePlayer.destroy(player);
-
                     connectHandler.getPendingConnection().invalidate(corePlayer.getUuid());
                     playerManager.remove(player.getUniqueId());
 
                     AsyncHelper.executor().execute(() -> {
                         packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
                         if (!corePlayer.isSaved()) {
+                            log.info("Saved via DisconnectHandler");
                             try {
                                 MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
                                 collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, corePlayer.getUuid().toString()),

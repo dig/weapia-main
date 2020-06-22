@@ -15,7 +15,7 @@ public class Constants {
 
     public static final String NETWORKCOMMAND_COOLDOWN = ChatColor.RED + "Please wait before trying this command again.";
 
-    public static final List<String> WHITELISTED_DEFAULT_COMMANDS = Arrays.asList("packet_filter", "filter", "protocol", "packetlog", "packet", "shop");
+    public static final List<String> WHITELISTED_DEFAULT_COMMANDS = Arrays.asList("packet_filter", "filter", "protocol", "packetlog", "packet", "shop", "help", "dm", "deluxemenu");
 
     public static final String DEFAULT_BOSS_BAR = "";
 

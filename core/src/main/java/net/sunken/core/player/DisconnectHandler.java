@@ -52,9 +52,7 @@ public class DisconnectHandler implements Facet, Listener {
 
                     AsyncHelper.executor().execute(() -> {
                         try {
-                            MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                            collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, corePlayer.getUuid().toString()),
-                                    new Document("$set", corePlayer.toDocument()), new UpdateOptions().upsert(true));
+                            corePlayer.save(mongoConnection);
                         } catch (Exception e) {
                             log.log(Level.SEVERE, "Failed to save player data.", e);
                         }

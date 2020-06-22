@@ -10,6 +10,7 @@ import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.PlayerRequestServerPacket;
 import net.sunken.common.player.packet.PlayerSaveStatePacket;
 import net.sunken.common.server.module.ServerManager;
+import net.sunken.common.util.AsyncHelper;
 import net.sunken.master.instance.InstanceDetail;
 import net.sunken.master.queue.QueueManager;
 
@@ -42,7 +43,7 @@ public class PlayerRequestServerHandler extends PacketHandler<PlayerRequestServe
                     && !serverManager.hasPendingConnection(packet.getUuid())) {
 
                 pendingSaveBeforeConnect.put(packet.getUuid(), new InstanceDetail(packet.getType(), packet.getGame()));
-                packetUtil.send(new PlayerSaveStatePacket(packet.getUuid(), PlayerSaveStatePacket.Reason.REQUEST));
+                AsyncHelper.executor().execute(() -> packetUtil.send(new PlayerSaveStatePacket(packet.getUuid(), PlayerSaveStatePacket.Reason.REQUEST)));
             } else {
                 log.info(String.format("Tried to save player again? skipping. (%s)", packet.getUuid().toString()));
             }

@@ -36,7 +36,7 @@ public class ProxySettings implements Facet, Enableable {
     @Getter @Setter
     private String motdBottomLine = Constants.DEFAULT_PING_BOTTOM_LINE;
     @Getter @Setter
-    private boolean motdCentered = false;
+    private boolean motdCentered = true;
     @Getter @Setter
     private BufferedImage favicon;
 

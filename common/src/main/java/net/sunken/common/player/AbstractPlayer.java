@@ -1,9 +1,12 @@
 package net.sunken.common.player;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import net.sunken.common.database.DatabaseHelper;
 import net.sunken.common.database.MongoSerializable;
+import net.sunken.common.util.MongoUtil;
 import org.bson.Document;
 
 import java.util.UUID;
@@ -11,6 +14,9 @@ import java.util.UUID;
 @Data
 @ToString
 public abstract class AbstractPlayer implements MongoSerializable {
+
+    @Getter @Setter
+    protected boolean saved;
 
     protected final UUID uuid;
     protected final String username;
@@ -20,6 +26,8 @@ public abstract class AbstractPlayer implements MongoSerializable {
     protected long lastLoginMillis;
 
     public AbstractPlayer(UUID uuid, String username) {
+        this.saved = false;
+
         this.uuid = uuid;
         this.username = username;
 
@@ -29,7 +37,7 @@ public abstract class AbstractPlayer implements MongoSerializable {
     }
 
     public boolean fromDocument(Document document) {
-        rank = Rank.valueOf(document.getString(DatabaseHelper.PLAYER_RANK_KEY));
+        rank = (Rank) MongoUtil.getEnumOrDefault(document, Rank.class, DatabaseHelper.PLAYER_RANK_KEY, Rank.PLAYER);
         firstLoginMillis = document.getLong(DatabaseHelper.PLAYER_FIRSTLOGIN_KEY);
         return true;
     }
@@ -47,5 +55,4 @@ public abstract class AbstractPlayer implements MongoSerializable {
     public PlayerDetail toPlayerDetail() {
         return new PlayerDetail(uuid, username, rank);
     }
-
 }

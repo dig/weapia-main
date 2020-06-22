@@ -2,6 +2,7 @@ package net.sunken.core.player;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.util.Symbol;
 import net.sunken.core.Constants;

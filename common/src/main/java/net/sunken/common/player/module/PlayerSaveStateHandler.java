@@ -16,6 +16,7 @@ import net.sunken.common.util.AsyncHelper;
 import org.bson.Document;
 
 import java.util.Optional;
+import java.util.logging.Level;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -32,21 +33,25 @@ public class PlayerSaveStateHandler extends PacketHandler<PlayerSaveStatePacket>
     @Override
     public void onReceive(PlayerSaveStatePacket packet) {
         if (packet.getReason() == PlayerSaveStatePacket.Reason.REQUEST) {
-            Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(packet.getUuid());
+            log.info(String.format("PlayerSaveStateHandler for %s", packet.getUuid()));
 
-            if (abstractPlayerOptional.isPresent()) {
-                AbstractPlayer abstractPlayer = abstractPlayerOptional.get();
-
-                log.info(String.format("PlayerSaveStateHandler: Saving player (%s)", abstractPlayer.getUuid().toString()));
-                AsyncHelper.executor().submit(() -> {
-                    MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                    UpdateResult result = collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, abstractPlayer.getUuid().toString()),
-                            new Document("$set", abstractPlayer.toDocument()), new UpdateOptions().upsert(true));
-
-                    packetUtil.send(new PlayerSaveStatePacket(abstractPlayer.getUuid(), (result.wasAcknowledged() ? PlayerSaveStatePacket.Reason.COMPLETE : PlayerSaveStatePacket.Reason.FAIL)));
-                    log.info(String.format("PlayerSaveStateHandler: Saved, sending response. (%s)", abstractPlayer.getUuid().toString()));
-                });
-            }
+            playerManager.get(packet.getUuid()).ifPresent(abstractPlayer ->
+                AsyncHelper.executor().execute(() -> {
+                    boolean success = true;
+                    if (!abstractPlayer.isSaved()) {
+                        try {
+                            MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+                            collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, abstractPlayer.getUuid().toString()),
+                                    new Document("$set", abstractPlayer.toDocument()), new UpdateOptions().upsert(true));
+                            abstractPlayer.setSaved(true);
+                        } catch (Exception e) {
+                            log.log(Level.SEVERE, "Failed to save player data.", e);
+                            success = false;
+                        }
+                    }
+                    packetUtil.send(new PlayerSaveStatePacket(abstractPlayer.getUuid(), success ? PlayerSaveStatePacket.Reason.COMPLETE : PlayerSaveStatePacket.Reason.FAIL));
+                })
+            );
         }
     }
 

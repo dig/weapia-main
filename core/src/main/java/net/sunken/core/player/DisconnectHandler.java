@@ -21,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Optional;
+import java.util.logging.Level;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -42,29 +43,28 @@ public class DisconnectHandler implements Facet, Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         event.setQuitMessage("");
+        playerManager.get(player.getUniqueId())
+                .map(CorePlayer.class::cast)
+                .ifPresent(corePlayer -> {
+                    corePlayer.destroy(player);
 
-        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
-        if (abstractPlayerOptional.isPresent()) {
-            CorePlayer corePlayer = (CorePlayer) abstractPlayerOptional.get();
-            corePlayer.destroy(player);
+                    connectHandler.getPendingConnection().invalidate(corePlayer.getUuid());
+                    playerManager.remove(player.getUniqueId());
 
-            connectHandler.getPendingConnection().invalidate(corePlayer.getUuid());
-            playerManager.remove(player.getUniqueId());
-
-            AsyncHelper.executor().submit(() -> {
-                packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
-
-                try {
-                    MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                    collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, corePlayer.getUuid().toString()),
-                            new Document("$set", corePlayer.toDocument()), new UpdateOptions().upsert(true));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } else {
-            log.severe(String.format("onPlayerQuit: Attempted to quit with no data loaded? (%s)", player.getUniqueId().toString()));
-        }
+                    AsyncHelper.executor().execute(() -> {
+                        packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
+                        if (!corePlayer.isSaved()) {
+                            try {
+                                MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+                                collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, corePlayer.getUuid().toString()),
+                                        new Document("$set", corePlayer.toDocument()), new UpdateOptions().upsert(true));
+                                corePlayer.setSaved(true);
+                            } catch (Exception e) {
+                                log.log(Level.SEVERE, "Failed to save player data.", e);
+                            }
+                        }
+                    });
+                });
     }
 
 }

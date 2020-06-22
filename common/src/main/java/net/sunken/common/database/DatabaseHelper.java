@@ -23,8 +23,8 @@ public class DatabaseHelper {
 
     public final static String PLAYER_SURVIVAL_REALMS_KEY = "survivalrealms";
 
-    public final static String PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY = "adventureType";
-    public final static String PLAYER_SURVIVAL_REALMS_WORLD_KEY = "worldType";
+    public final static String PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY = "adventure";
+    public final static String PLAYER_SURVIVAL_REALMS_WORLD_KEY = "world";
     public final static String PLAYER_SURVIVAL_REALMS_LOCATION_KEY = "location";
 
     public final static String PLAYER_SURVIVAL_REALMS_INSTANCE_KEY = "instance";

@@ -10,6 +10,7 @@ import net.sunken.core.PluginInform;
 import net.sunken.core.engine.state.impl.BasePlayerState;
 import net.sunken.core.scoreboard.CustomScoreboard;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
+import net.sunken.core.util.ActionBar;
 import net.sunken.core.util.TabList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,6 +38,9 @@ public abstract class CorePlayer extends AbstractPlayer {
         setTabList(player);
         setNametagAndTabList(player);
         setScoreboard(player);
+
+        // clear action bar
+        ActionBar.sendMessage(player, "");
     }
 
     public void destroy(@NonNull Player player) {

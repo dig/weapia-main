@@ -220,38 +220,7 @@ public class ConnectHandler implements Facet, Listener, Enableable {
     @EventHandler
     public void onPlayerLogin(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
-
         Constants.PLAYER_WELCOME_MESSAGE.forEach(message -> player.sendMessage(TextComponent.fromLegacyText(message)));
-
-        TextComponent spaceBeforeLink = new TextComponent("      ");
-        TextComponent firstGameLink = new TextComponent("[Herobrine Escort]");
-        firstGameLink.setColor(ChatColor.YELLOW);
-        firstGameLink.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server herobrine_escort"));
-
-        TextComponent secondGameLink = new TextComponent("[Space Games]");
-        secondGameLink.setColor(ChatColor.DARK_PURPLE);
-        secondGameLink.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server space_games_solo"));
-
-        TextComponent spaceBeforeLink1 = new TextComponent("                            ");
-        TextComponent thirdGameLink = new TextComponent("[Base Invaders]");
-        thirdGameLink.setColor(ChatColor.AQUA);
-        thirdGameLink.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server base_invaders"));
-
-        TextComponent fourthGameLink = new TextComponent("[Natural Disaster]");
-        fourthGameLink.setColor(ChatColor.RED);
-        fourthGameLink.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server natural_disaster"));
-
-        spaceBeforeLink.addExtra(firstGameLink);
-        spaceBeforeLink.addExtra(" ");
-        spaceBeforeLink.addExtra(secondGameLink);
-        spaceBeforeLink.addExtra(" ");
-        spaceBeforeLink.addExtra(thirdGameLink);
-
-        spaceBeforeLink1.addExtra(fourthGameLink);
-
-        player.sendMessage(spaceBeforeLink);
-        player.sendMessage(spaceBeforeLink1);
-        player.sendMessage(new TextComponent(" "));
     }
 
     @Override

@@ -1,22 +1,21 @@
 package net.sunken.common.player;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.UpdateOptions;
+import lombok.*;
 import net.sunken.common.database.DatabaseHelper;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.database.MongoSerializable;
 import net.sunken.common.util.MongoUtil;
 import org.bson.Document;
 
 import java.util.UUID;
 
+import static com.mongodb.client.model.Filters.eq;
+
 @Data
 @ToString
 public abstract class AbstractPlayer implements MongoSerializable {
-
-    @Getter @Setter
-    protected boolean saved;
 
     protected final UUID uuid;
     protected final String username;
@@ -26,14 +25,18 @@ public abstract class AbstractPlayer implements MongoSerializable {
     protected long lastLoginMillis;
 
     public AbstractPlayer(UUID uuid, String username) {
-        this.saved = false;
-
         this.uuid = uuid;
         this.username = username;
 
         this.rank = Rank.PLAYER;
         this.firstLoginMillis = System.currentTimeMillis();
         this.lastLoginMillis = System.currentTimeMillis();
+    }
+
+    public void save(@NonNull MongoConnection mongoConnection) {
+        MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+        collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, uuid),
+                new Document("$set", toDocument()), new UpdateOptions().upsert(true));
     }
 
     public boolean fromDocument(Document document) {

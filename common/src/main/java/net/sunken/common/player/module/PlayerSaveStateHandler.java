@@ -36,17 +36,11 @@ public class PlayerSaveStateHandler extends PacketHandler<PlayerSaveStatePacket>
             playerManager.get(packet.getUuid()).ifPresent(abstractPlayer ->
                 AsyncHelper.executor().execute(() -> {
                     boolean success = true;
-                    if (!abstractPlayer.isSaved()) {
-                        log.info("Saved via PlayerSaveStateHandler");
-                        try {
-                            MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                            collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, abstractPlayer.getUuid().toString()),
-                                    new Document("$set", abstractPlayer.toDocument()), new UpdateOptions().upsert(true));
-                            abstractPlayer.setSaved(true);
-                        } catch (Exception e) {
-                            log.log(Level.SEVERE, "Failed to save player data.", e);
-                            success = false;
-                        }
+                    try {
+                        abstractPlayer.save(mongoConnection);
+                    } catch (Exception e) {
+                        log.log(Level.SEVERE, "Failed to save player data.", e);
+                        success = false;
                     }
                     packetUtil.send(new PlayerSaveStatePacket(abstractPlayer.getUuid(), success ? PlayerSaveStatePacket.Reason.COMPLETE : PlayerSaveStatePacket.Reason.FAIL));
                 })

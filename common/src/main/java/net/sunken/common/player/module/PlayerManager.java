@@ -42,8 +42,9 @@ public class PlayerManager implements Facet, Enableable {
     }
 
     public Optional<AbstractPlayer> get(@NonNull String name) {
-        if (nameCache.containsKey(name.toLowerCase())) {
-            return get(nameCache.get(name.toLowerCase()));
+        name = name.toLowerCase();
+        if (nameCache.containsKey(name)) {
+            return get(nameCache.get(name));
         }
         return Optional.empty();
     }

@@ -41,7 +41,7 @@ public class NetworkManager implements Facet, Enableable {
 
     public void add(@NonNull PlayerDetail playerDetail, boolean local) {
         playerCache.put(playerDetail.getUuid(), playerDetail);
-        nameCache.put(playerDetail.getDisplayName(), playerDetail.getUuid());
+        nameCache.put(playerDetail.getDisplayName().toLowerCase(), playerDetail.getUuid());
 
         if (!local) {
             try (Jedis jedis = redisConnection.getConnection()) {
@@ -67,10 +67,10 @@ public class NetworkManager implements Facet, Enableable {
         return Optional.ofNullable(playerCache.get(uuid));
     }
 
-    public Optional<PlayerDetail> get(@NonNull String displayName) {
-        UUID uuid = nameCache.get(displayName);
-        if (uuid != null) {
-            return Optional.ofNullable(playerCache.get(uuid));
+    public Optional<PlayerDetail> get(@NonNull String name) {
+        name = name.toLowerCase();
+        if (nameCache.containsKey(name)) {
+            return get(nameCache.get(name));
         }
         return Optional.empty();
     }

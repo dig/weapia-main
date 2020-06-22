@@ -20,7 +20,8 @@ public class PlayerManager implements Facet, Enableable {
     @Inject
     private PlayerSaveStateHandler playerSaveStateHandler;
 
-    private final Map<UUID, AbstractPlayer> onlinePlayers = Maps.newConcurrentMap();
+    private final Map<UUID, AbstractPlayer> playerCache = Maps.newConcurrentMap();
+    private final Map<String, UUID> nameCache = Maps.newConcurrentMap();
 
     @Override
     public void enable() {
@@ -32,18 +33,32 @@ public class PlayerManager implements Facet, Enableable {
     }
 
     public void add(@NonNull AbstractPlayer abstractPlayer) {
-        onlinePlayers.put(abstractPlayer.getUuid(), abstractPlayer);
+        playerCache.put(abstractPlayer.getUuid(), abstractPlayer);
+        nameCache.put(abstractPlayer.getUsername().toLowerCase(), abstractPlayer.getUuid());
     }
 
     public Optional<AbstractPlayer> get(@NonNull UUID uuid) {
-        return Optional.ofNullable(onlinePlayers.get(uuid));
+        return Optional.ofNullable(playerCache.get(uuid));
+    }
+
+    public Optional<AbstractPlayer> get(@NonNull String name) {
+        if (nameCache.containsKey(name.toLowerCase())) {
+            return get(nameCache.get(name.toLowerCase()));
+        }
+        return Optional.empty();
     }
 
     public void remove(@NonNull UUID uuid) {
-        onlinePlayers.remove(uuid);
+        playerCache.remove(uuid);
+        nameCache.keySet().forEach(name -> {
+            UUID value = nameCache.get(name);
+            if (value.equals(uuid)) {
+                nameCache.remove(name);
+            }
+        });
     }
 
     public Collection<AbstractPlayer> getOnlinePlayers() {
-        return onlinePlayers.values();
+        return playerCache.values();
     }
 }

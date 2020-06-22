@@ -31,6 +31,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -87,7 +88,7 @@ public class ConnectHandler implements Facet, Listener {
                 loadState = abstractPlayer.fromDocument(document);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, String.format("Failed to load player (%s)", abstractPlayer.getUuid()), e);
             loadState = false;
         }
 

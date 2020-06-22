@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.player.Rank;
 import net.sunken.common.server.module.ServerManager;
+import net.sunken.common.util.Symbol;
 import net.sunken.core.PluginInform;
 import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.CustomScoreboard;
@@ -30,11 +31,13 @@ public class LobbyPlayer extends CorePlayer {
 
         setScoreboard(player, scoreboard -> {
             scoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
+
             scoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
             scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
             scoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
+
             scoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
-            scoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 3);
+            scoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline() + " " + Symbol.BLACK_SMILING_FACE, 3);
             scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
         });
     }

@@ -28,17 +28,19 @@ public class LobbyPlayer extends CorePlayer {
     public void setup(@NonNull Player player) {
         super.setup(player);
         player.getInventory().clear();
+    }
 
-        setScoreboard(player, scoreboard -> {
-            scoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
+    @Override
+    protected boolean setupScoreboard(@NonNull CustomScoreboard scoreboard) {
+        scoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
 
-            scoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
-            scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
-            scoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
+        scoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
+        scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
+        scoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
 
-            scoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
-            scoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 3);
-            scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
-        });
+        scoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
+        scoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 3);
+        scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
+        return true;
     }
 }

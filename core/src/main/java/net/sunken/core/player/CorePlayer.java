@@ -36,6 +36,7 @@ public abstract class CorePlayer extends AbstractPlayer {
     public void setup(@NonNull Player player) {
         setTabList(player);
         setNametagAndTabList(player);
+        setScoreboard(player);
     }
 
     public void destroy(@NonNull Player player) {
@@ -58,16 +59,18 @@ public abstract class CorePlayer extends AbstractPlayer {
         }
     }
 
-    protected void setScoreboard(@NonNull Player player, Consumer<CustomScoreboard> consumer) {
+    public void setScoreboard(@NonNull Player player) {
         CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
 
-        consumer.accept(customScoreboard);
+        if (!setupScoreboard(customScoreboard)) return;
         customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
         customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
 
         customScoreboard.add(player);
         scoreboardRegistry.register(player.getUniqueId().toString(), customScoreboard);
     }
+
+    protected abstract boolean setupScoreboard(@NonNull CustomScoreboard scoreboard);
 
     public Optional<? extends Player> toPlayer() {
         return Optional.ofNullable(Bukkit.getPlayer(uuid));

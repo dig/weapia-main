@@ -15,7 +15,10 @@ public class Constants {
 
     public static final String NETWORKCOMMAND_COOLDOWN = ChatColor.RED + "Please wait before trying this command again.";
 
-    public static final List<String> WHITELISTED_DEFAULT_COMMANDS = Arrays.asList("packet_filter", "filter", "protocol", "packetlog", "packet", "shop", "help", "dm", "deluxemenu");
+    public static final List<String> WHITELISTED_DEFAULT_COMMANDS = Arrays.asList(
+            "packet_filter", "filter", "protocol", "packetlog", "packet", "shop", "help", "dm", "deluxemenu",
+            "mmoxpbar", "mmoinfo", "xprate", "mcmmo", "mctop", "mcrank", "addxp", "addlevels", "mcability", "mcrefresh", "mccooldown", "mcchatspy", "mcgod", "mcimport", "mcstats", "mcremove", "mmoedit", "inspect", "skillreset", "excavation", "herbalism", "mining", "woodcutting", "axes", "archery", "swords", "taming", "unarmed", "acrobatics", "repair", "fishing", "smelting", "alchemy", "salvage", "mcpurge", "hardcore", "vampirism", "mcnotify", "mhd", "mcmmoreloadlocale"
+    );
 
     public static final String DEFAULT_BOSS_BAR = "";
 

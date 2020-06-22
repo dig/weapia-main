@@ -3,6 +3,7 @@ package net.sunken.core.player;
 import lombok.Getter;
 import lombok.NonNull;
 import net.sunken.common.player.AbstractPlayer;
+import net.sunken.common.util.Symbol;
 import net.sunken.core.Constants;
 import net.sunken.core.PluginInform;
 import net.sunken.core.engine.state.impl.BasePlayerState;
@@ -57,7 +58,7 @@ public abstract class CorePlayer extends AbstractPlayer {
     }
 
     protected void setScoreboard(@NonNull Player player, Consumer<CustomScoreboard> consumer) {
-        CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
+        CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + Symbol.DARK_STAR + "WEAPIA");
 
         consumer.accept(customScoreboard);
         customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);

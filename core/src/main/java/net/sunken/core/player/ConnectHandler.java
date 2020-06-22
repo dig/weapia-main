@@ -86,7 +86,8 @@ public class ConnectHandler implements Facet, Listener {
             if (document != null) {
                 loadState = abstractPlayer.fromDocument(document);
             }
-        } catch (MongoException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             loadState = false;
         }
 

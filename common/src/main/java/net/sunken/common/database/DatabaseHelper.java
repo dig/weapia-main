@@ -22,8 +22,11 @@ public class DatabaseHelper {
     public final static String LOCATION_PITCH_KEY = "pitch";
 
     public final static String PLAYER_SURVIVAL_REALMS_KEY = "survivalrealms";
-    public final static String PLAYER_SURVIVAL_REALMS_WORLD_KEY = "world";
+    public final static String PLAYER_SURVIVAL_REALMS_FORWARDER_KEY = "forwarder";
+    public final static String PLAYER_SURVIVAL_REALMS_WORLD_KEY = "worldType";
     public final static String PLAYER_SURVIVAL_REALMS_LOCATION_KEY = "location";
+
+    public final static String PLAYER_SURVIVAL_REALMS_INSTANCE_KEY = "instance";
     public final static String PLAYER_SURVIVAL_REALMS_COINS_KEY = "coins";
 
     public final static String GRIDFS_BUCKET_SURVIVAL_REALMS = "srworld";

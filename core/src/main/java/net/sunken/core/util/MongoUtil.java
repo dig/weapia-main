@@ -10,9 +10,9 @@ import org.bukkit.Location;
 @UtilityClass
 public class MongoUtil {
 
-    public static Location location(@NonNull Document document) {
+    public static Location location(@NonNull Document document, boolean containWorld) {
         return new Location(
-                Bukkit.getWorld(document.getString(DatabaseHelper.LOCATION_WORLD_KEY)),
+                containWorld ? Bukkit.getWorld(document.getString(DatabaseHelper.LOCATION_WORLD_KEY)) : null,
                 document.getDouble(DatabaseHelper.LOCATION_X_KEY),
                 document.getDouble(DatabaseHelper.LOCATION_Y_KEY),
                 document.getDouble(DatabaseHelper.LOCATION_Z_KEY),
@@ -20,13 +20,15 @@ public class MongoUtil {
                 document.getDouble(DatabaseHelper.LOCATION_PITCH_KEY).floatValue());
     }
 
-    public static Document location(@NonNull Location location) {
-        return new Document()
-                .append(DatabaseHelper.LOCATION_WORLD_KEY, location.getWorld().getName())
+    public static Document location(@NonNull Location location, boolean containWorld) {
+        Document document = new Document()
                 .append(DatabaseHelper.LOCATION_X_KEY, location.getX())
                 .append(DatabaseHelper.LOCATION_Y_KEY, location.getY())
                 .append(DatabaseHelper.LOCATION_Z_KEY, location.getZ())
                 .append(DatabaseHelper.LOCATION_YAW_KEY, location.getYaw())
                 .append(DatabaseHelper.LOCATION_PITCH_KEY, location.getPitch());
+
+        if (containWorld) document.append(DatabaseHelper.LOCATION_WORLD_KEY, location.getWorld().getName());
+        return document;
     }
 }

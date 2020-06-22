@@ -15,5 +15,4 @@ public class PlayerSaveStateHandler extends PacketHandler<PlayerSaveStatePacket>
             playerRequestServerHandler.connected(packet.getUuid(), packet.getReason());
         }
     }
-
 }

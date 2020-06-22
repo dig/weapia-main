@@ -14,7 +14,7 @@ public class CommandModule extends AbstractModule {
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(BuyCommand.class);
         pluginFacetBinder.addBinding(DiscordCommand.class);
-        pluginFacetBinder.addBinding(HelpCommand.class);
+        // pluginFacetBinder.addBinding(HelpCommand.class);
         pluginFacetBinder.addBinding(StaffChatCommand.class);
         pluginFacetBinder.addBinding(LobbyCommand.class);
         pluginFacetBinder.addBinding(ServerCommand.class);

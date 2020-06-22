@@ -58,11 +58,11 @@ public abstract class CorePlayer extends AbstractPlayer {
     }
 
     protected void setScoreboard(@NonNull Player player, Consumer<CustomScoreboard> consumer) {
-        CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + Symbol.DARK_STAR + "WEAPIA");
+        CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
 
         consumer.accept(customScoreboard);
         customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
-        customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
+        customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + Symbol.DARK_STAR + " play.weapia.com", 0);
 
         customScoreboard.add(player);
         scoreboardRegistry.register(player.getUniqueId().toString(), customScoreboard);

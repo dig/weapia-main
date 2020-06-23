@@ -17,4 +17,6 @@ public class Constants {
             .name(ChatColor.YELLOW + "Lobby Selector")
             .lore(ChatColor.WHITE + "Hang out in a lobby of your choice!");
 
+    public static final String LOBBY_ITEM_ALREADY_CONNECTED = ChatColor.RED + "You are already connected to this lobby.";
+
 }

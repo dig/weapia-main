@@ -17,6 +17,7 @@ import net.sunken.common.server.module.event.ServerAddedEvent;
 import net.sunken.common.server.module.event.ServerRemovedEvent;
 import net.sunken.common.server.module.event.ServerUpdatedEvent;
 import net.sunken.common.util.AsyncHelper;
+import net.sunken.core.PluginInform;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.inventory.ItemBuilder;
 import net.sunken.core.inventory.Page;
@@ -24,6 +25,7 @@ import net.sunken.core.inventory.PageContainer;
 import net.sunken.core.inventory.element.Action;
 import net.sunken.core.inventory.element.Element;
 import net.sunken.core.inventory.element.ElementFactory;
+import net.sunken.lobby.Constants;
 import net.sunken.lobby.config.ItemConfiguration;
 import net.sunken.lobby.config.UIConfiguration;
 import org.bukkit.ChatColor;
@@ -52,6 +54,8 @@ public class LobbySelectorItem implements Facet, Enableable, Listener, SunkenLis
     private PacketUtil packetUtil;
     @Inject
     private BukkitSyncExecutor bukkitSyncExecutor;
+    @Inject
+    private PluginInform pluginInform;
 
     @Inject
     private PageContainer container;
@@ -175,11 +179,15 @@ public class LobbySelectorItem implements Facet, Enableable, Listener, SunkenLis
                     NBTItem nbtItem = new NBTItem(context.getItem());
                     String serverId = nbtItem.getString("serverId");
 
-                    serverManager.findServerById(serverId)
-                            .ifPresent(srv -> {
-                                AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerSendToServerPacket(observer.getUniqueId(), srv.toServerDetail())));
-                                observer.closeInventory();
-                            });
+                    if (!pluginInform.getServer().getId().equals(serverId)) {
+                        serverManager.findServerById(serverId)
+                                .ifPresent(srv -> {
+                                    AsyncHelper.executor().execute(() -> packetUtil.send(new PlayerSendToServerPacket(observer.getUniqueId(), srv.toServerDetail())));
+                                    observer.closeInventory();
+                                });
+                    } else {
+                        observer.sendMessage(Constants.LOBBY_ITEM_ALREADY_CONNECTED);
+                    }
 
                     return context;
                 }));

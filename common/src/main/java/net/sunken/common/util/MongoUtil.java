@@ -14,5 +14,4 @@ public class MongoUtil {
     public static <T extends Enum<T>> Enum<T> getEnumOrDefault(@NonNull Document document, Class<T> enumType, @NonNull String key, @NonNull Enum<T> defaultValue) {
         return document.containsKey(key) ? Enum.valueOf(enumType, document.getString(key)) : defaultValue;
     }
-
 }

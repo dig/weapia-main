@@ -27,13 +27,19 @@ public class DatabaseHelper {
     public final static String INVENTORY_EXTRA_CONTENTS_KEY = "extracontents";
     public final static String INVENTORY_STORAGE_CONTENTS_KEY = "storagecontents";
 
+    public final static String PLAYER_INVENTORY_KEY = "inventory";
+    public final static String PLAYER_HEALTH_LEVEL = "health";
+    public final static String PLAYER_FOOD_LEVEL = "food";
+    public final static String PLAYER_GAMEMODE = "gamemode";
+    public final static String PLAYER_LOCATION = "location";
+
     public final static String PLAYER_SURVIVAL_REALMS_KEY = "survivalrealms";
 
     public final static String PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY = "adventure";
     public final static String PLAYER_SURVIVAL_REALMS_WORLD_KEY = "world";
     public final static String PLAYER_SURVIVAL_REALMS_LOCATION_KEY = "location";
 
-    public final static String PLAYER_SURVIVAL_REALMS_INVENTORY_KEY = "inventory";
+    public final static String PLAYER_SURVIVAL_REALMS_PLAYER_KEY = "player";
     public final static String PLAYER_SURVIVAL_REALMS_INSTANCE_KEY = "instance";
     public final static String PLAYER_SURVIVAL_REALMS_COINS_KEY = "coins";
 

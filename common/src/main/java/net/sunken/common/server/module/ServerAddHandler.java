@@ -13,6 +13,7 @@ import net.sunken.common.util.AsyncHelper;
 import redis.clients.jedis.Jedis;
 
 import java.util.Map;
+import java.util.logging.Level;
 
 @Log
 public class ServerAddHandler extends PacketHandler<ServerAddPacket> {
@@ -26,15 +27,18 @@ public class ServerAddHandler extends PacketHandler<ServerAddPacket> {
 
     @Override
     public void onReceive(ServerAddPacket packet) {
-        AsyncHelper.executor().submit(() -> {
+        AsyncHelper.executor().execute(() -> {
             try (Jedis jedis = redisConnection.getConnection()) {
                 Map<String, String> kv = jedis.hgetAll(ServerHelper.SERVER_STORAGE_KEY + ":" + packet.getId());
-                Server server = ServerHelper.from(kv);
 
-                serverManager.add(server, true);
-                eventManager.callEvent(new ServerAddedEvent(server));
+                try {
+                    Server server = ServerHelper.from(kv);
+                    serverManager.add(server, true);
+                    eventManager.callEvent(new ServerAddedEvent(server));
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "Unable to load server", e);
+                }
             }
         });
     }
-
 }

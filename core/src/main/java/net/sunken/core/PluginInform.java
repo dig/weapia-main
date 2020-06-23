@@ -65,10 +65,6 @@ public class PluginInform implements Facet, Enableable, Listener {
         serverManager.add(server, false);
     }
 
-    @Override
-    public void disable() {
-    }
-
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         server.setPlayers(Bukkit.getOnlinePlayers().size());

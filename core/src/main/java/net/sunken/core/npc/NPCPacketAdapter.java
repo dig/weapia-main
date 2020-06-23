@@ -58,8 +58,4 @@ public class NPCPacketAdapter extends PacketAdapter implements Facet, Enableable
     public void enable() {
         protocolManager.addPacketListener(this);
     }
-
-    @Override
-    public void disable() {
-    }
 }

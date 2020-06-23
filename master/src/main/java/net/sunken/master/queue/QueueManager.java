@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.sunken.common.inject.Disableable;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 @Log
 @Singleton
-public class QueueManager implements Facet, Enableable {
+public class QueueManager implements Facet, Enableable, Disableable {
 
     @Inject
     private QueueThread queueThread;
@@ -94,6 +95,5 @@ public class QueueManager implements Facet, Enableable {
                 queueManager.getGameBalancers().values().forEach(AbstractBalancer::run);
             }
         }
-
     }
 }

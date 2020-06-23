@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.sunken.common.inject.Disableable;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.core.executor.BukkitSyncExecutor;
@@ -21,7 +22,7 @@ import java.util.*;
 
 @Log
 @Singleton
-public class NPCRegistry implements Facet, Enableable, Listener {
+public class NPCRegistry implements Facet, Disableable, Listener {
 
     @Inject
     private BukkitSyncExecutor bukkitSyncExecutor;
@@ -63,10 +64,6 @@ public class NPCRegistry implements Facet, Enableable, Listener {
 
     public Collection<NPC> getNPCs() {
         return npcMap.values();
-    }
-
-    @Override
-    public void enable() {
     }
 
     @Override

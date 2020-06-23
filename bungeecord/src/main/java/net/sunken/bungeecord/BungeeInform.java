@@ -47,10 +47,6 @@ public class BungeeInform implements Facet, Enableable, Listener {
         serverManager.add(server, false);
     }
 
-    @Override
-    public void disable() {
-    }
-
     @EventHandler
     public void onPlayerLogin(PostLoginEvent event) {
         server.setPlayers(proxyServer.getOnlineCount());

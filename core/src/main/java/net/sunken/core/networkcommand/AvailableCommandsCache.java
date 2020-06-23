@@ -39,8 +39,4 @@ public class AvailableCommandsCache extends PacketHandler<MasterBootPacket> impl
             availableCommands = connection.smembers(NetworkCommandConstants.COMMAND_LIST_KEY);
         }
     }
-
-    @Override
-    public void disable() {
-    }
 }

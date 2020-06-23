@@ -24,6 +24,13 @@ public abstract class AbstractFacetLoader {
                 .collect(Collectors.toSet());
     }
 
+    protected Set<Disableable> getDisableableFacets() {
+        return pluginFacets.stream()
+                .filter(facet -> facet instanceof Disableable)
+                .map(Disableable.class::cast)
+                .collect(Collectors.toSet());
+    }
+
     protected void enableAllFacets() {
         getEnableableFacets().forEach(Enableable::enable);
     }
@@ -35,13 +42,13 @@ public abstract class AbstractFacetLoader {
     }
 
     protected void disableAllFacets() {
-        getEnableableFacets().forEach(Enableable::disable);
+        getDisableableFacets().forEach(Disableable::disable);
     }
 
-    protected void disableAllFacets(Predicate<? super Enableable> filter) {
-        getEnableableFacets().stream()
+    protected void disableAllFacets(Predicate<? super Disableable> filter) {
+        getDisableableFacets().stream()
                 .filter(filter)
-                .forEach(Enableable::disable);
+                .forEach(Disableable::disable);
     }
 
     public abstract void start();

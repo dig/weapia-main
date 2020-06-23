@@ -15,8 +15,4 @@ public class MasterBootNotifier implements Enableable, Facet {
     public void enable() {
         packetUtil.send(new MasterBootPacket());
     }
-
-    @Override
-    public void disable() {
-    }
 }

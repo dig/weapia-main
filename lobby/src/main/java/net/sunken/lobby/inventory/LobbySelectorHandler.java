@@ -88,10 +88,6 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
         update(Server.Type.LOBBY);
     }
 
-    @Override
-    public void disable() {
-    }
-
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -199,5 +195,4 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
             bukkitSyncExecutor.execute(() -> lobbyMainMenu.updateInventory());
         }
     }
-
 }

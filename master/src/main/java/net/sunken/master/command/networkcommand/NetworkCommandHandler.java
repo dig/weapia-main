@@ -102,8 +102,4 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
     public void enable() {
         packetHandlerRegistry.registerHandler(NetworkCommandPacket.class, this);
     }
-
-    @Override
-    public void disable() {
-    }
 }

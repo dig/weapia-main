@@ -47,5 +47,4 @@ public class BungeeFacetLoader extends AbstractFacetLoader {
         super.find(Command.class).forEach(command -> plugin.getProxy().getPluginManager().registerCommand(plugin, command));
         super.find(BaseCommand.class).forEach(baseCommand -> baseCommandRegistry.register(baseCommand));
     }
-
 }

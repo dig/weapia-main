@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.config.InjectConfig;
+import net.sunken.common.inject.Disableable;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
@@ -24,7 +25,7 @@ import java.util.Random;
 
 @Log
 @Singleton
-public class InstanceManager implements Facet, Enableable {
+public class InstanceManager implements Facet, Enableable, Disableable {
 
     @Inject
     private ServerManager serverManager;

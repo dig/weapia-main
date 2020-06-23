@@ -27,12 +27,10 @@ public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
 
     @Override
     public void onReceive(ServerUpdatePacket packet) {
-        AsyncHelper.executor().submit(() -> {
+        AsyncHelper.executor().execute(() -> {
             Optional<Server> serverToUpdateOptional = serverManager.findServerById(packet.getId());
-
             if (serverToUpdateOptional.isPresent()) {
                 Server serverToUpdate = serverToUpdateOptional.get();
-
                 try (Jedis jedis = redisConnection.getConnection()) {
                     Map<String, String> kv = jedis.hgetAll(ServerHelper.SERVER_STORAGE_KEY + ":" + packet.getId());
 
@@ -53,10 +51,7 @@ public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
 
                     eventManager.callEvent(new ServerUpdatedEvent(serverToUpdate));
                 }
-
-                log.info(String.format("ServerUpdatePacket (%s, %s)", packet.getId(), packet.getType().toString()));
             }
         });
     }
-
 }

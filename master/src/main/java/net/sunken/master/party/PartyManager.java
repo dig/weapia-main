@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.database.RedisConnection;
+import net.sunken.common.inject.Disableable;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
@@ -23,11 +24,12 @@ import redis.clients.jedis.Jedis;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Log
 @Singleton
-public class PartyManager implements Facet, Enableable {
+public class PartyManager implements Facet, Enableable, Disableable {
 
     @Inject
     private RedisConnection redisConnection;
@@ -69,22 +71,22 @@ public class PartyManager implements Facet, Enableable {
     public void enable() {
         try (Jedis jedis = redisConnection.getConnection()) {
             Set<String> keys = RedisUtil.scanAll(jedis, PartyHelper.PARTY_STORAGE_KEY + ":*");
-
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
-                Party party = fromRedis(kv);
-                Set<String> membersKeys = RedisUtil.scanAll(jedis, PartyHelper.PARTY_MEMBERS_STORAGE_KEY + ":" + party.getUuid().toString() + ":*");
+                try {
+                    Party party = fromRedis(kv);
+                    Set<String> membersKeys = RedisUtil.scanAll(jedis, PartyHelper.PARTY_MEMBERS_STORAGE_KEY + ":" + party.getUuid().toString() + ":*");
 
-                for (String memberKey : membersKeys) {
-                    Map<String, String> memberKV = jedis.hgetAll(memberKey);
-                    PlayerDetail playerDetail = fromRedisMember(memberKV);
+                    for (String memberKey : membersKeys) {
+                        Map<String, String> memberKV = jedis.hgetAll(memberKey);
+                        PlayerDetail playerDetail = fromRedisMember(memberKV);
+                        party.getMembers().add(playerDetail);
+                    }
 
-                    party.getMembers().add(playerDetail);
-                    log.info(String.format("Loaded party member (%s, %s, %s)", party.getUuid().toString(), playerDetail.getUuid().toString(), playerDetail.getDisplayName()));
+                    parties.put(party.getUuid(), party);
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "Unable to load party", e);
                 }
-
-                parties.put(party.getUuid(), party);
-                log.info(String.format("Loaded party (%s)", party.toString()));
             }
         }
 
@@ -112,7 +114,6 @@ public class PartyManager implements Facet, Enableable {
                         .put(PartyHelper.PARTY_UUID_KEY, party.getUuid().toString())
                         .put(PartyHelper.PARTY_CREATED_KEY, party.getCreated().toString())
                         .put(PartyHelper.PARTY_LEADER_UUID_KEY, party.getLeaderUUID().toString());
-
                 jedis.hmset(PartyHelper.PARTY_STORAGE_KEY + ":" + party.getUuid().toString(), partyDataBuilder.build());
 
                 for (PlayerDetail playerDetail : party.getMembers()) {

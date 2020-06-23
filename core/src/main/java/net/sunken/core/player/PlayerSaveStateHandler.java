@@ -50,8 +50,4 @@ public class PlayerSaveStateHandler extends PacketHandler<PlayerSaveStatePacket>
     public void enable() {
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, this);
     }
-
-    @Override
-    public void disable() {
-    }
 }

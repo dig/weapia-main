@@ -21,5 +21,4 @@ public class ServerDetail implements Serializable {
     public InetSocketAddress toInetSocketAddress() {
         return new InetSocketAddress(this.host, this.port);
     }
-
 }

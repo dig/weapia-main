@@ -16,19 +16,8 @@ public class ServerConnectedHandler extends PacketHandler<ServerConnectedPacket>
 
     @Override
     public void onReceive(ServerConnectedPacket packet) {
-        Optional<Server> connectedToServer = serverManager.findServerById(packet.getServerId());
-
-        if (connectedToServer.isPresent()) {
-            Server server = connectedToServer.get();
-
-            if (server.getType() != Server.Type.BUNGEE) {
-                serverManager.getPendingPlayerConnection().invalidate(packet.getUuid());
-            }
-
-            log.info(String.format("Player connected to server. (%s, %s)", packet.getUuid().toString(), packet.getServerId()));
-        } else {
-           log.severe(String.format("Player connected to a server which isn't stored locally? huh"));
-        }
+        serverManager.findServerById(packet.getServerId())
+                .filter(server -> server.getType() != Server.Type.BUNGEE)
+                .ifPresent(server -> serverManager.getPendingPlayerConnection().invalidate(packet.getUuid()));
     }
-
 }

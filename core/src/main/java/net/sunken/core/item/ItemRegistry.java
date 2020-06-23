@@ -105,10 +105,6 @@ public class ItemRegistry implements Facet, Enableable {
         }
     }
 
-    @Override
-    public void disable() {
-    }
-
     private <T> T loadConfig(File configFile, Class<T> type) {
         ConfigurationLoader<CommentedConfigurationNode> loader =
                 HoconConfigurationLoader.builder().setPath(configFile.toPath()).build();

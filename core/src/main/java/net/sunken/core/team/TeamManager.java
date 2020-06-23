@@ -41,11 +41,6 @@ public class TeamManager implements Facet, Enableable, Listener {
         allocationStrategy = new GreedyAllocationStrategy();
     }
 
-    @Override
-    public void disable() {
-        teamsList.clear();
-    }
-
     public void allocateTeams() {
         if (allocationStrategy != null && teamConfigMapper != null) {
             Set<Team> teams = teamConfiguration.getTeamsAvailable().stream()

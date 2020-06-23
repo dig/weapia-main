@@ -124,10 +124,6 @@ public class GameSelectorHandler implements Facet, Enableable, Listener, SunkenL
         container.setInitial(compassMainMenu);
     }
 
-    @Override
-    public void disable() {
-    }
-
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();

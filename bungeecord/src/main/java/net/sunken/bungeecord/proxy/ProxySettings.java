@@ -62,9 +62,4 @@ public class ProxySettings implements Facet, Enableable {
 
         packetHandlerRegistry.registerHandler(ProxyUpdatePacket.class, proxyUpdateHandler);
     }
-
-    @Override
-    public void disable() {
-    }
-
 }

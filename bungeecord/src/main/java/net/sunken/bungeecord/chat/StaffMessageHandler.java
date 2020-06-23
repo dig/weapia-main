@@ -39,9 +39,4 @@ public class StaffMessageHandler extends PacketHandler<StaffMessagePacket> imple
     public void enable() {
         packetHandlerRegistry.registerHandler(StaffMessagePacket.class, this);
     }
-
-    @Override
-    public void disable() {
-    }
-
 }

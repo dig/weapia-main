@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import net.sunken.common.database.RedisConnection;
 import net.sunken.common.event.EventManager;
+import net.sunken.common.inject.Disableable;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.event.PacketReceivedEvent;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-public class PacketListener implements Facet, Enableable {
+public class PacketListener implements Facet, Enableable, Disableable {
 
     private String packetChannel;
     private RedisConnection redisConnection;
@@ -46,7 +47,6 @@ public class PacketListener implements Facet, Enableable {
     @Override
     public void disable() {
         subscriberThread.interrupt();
-        // subscriber.close();
     }
 
     private class Listener extends BinaryJedisPubSub {

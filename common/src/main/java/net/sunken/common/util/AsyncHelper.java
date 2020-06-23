@@ -16,6 +16,7 @@ public class AsyncHelper {
         return executorService;
     }
 
-    public static ScheduledExecutorService scheduledExecutor() { return scheduledExecutorService; };
-
+    public static ScheduledExecutorService scheduledExecutor() {
+        return scheduledExecutorService;
+    }
 }

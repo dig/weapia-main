@@ -24,6 +24,7 @@ import redis.clients.jedis.Jedis;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Log
@@ -58,7 +59,6 @@ public class ServerManager implements Facet, Enableable {
 
     public void add(@NonNull Server server, boolean local) {
         servers.put(server.getId(), server);
-
         if (!local) {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.hmset(ServerHelper.SERVER_STORAGE_KEY + ":" + server.getId(), server.toRedis());
@@ -69,7 +69,6 @@ public class ServerManager implements Facet, Enableable {
 
     public void remove(@NonNull String id, boolean local) {
         servers.remove(id);
-
         if (!local) {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.del(ServerHelper.SERVER_STORAGE_KEY + ":" + id);
@@ -246,8 +245,12 @@ public class ServerManager implements Facet, Enableable {
             Set<String> keys = RedisUtil.scanAll(jedis, ServerHelper.SERVER_STORAGE_KEY + ":*");
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
-                Server server = ServerHelper.from(kv);
-                servers.put(server.getId(), server);
+                try {
+                    Server server = ServerHelper.from(kv);
+                    servers.put(server.getId(), server);
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "Unable to load server", e);
+                }
             }
         }
 
@@ -255,9 +258,5 @@ public class ServerManager implements Facet, Enableable {
         packetHandlerRegistry.registerHandler(ServerRemovePacket.class, serverRemoveHandler);
         packetHandlerRegistry.registerHandler(ServerUpdatePacket.class, serverUpdateHandler);
         packetHandlerRegistry.registerHandler(ServerConnectedPacket.class, serverConnectedHandler);
-    }
-
-    @Override
-    public void disable() {
     }
 }

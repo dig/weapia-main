@@ -229,9 +229,4 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         packetHandlerRegistry.registerHandler(PlayerSendToServerPacket.class, playerSendToServerHandler);
         packetHandlerRegistry.registerHandler(PlayerProxyMessagePacket.class, playerProxyMessageHandler);
     }
-
-    @Override
-    public void disable() {
-    }
-
 }

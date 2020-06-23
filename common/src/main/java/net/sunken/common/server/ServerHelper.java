@@ -60,5 +60,4 @@ public class ServerHelper {
         sb.append(AB.charAt(random.nextInt(AB.length())));
         return type.getPrefix() + sb.toString();
     }
-
 }

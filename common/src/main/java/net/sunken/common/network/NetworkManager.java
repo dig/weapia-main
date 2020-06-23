@@ -91,9 +91,4 @@ public class NetworkManager implements Facet, Enableable {
         packetHandlerRegistry.registerHandler(NetworkJoinPacket.class, networkJoinHandler);
         packetHandlerRegistry.registerHandler(NetworkQuitPacket.class, networkQuitHandler);
     }
-
-    @Override
-    public void disable() {
-    }
-
 }

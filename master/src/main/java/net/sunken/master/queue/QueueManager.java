@@ -96,5 +96,4 @@ public class QueueManager implements Facet, Enableable {
         }
 
     }
-
 }

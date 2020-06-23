@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class Hologram {
 
-    private static double OFFSET_Y = 0.28;
+    private static final double OFFSET_Y = 0.28;
 
     @Getter
     private Location location;

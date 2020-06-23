@@ -16,5 +16,4 @@ public class CommonModule extends AbstractModule {
         install(new ConfigModule(new File("config/mongo.conf"), MongoConfiguration.class));
         install(new PacketModule());
     }
-
 }

@@ -89,5 +89,4 @@ public class PluginInform implements Facet, Enableable, Listener {
     public void remove() {
         serverManager.remove(server.getId(), false);
     }
-
 }

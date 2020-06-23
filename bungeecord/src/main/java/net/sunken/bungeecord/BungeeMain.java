@@ -41,5 +41,4 @@ public class BungeeMain extends Plugin {
         redisConnection.disconnect();
         mongoConnection.disconnect();
     }
-
 }

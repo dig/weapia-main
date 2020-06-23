@@ -55,5 +55,4 @@ public abstract class Core extends JavaPlugin {
         redisConnection.disconnect();
         mongoConnection.disconnect();
     }
-
 }

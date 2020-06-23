@@ -1,24 +1,31 @@
 package net.sunken.core.npc;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.google.inject.Inject;
 import net.minecraft.server.v1_15_R1.EnumHand;
 import net.minecraft.server.v1_15_R1.PacketPlayInUseEntity;
+import net.sunken.common.inject.Enableable;
+import net.sunken.common.inject.Facet;
 import net.sunken.core.npc.interact.NPCInteraction;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Optional;
 
-public class NPCPacketAdapter extends PacketAdapter {
+public class NPCPacketAdapter extends PacketAdapter implements Facet, Enableable {
 
+    @Inject
+    private ProtocolManager protocolManager;
+    @Inject
     private NPCRegistry npcRegistry;
 
-    public NPCPacketAdapter(Plugin plugin, NPCRegistry npcRegistry, ListenerPriority listenerPriority, PacketType... types) {
-        super(plugin, listenerPriority, types);
-        this.npcRegistry = npcRegistry;
+    @Inject
+    public NPCPacketAdapter(JavaPlugin plugin) {
+        super(plugin, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY);
     }
 
     @Override
@@ -45,5 +52,14 @@ public class NPCPacketAdapter extends PacketAdapter {
                 }
             }
         }
+    }
+
+    @Override
+    public void enable() {
+        protocolManager.addPacketListener(this);
+    }
+
+    @Override
+    public void disable() {
     }
 }

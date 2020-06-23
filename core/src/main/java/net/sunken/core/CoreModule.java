@@ -18,6 +18,7 @@ import net.sunken.core.item.command.ItemCommand;
 import net.sunken.core.item.config.ItemAttributeConfiguration;
 import net.sunken.core.item.config.ItemAttributeConfigurationSerializer;
 import net.sunken.core.networkcommand.*;
+import net.sunken.core.npc.NPCPacketAdapter;
 import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.player.ChatHandler;
 import net.sunken.core.player.ConnectHandler;
@@ -47,6 +48,7 @@ public class CoreModule extends AbstractModule {
 
         pluginFacetBinder.addBinding(PluginInform.class);
         pluginFacetBinder.addBinding(NPCRegistry.class);
+        pluginFacetBinder.addBinding(NPCPacketAdapter.class);
         pluginFacetBinder.addBinding(ElementListener.class);
         pluginFacetBinder.addBinding(ExampleInvCommand.class);
         pluginFacetBinder.addBinding(NametagCommand.class);

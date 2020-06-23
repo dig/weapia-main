@@ -1,8 +1,5 @@
 package net.sunken.core.npc;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.NonNull;
@@ -12,14 +9,13 @@ import net.sunken.common.inject.Facet;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.hologram.HologramFactory;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -27,10 +23,6 @@ import java.util.*;
 @Singleton
 public class NPCRegistry implements Facet, Enableable, Listener {
 
-    @Inject
-    private ProtocolManager protocolManager;
-    @Inject
-    private JavaPlugin javaPlugin;
     @Inject
     private BukkitSyncExecutor bukkitSyncExecutor;
     @Inject
@@ -75,7 +67,6 @@ public class NPCRegistry implements Facet, Enableable, Listener {
 
     @Override
     public void enable() {
-        protocolManager.addPacketListener(new NPCPacketAdapter(javaPlugin, this, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY));
     }
 
     @Override
@@ -90,14 +81,17 @@ public class NPCRegistry implements Facet, Enableable, Listener {
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        Chunk chunk = event.getChunk();
+        Bukkit.getOnlinePlayers().forEach(this::show);
+    }
 
+    private void show(@NonNull Player player) {
+        Location location = player.getLocation();
         npcMap.values().forEach(npc -> {
             CraftPlayer craftPlayer = npc.getBukkitEntity();
-            if (craftPlayer.getWorld().getName().equals(event.getWorld().getName())
-                    && craftPlayer.getLocation().getChunk().getX() == chunk.getX()
-                    && craftPlayer.getLocation().getChunk().getZ() == chunk.getZ()) {
-                Bukkit.getOnlinePlayers().forEach(player -> npc.show(player));
+            if (craftPlayer.getWorld().equals(location.getWorld())
+                    && craftPlayer.getLocation().getChunk().getX() == location.getChunk().getX()
+                    && craftPlayer.getLocation().getChunk().getZ() == location.getChunk().getZ()) {
+                npc.show(player);
             }
         });
     }

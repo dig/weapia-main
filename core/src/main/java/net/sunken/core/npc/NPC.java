@@ -52,18 +52,15 @@ public class NPC extends EntityPlayer {
     private void setup() {
         getBukkitEntity().setGameMode(GameMode.CREATIVE);
         getBukkitEntity().setRemoveWhenFarAway(false);
-
         getDataWatcher().set(new DataWatcherObject<>(16, DataWatcherRegistry.a), (byte) 127);
     }
 
     public void show(@NonNull Player player) {
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-
         connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, this));
         connection.sendPacket(new PacketPlayOutNamedEntitySpawn(this));
         connection.sendPacket(new PacketPlayOutEntityHeadRotation(this, (byte) ((this.yaw * 256.0F) / 360.0F)));
         connection.sendPacket(new PacketPlayOutEntityMetadata(getId(), getDataWatcher(), true));
-
         bukkitSyncExecutor.execute(() -> connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, this)), 6 * 20L);
     }
 

@@ -54,8 +54,11 @@ public class Hologram {
     public void update(int index, String line) {
         if (index >= 0 && index < lines.size()) {
             lines.set(index, line);
+
             Entity entity = Bukkit.getEntity(livingEntities.get(index));
-            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
+            if (entity != null) {
+                entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
+            }
         }
     }
 

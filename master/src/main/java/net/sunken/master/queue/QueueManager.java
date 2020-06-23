@@ -56,6 +56,8 @@ public class QueueManager implements Facet, Enableable, Disableable {
         consumer = new QueueConsumer(balancers, lobbyBalancer);
         consumer.start();
 
+        log.info("consumer started");
+
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
     }

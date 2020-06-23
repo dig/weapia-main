@@ -34,13 +34,13 @@ public class LobbyBalancer extends AbstractBalancer {
                 .filter(Server::canJoin)
                 .filter(server -> (server.getPlayers() + (int) serverManager.findPendingConnectionCount(server)) < server.getMaxPlayers())
                 .findFirst();
-
         if (serverOptional.isPresent()) {
             Server server = serverOptional.get();
             ServerDetail serverDetail = server.toServerDetail();
             packetUtil.send(new PlayerSendToServerPacket(uuid, serverDetail));
             return true;
         }
+
         return false;
     }
 }

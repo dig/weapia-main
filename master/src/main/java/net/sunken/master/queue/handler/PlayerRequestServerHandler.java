@@ -44,8 +44,6 @@ public class PlayerRequestServerHandler extends PacketHandler<PlayerRequestServe
 
                 pendingSaveBeforeConnect.put(packet.getUuid(), new InstanceDetail(packet.getType(), packet.getGame()));
                 AsyncHelper.executor().execute(() -> packetUtil.send(new PlayerSaveStatePacket(packet.getUuid(), PlayerSaveStatePacket.Reason.REQUEST)));
-            } else {
-                log.info(String.format("Tried to save player again? skipping. (%s)", packet.getUuid().toString()));
             }
         } else {
             queueManager.queue(packet.getUuid(), packet.getType(), packet.getGame());
@@ -54,23 +52,16 @@ public class PlayerRequestServerHandler extends PacketHandler<PlayerRequestServe
 
     public void connected(UUID uuid, PlayerSaveStatePacket.Reason reason) {
         InstanceDetail instanceDetail = pendingSaveBeforeConnect.getIfPresent(uuid);
-
         if (instanceDetail != null) {
             switch (reason) {
                 case COMPLETE:
-                    log.info(String.format("PlayerSaveStatePacket: Complete (%s)", uuid.toString()));
-
                     pendingSaveBeforeConnect.invalidate(uuid);
                     queueManager.queue(uuid, instanceDetail.getType(), instanceDetail.getGame());
                     break;
                 case FAIL:
-                    log.severe(String.format("PlayerSaveStatePacket: Fail (%s)", uuid.toString()));
                     pendingSaveBeforeConnect.invalidate(uuid);
                     break;
             }
-        } else {
-            log.severe(String.format("PlayerSaveStatePacket: Connected but doesn't exist in pendingSave? huh (%s)", uuid.toString()));
         }
     }
-
 }

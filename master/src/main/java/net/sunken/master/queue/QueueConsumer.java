@@ -1,6 +1,7 @@
 package net.sunken.master.queue;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import net.sunken.common.server.Game;
 import net.sunken.master.queue.impl.AbstractBalancer;
 import net.sunken.master.queue.impl.LobbyBalancer;

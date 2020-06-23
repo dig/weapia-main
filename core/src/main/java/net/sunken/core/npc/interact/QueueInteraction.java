@@ -14,10 +14,10 @@ import org.bukkit.entity.Player;
 @AllArgsConstructor
 public class QueueInteraction implements NPCInteraction {
 
-    private Server.Type type;
-    private Game game;
-    private boolean save;
-    private PacketUtil packetUtil;
+    private final Server.Type type;
+    private final Game game;
+    private final boolean save;
+    private final PacketUtil packetUtil;
 
     @Override
     public void onInteract(Player player, PacketPlayInUseEntity.EnumEntityUseAction enumEntityUseAction, EnumHand enumHand) {
@@ -27,5 +27,4 @@ public class QueueInteraction implements NPCInteraction {
             AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), type, game, save)));
         }
     }
-
 }

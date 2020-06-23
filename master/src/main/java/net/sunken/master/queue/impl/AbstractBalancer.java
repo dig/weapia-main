@@ -118,6 +118,7 @@ public abstract class AbstractBalancer {
                 party.getMembers().forEach(playerDetail -> packetUtil.send(new PlayerSendToServerPacket(playerDetail.getUuid(), serverDetail)));
             } else {
                 packetUtil.send(new PlayerSendToServerPacket(uuid, serverDetail));
+                log.info(String.format("Sending %s to %s.", uuid, serverDetail));
             }
             return true;
         }

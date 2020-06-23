@@ -14,5 +14,4 @@ public class PacketModule extends AbstractModule {
         pluginFacetBinder.addBinding(PacketHandlerRegistry.class);
         pluginFacetBinder.addBinding(PacketListener.class);
     }
-
 }

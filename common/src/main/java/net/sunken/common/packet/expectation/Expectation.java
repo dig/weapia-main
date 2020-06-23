@@ -32,5 +32,4 @@ public class Expectation implements SunkenListener {
     public void setMet() {
         isMet = true;
     }
-
 }

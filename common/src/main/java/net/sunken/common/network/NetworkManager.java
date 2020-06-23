@@ -19,6 +19,7 @@ import net.sunken.common.util.RedisUtil;
 import redis.clients.jedis.Jedis;
 
 import java.util.*;
+import java.util.logging.Level;
 
 @Log
 @Singleton
@@ -42,7 +43,6 @@ public class NetworkManager implements Facet, Enableable {
     public void add(@NonNull PlayerDetail playerDetail, boolean local) {
         playerCache.put(playerDetail.getUuid(), playerDetail);
         nameCache.put(playerDetail.getDisplayName().toLowerCase(), playerDetail.getUuid());
-
         if (!local) {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.hmset(NetworkHelper.NETWORK_PLAYER_STORAGE_KEY + ":" + playerDetail.getUuid().toString(), playerDetail.toRedis());
@@ -54,7 +54,6 @@ public class NetworkManager implements Facet, Enableable {
     public void remove(@NonNull PlayerDetail playerDetail, boolean local) {
         playerCache.remove(playerDetail.getUuid());
         nameCache.remove(playerDetail.getDisplayName());
-
         if (!local) {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.del(NetworkHelper.NETWORK_PLAYER_STORAGE_KEY + ":" + playerDetail.getUuid().toString());
@@ -81,10 +80,13 @@ public class NetworkManager implements Facet, Enableable {
             Set<String> keys = RedisUtil.scanAll(jedis, NetworkHelper.NETWORK_PLAYER_STORAGE_KEY + ":*");
             for (String key : keys) {
                 Map<String, String> kv = jedis.hgetAll(key);
-                PlayerDetail playerDetail = NetworkHelper.from(kv);
-
-                playerCache.put(playerDetail.getUuid(), playerDetail);
-                nameCache.put(playerDetail.getDisplayName(), playerDetail.getUuid());
+                try {
+                    PlayerDetail playerDetail = NetworkHelper.from(kv);
+                    playerCache.put(playerDetail.getUuid(), playerDetail);
+                    nameCache.put(playerDetail.getDisplayName(), playerDetail.getUuid());
+                } catch (Exception e) {
+                    log.log(Level.SEVERE, "Unable to load network player", e);
+                }
             }
         }
 

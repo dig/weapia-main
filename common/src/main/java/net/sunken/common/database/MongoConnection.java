@@ -13,8 +13,6 @@ import net.sunken.common.config.InjectConfig;
 import net.sunken.common.database.config.MongoConfiguration;
 import org.bson.Document;
 
-import java.util.Arrays;
-
 @Singleton
 public class MongoConnection extends Database<MongoClient> {
 

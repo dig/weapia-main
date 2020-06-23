@@ -19,5 +19,4 @@ public class PacketReceivedEvent extends SunkenEvent {
     public PacketReceivedEvent(Packet packet) {
         this.packet = packet;
     }
-
 }

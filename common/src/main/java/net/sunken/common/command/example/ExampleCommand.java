@@ -27,5 +27,4 @@ public class ExampleCommand extends BasicCommand {
         System.out.println(args.toString());
         return true;
     }
-
 }

@@ -12,6 +12,7 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 @Log
 @AllArgsConstructor
@@ -34,11 +35,10 @@ public class ConfigModule extends AbstractModule {
                             .annotatedWith(InjectConfig.class)
                             .toInstance(rootNode.getValue(TypeToken.of(configClass)));
             } catch (IOException | ObjectMappingException e) {
-                e.printStackTrace();
+                log.log(Level.SEVERE, String.format("Error while loading config (%s)", configFile.getName()), e);
             }
         } else {
-            log.severe(String.format("Unable to load config. (%s, %s)", configFile.getName(), configFile.getAbsolutePath()));
+            log.severe(String.format("Unable to find config. (%s, %s)", configFile.getName(), configFile.getAbsolutePath()));
         }
     }
-
 }

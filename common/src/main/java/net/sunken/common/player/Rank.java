@@ -26,5 +26,4 @@ public enum Rank {
     public boolean has(Rank rank) {
         return index >= rank.getIndex();
     }
-
 }

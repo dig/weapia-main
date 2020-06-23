@@ -15,7 +15,5 @@ public class NetworkQuitHandler extends PacketHandler<NetworkQuitPacket> {
     @Override
     public void onReceive(NetworkQuitPacket packet) {
         networkManager.remove(packet.getPlayer(), true);
-        log.info(String.format("NetworkQuitPacket %s", packet.getPlayer().toString()));
     }
-
 }

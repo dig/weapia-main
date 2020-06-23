@@ -15,7 +15,5 @@ public class NetworkJoinHandler extends PacketHandler<NetworkJoinPacket> {
     @Override
     public void onReceive(NetworkJoinPacket packet) {
         networkManager.add(packet.getPlayer(), true);
-        log.info(String.format("NetworkJoinPacket %s", packet.getPlayer().toString()));
     }
-
 }

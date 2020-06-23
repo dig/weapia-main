@@ -3,8 +3,6 @@ package net.sunken.common.player;
 import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 import lombok.NonNull;
-import net.sunken.common.inject.Facet;
-import net.sunken.common.player.AbstractPlayer;
 
 import java.util.*;
 

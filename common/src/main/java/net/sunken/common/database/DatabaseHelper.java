@@ -21,12 +21,19 @@ public class DatabaseHelper {
     public final static String LOCATION_YAW_KEY = "yaw";
     public final static String LOCATION_PITCH_KEY = "pitch";
 
+    public final static String INVENTORY_HELD_SLOT_KEY = "heldslot";
+    public final static String INVENTORY_CONTENTS_KEY = "contents";
+    public final static String INVENTORY_ARMOUR_CONTENTS_KEY = "armourcontents";
+    public final static String INVENTORY_EXTRA_CONTENTS_KEY = "extracontents";
+    public final static String INVENTORY_STORAGE_CONTENTS_KEY = "storagecontents";
+
     public final static String PLAYER_SURVIVAL_REALMS_KEY = "survivalrealms";
 
     public final static String PLAYER_SURVIVAL_REALMS_ADVENTURE_KEY = "adventure";
     public final static String PLAYER_SURVIVAL_REALMS_WORLD_KEY = "world";
     public final static String PLAYER_SURVIVAL_REALMS_LOCATION_KEY = "location";
 
+    public final static String PLAYER_SURVIVAL_REALMS_INVENTORY_KEY = "inventory";
     public final static String PLAYER_SURVIVAL_REALMS_INSTANCE_KEY = "instance";
     public final static String PLAYER_SURVIVAL_REALMS_COINS_KEY = "coins";
 

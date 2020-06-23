@@ -81,7 +81,8 @@ public class MongoBukkitUtil {
                 .append(DatabaseHelper.PLAYER_FOOD_LEVEL_KEY, player.getFoodLevel())
                 .append(DatabaseHelper.PLAYER_FIRE_TICK_KEY, player.getFireTicks())
                 .append(DatabaseHelper.PLAYER_GAMEMODE_KEY, player.getGameMode().toString())
-                .append(DatabaseHelper.PLAYER_EXPERIENCE_KEY, player.getTotalExperience())
+                .append(DatabaseHelper.PLAYER_EXPERIENCE_KEY, player.getExp())
+                .append(DatabaseHelper.PLAYER_LEVEL_KEY, player.getLevel())
                 .append(DatabaseHelper.PLAYER_INVENTORY_KEY, fromInventory(player.getInventory()))
                 .append(DatabaseHelper.PLAYER_ENDERCHEST_KEY, fromInventory(player.getEnderChest()))
                 .append(DatabaseHelper.PLAYER_POTIONEFFECTS_KEY, PotionEffectUtil.encode(player.getActivePotionEffects()));
@@ -97,7 +98,8 @@ public class MongoBukkitUtil {
         player.setFoodLevel(document.getInteger(DatabaseHelper.PLAYER_FOOD_LEVEL_KEY, 20));
         player.setFireTicks(document.getInteger(DatabaseHelper.PLAYER_FIRE_TICK_KEY, 0));
         player.setGameMode((GameMode) MongoUtil.getEnumOrDefault(document, GameMode.class, DatabaseHelper.PLAYER_GAMEMODE_KEY, GameMode.SURVIVAL));
-        player.setTotalExperience(document.getInteger(DatabaseHelper.PLAYER_EXPERIENCE_KEY, 0));
+        player.setExp(document.getDouble(DatabaseHelper.PLAYER_EXPERIENCE_KEY).floatValue());
+        player.setLevel(document.getInteger(DatabaseHelper.PLAYER_LEVEL_KEY, 0));
         player.addPotionEffects(PotionEffectUtil.decode(document.getString(DatabaseHelper.PLAYER_POTIONEFFECTS_KEY)));
 
         setInventory((Document) document.get(DatabaseHelper.PLAYER_INVENTORY_KEY), player.getInventory());

@@ -35,6 +35,7 @@ public class DatabaseHelper {
     public final static String PLAYER_FIRE_TICK_KEY = "firetick";
     public final static String PLAYER_GAMEMODE_KEY = "gamemode";
     public final static String PLAYER_EXPERIENCE_KEY = "exp";
+    public final static String PLAYER_LEVEL_KEY = "level";
     public final static String PLAYER_ENDERCHEST_KEY = "enderchest";
     public final static String PLAYER_POTIONEFFECTS_KEY = "potioneffects";
 

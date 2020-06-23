@@ -39,7 +39,7 @@ public class PingListener implements Facet, Listener {
 
         if (proxySettings.isMotdCentered()) {
             serverPing.setDescriptionComponent(new TextComponent(
-                    StringUtil.center(ChatColor.translateAlternateColorCodes('&', proxySettings.getMotdTopLine()), 154) + "\n" +
+                    StringUtil.center(ChatColor.translateAlternateColorCodes('&', proxySettings.getMotdTopLine()), 150) + "\n" +
                             StringUtil.center(ChatColor.translateAlternateColorCodes('&', proxySettings.getMotdBottomLine()), 138)
             ));
         } else {

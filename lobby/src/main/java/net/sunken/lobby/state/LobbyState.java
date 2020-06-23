@@ -228,5 +228,4 @@ public class LobbyState extends EventGameState {
             });
         }
     }
-
 }

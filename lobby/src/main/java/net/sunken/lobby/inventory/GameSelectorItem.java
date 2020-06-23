@@ -39,8 +39,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class GameSelectorHandler implements Facet, Enableable, Listener, SunkenListener {
+public class GameSelectorItem implements Facet, Enableable, Listener, SunkenListener {
 
     @Inject @InjectConfig
     private UIConfiguration uiConfiguration;
@@ -86,9 +87,9 @@ public class GameSelectorHandler implements Facet, Enableable, Listener, SunkenL
         for (SelectorItemConfiguration selectorItemConfiguration : uiConfiguration.getGameSelector()) {
             int count = serverManager.getPlayersOnline(selectorItemConfiguration.getServer().getType(), selectorItemConfiguration.getServer().getGame());
 
-            List<String> lore = new ArrayList<>();
-            for (String line : selectorItemConfiguration.getLore())
-                lore.add(ChatColor.translateAlternateColorCodes('&', line.replaceAll("%players", String.valueOf(count))));
+            List<String> lore = selectorItemConfiguration.getLore().stream()
+                    .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.valueOf(count))))
+                    .collect(Collectors.toList());
 
             ItemBuilder selectorItemBuilder = new ItemBuilder(selectorItemConfiguration.getMaterial())
                     .name(ChatColor.translateAlternateColorCodes('&', selectorItemConfiguration.getDisplayName()))
@@ -155,33 +156,31 @@ public class GameSelectorHandler implements Facet, Enableable, Listener, SunkenL
 
     private void update(Server server) {
         Page compassMainMenu = container.getPages().get("compass-main-menu");
-
         compassMainMenu.getElements().values().stream()
-                .filter(element -> new NBTItem(element.getItem()).hasKey("type") && new NBTItem(element.getItem()).hasKey("game"))
-                .filter(element -> Server.Type.valueOf(new NBTItem(element.getItem()).getString("type")) == server.getType())
-                .filter(element -> Game.valueOf(new NBTItem(element.getItem()).getString("game")) == server.getGame())
-                .forEach(element -> {
-                    ItemStack item = element.getItem();
-                    NBTItem nbtItem = new NBTItem(element.getItem());
+                .map(element -> new NBTItem(element.getItem()))
+                .filter(nbtItem -> nbtItem.hasKey("type") && nbtItem.hasKey("game"))
+                .filter(nbtItem -> Server.Type.valueOf(nbtItem.getString("type")) == server.getType())
+                .filter(nbtItem -> Game.valueOf(nbtItem.getString("game")) == server.getGame())
+                .forEach(nbtItem -> {
+                    ItemStack item = nbtItem.getItem();
+
                     Optional<SelectorItemConfiguration> selectorItemConfigurationOptional = uiConfiguration.getGameSelector().stream()
                             .filter(itemConfiguration -> itemConfiguration.getId().equals(nbtItem.getString("id")))
                             .findFirst();
 
-                    if (selectorItemConfigurationOptional.isPresent()) {
-                        SelectorItemConfiguration selectorItemConfiguration = selectorItemConfigurationOptional.get();
+                    selectorItemConfigurationOptional.ifPresent(selectorItemConfiguration -> {
                         int count = serverManager.getPlayersOnline(server.getType(), server.getGame());
 
                         ItemMeta itemMeta = item.getItemMeta();
-                        List<String> lore = new ArrayList<>();
-                        for (String line : selectorItemConfiguration.getLore())
-                            lore.add(ChatColor.translateAlternateColorCodes('&', line.replaceAll("%players", String.valueOf(count))));
+                        List<String> lore = selectorItemConfiguration.getLore().stream()
+                                .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.valueOf(count))))
+                                .collect(Collectors.toList());
 
                         itemMeta.setLore(lore);
                         item.setItemMeta(itemMeta);
-                    }
+                    });
                 });
 
         bukkitSyncExecutor.execute(() -> compassMainMenu.updateInventory());
     }
-
 }

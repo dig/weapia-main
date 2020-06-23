@@ -33,5 +33,4 @@ public class LobbyPluginModule extends PluginModule {
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(ServerUpdatedListener.class);
     }
-
 }

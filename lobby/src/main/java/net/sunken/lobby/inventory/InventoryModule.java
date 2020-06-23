@@ -8,8 +8,7 @@ public class InventoryModule extends AbstractModule {
     @Override
     protected void configure() {
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(GameSelectorHandler.class);
-        pluginFacetBinder.addBinding(LobbySelectorHandler.class);
+        pluginFacetBinder.addBinding(GameSelectorItem.class);
+        pluginFacetBinder.addBinding(LobbySelectorItem.class);
     }
-
 }

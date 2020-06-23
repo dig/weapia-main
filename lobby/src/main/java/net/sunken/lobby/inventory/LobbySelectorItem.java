@@ -38,8 +38,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class LobbySelectorHandler implements Facet, Enableable, Listener, SunkenListener {
+public class LobbySelectorItem implements Facet, Enableable, Listener, SunkenListener {
 
     @Inject @InjectConfig
     private UIConfiguration uiConfiguration;
@@ -84,7 +85,6 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
 
         container.add(lobbyMainMenu);
         container.setInitial(lobbyMainMenu);
-
         update(Server.Type.LOBBY);
     }
 
@@ -97,7 +97,6 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
             container.launchFor(observer);
             return context;
         }).getItem();
-
         player.getInventory().setItem(5, lobbySelector);
     }
 
@@ -118,28 +117,25 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
         if (event.getServer().getType() == Server.Type.LOBBY) {
             lobbyMainMenu.getElements().values().stream()
                     .filter(element -> element.getItem().getType() == Material.GRAY_BED)
-                    .filter(element -> new NBTItem(element.getItem()).hasKey("serverId"))
-                    .forEach(element -> {
-                        ItemStack item = element.getItem();
-
-                        NBTItem nbtItem = new NBTItem(item);
+                    .map(element -> new NBTItem(element.getItem()))
+                    .filter(nbtItem -> nbtItem.hasKey("serverId"))
+                    .forEach(nbtItem -> {
+                        ItemStack item = nbtItem.getItem();
                         String serverId = nbtItem.getString("serverId");
-                        Optional<Server> serverOptional = serverManager.findServerById(serverId);
 
-                        if (serverOptional.isPresent()) {
-                            Server server = serverOptional.get();
-                            String metadataId = (server.getMetadata().containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? server.getMetadata().get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending");
+                        serverManager.findServerById(serverId)
+                                .ifPresent(server -> {
+                                    String metadataId = (server.getMetadata().containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? server.getMetadata().get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending");
+                                    List<String> lore = uiConfiguration.getLobbySelectorTemplate().getLore().stream()
+                                            .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.valueOf(server.getPlayers()))))
+                                            .collect(Collectors.toList());
 
-                            List<String> lore = new ArrayList<>();
-                            for (String line : uiConfiguration.getLobbySelectorTemplate().getLore())
-                                lore.add(ChatColor.translateAlternateColorCodes('&', line.replaceAll("%players", String.valueOf(server.getPlayers()))));
+                                    ItemMeta itemMeta = item.getItemMeta();
+                                    itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', uiConfiguration.getLobbySelectorTemplate().getDisplayName().replaceAll("%num", metadataId)));
+                                    itemMeta.setLore(lore);
 
-                            ItemMeta itemMeta = item.getItemMeta();
-                            itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', uiConfiguration.getLobbySelectorTemplate().getDisplayName().replaceAll("%num", metadataId)));
-                            itemMeta.setLore(lore);
-
-                            item.setItemMeta(itemMeta);
-                        }
+                                    item.setItemMeta(itemMeta);
+                                });
                     });
 
             bukkitSyncExecutor.execute(() -> lobbyMainMenu.updateInventory());
@@ -150,9 +146,9 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
         ItemConfiguration lobbySelectorTemplate = uiConfiguration.getLobbySelectorTemplate();
         String metadataId = (server.getMetadata().containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? server.getMetadata().get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending");
 
-        List<String> lore = new ArrayList<>();
-        for (String line : lobbySelectorTemplate.getLore())
-            lore.add(ChatColor.translateAlternateColorCodes('&', line.replaceAll("%players", String.valueOf(server.getPlayers()))));
+        List<String> lore = lobbySelectorTemplate.getLore().stream()
+                .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.valueOf(server.getPlayers()))))
+                .collect(Collectors.toList());
 
         ItemBuilder serverItemBuilder = new ItemBuilder(lobbySelectorTemplate.getMaterial())
                 .name(ChatColor.translateAlternateColorCodes('&', lobbySelectorTemplate.getDisplayName().replaceAll("%num", metadataId)))
@@ -176,15 +172,14 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
             for (Server server : serverManager.findAll(Server.Type.LOBBY, Game.NONE)) {
                 lobbyMainMenu.getElements().put((y > 6 ? 21 : 19) + y, elementFactory.createActionableElement(createLobbyItem(server), context -> {
                     Player observer = context.getObserver();
-
                     NBTItem nbtItem = new NBTItem(context.getItem());
                     String serverId = nbtItem.getString("serverId");
 
-                    Optional<Server> serverOptional = serverManager.findServerById(serverId);
-                    if (serverOptional.isPresent()) {
-                        AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerSendToServerPacket(observer.getUniqueId(), serverOptional.get().toServerDetail())));
-                        observer.closeInventory();
-                    }
+                    serverManager.findServerById(serverId)
+                            .ifPresent(srv -> {
+                                AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerSendToServerPacket(observer.getUniqueId(), srv.toServerDetail())));
+                                observer.closeInventory();
+                            });
 
                     return context;
                 }));

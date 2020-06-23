@@ -24,5 +24,4 @@ public class Lobby extends Core {
 
         pluginInform.setState(Server.State.OPEN);
     }
-
 }

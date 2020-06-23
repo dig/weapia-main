@@ -27,7 +27,7 @@ public abstract class AbstractBalancer {
     protected final InstanceManager instanceManager;
     protected final PacketUtil packetUtil;
 
-    protected final Queue<QueueDetail> queue = Queues.newConcurrentLinkedQueue();
+    protected final Queue<QueueDetail> queue = Queues.newArrayDeque();
 
     public AbstractBalancer(PartyManager partyManager, ServerManager serverManager, InstanceManager instanceManager, PacketUtil packetUtil) {
         this.partyManager = partyManager;
@@ -90,12 +90,7 @@ public abstract class AbstractBalancer {
         if (totalAmountOfSlotsAvailable < amountOfQueuedPlayers) {
             long amountOfInstancesNeeded = (long) Math.ceil(((double) amountOfQueuedPlayers - (double) totalAmountOfSlotsAvailable) / (double) game.getMaxPlayers());
             int created = instanceManager.create(type, game, (int) amountOfInstancesNeeded);
-
-            log.info(String.format("Starting instances. (%s, %s, %s, %s)", type.toString(), game.toString(), amountOfInstancesNeeded, created));
-            log.info(String.format("totalAmountOfSlotsAvailable = %s", totalAmountOfSlotsAvailable));
-            log.info(String.format("availableInstanceSlots = %s", availableInstanceSlots));
-            log.info(String.format("pendingInstancesCount = %s (%s slots)", pendingInstancesCount, pendingInstancesCount * game.getMaxPlayers()));
-            log.info(String.format("amountOfQueuedPlayers = %s", amountOfQueuedPlayers));
+            log.info(String.format("Created %d of %s %s", created, type.toString(), game.toString()));
         }
     }
 
@@ -124,12 +119,9 @@ public abstract class AbstractBalancer {
             } else {
                 packetUtil.send(new PlayerSendToServerPacket(uuid, serverDetail));
             }
-
-            log.info(String.format("Sending player to instance. (%s, %s)", uuid, server.getId()));
             return true;
         }
 
         return false;
     }
-
 }

@@ -11,7 +11,9 @@ import net.sunken.common.inject.*;
 @Singleton
 public class CommandRegistry extends BaseCommandRegistry implements Facet {
 
-    CommandRegistry() { registeredCommands = Sets.newLinkedHashSet(); }
+    private CommandRegistry() {
+        registeredCommands = Sets.newLinkedHashSet();
+    }
 
     @Override
     public void register(BaseCommand baseCommand) {
@@ -28,5 +30,4 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet {
     public void unregister(BaseCommand baseCommand) {
         registeredCommands.remove(baseCommand);
     }
-
 }

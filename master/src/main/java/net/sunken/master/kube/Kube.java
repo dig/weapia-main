@@ -20,6 +20,7 @@ import net.sunken.master.instance.config.InstanceConfiguration;
 import net.sunken.master.instance.config.InstanceGameConfiguration;
 
 import java.io.*;
+import java.util.logging.Level;
 
 @Log
 @Singleton
@@ -42,9 +43,9 @@ public class Kube {
                 BufferedReader bearerBuffer = new BufferedReader(new FileReader("/var/run/secrets/kubernetes.io/serviceaccount/token"));
                 serviceAccountBearer = bearerBuffer.readLine();
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                log.log(Level.SEVERE, "Unable to find bearer file", e);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.log(Level.SEVERE, "Unable to load bearer file", e);
             }
         }
     }
@@ -66,7 +67,6 @@ public class Kube {
                 containerObject.addProperty("name", "container" + i);
                 containerObject.addProperty("image", imageUri);
 
-                //--- Setup environment variables
                 JsonArray envVariables = containerObject.getAsJsonArray("env");
                 for (int i2 = 0; i2 < envVariables.size(); i2++) {
                     JsonObject currentObject = envVariables.get(i2).getAsJsonObject();
@@ -90,7 +90,6 @@ public class Kube {
                     }
                 }
 
-                //--- Add metadata
                 for (String metadataKey : ServerHelper.SERVER_METADATA_KEYS) {
                     if (server.getMetadata().containsKey(metadataKey)) {
                         String kubeKey = metadataKey.toUpperCase().replace("-", "_");
@@ -116,7 +115,7 @@ public class Kube {
 
             log.info(String.format("Created new pod. (%s, %s)", server.getId(), response.getStatus()));
         } catch (UnirestException | FileNotFoundException ex) {
-            ex.printStackTrace();
+            log.log(Level.SEVERE, "Unable to create pod", ex);
             return false;
         }
 
@@ -136,7 +135,7 @@ public class Kube {
 
             log.info(String.format("Deleted pod. (%s, %s)", podId, response.getStatus()));
         } catch (UnirestException ex) {
-            ex.printStackTrace();
+            log.log(Level.SEVERE, "Unable to delete pod", ex);
             return false;
         }
 
@@ -153,5 +152,4 @@ public class Kube {
 
         return kubeConfiguration.getBranch().equals("develop") ? config.getInfrastructure().getDevelopment() : config.getInfrastructure().getProduction();
     }
-
 }

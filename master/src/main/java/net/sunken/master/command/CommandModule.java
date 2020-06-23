@@ -18,5 +18,4 @@ public class CommandModule extends AbstractModule {
 
         install(new NetworkCommandModule());
     }
-
 }

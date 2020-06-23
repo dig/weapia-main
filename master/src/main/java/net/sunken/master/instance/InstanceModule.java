@@ -18,5 +18,4 @@ public class InstanceModule extends AbstractModule {
         pluginFacetBinder.addBinding(InstanceManager.class);
         pluginFacetBinder.addBinding(HeartbeatManager.class);
     }
-
 }

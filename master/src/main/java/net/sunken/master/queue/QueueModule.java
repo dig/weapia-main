@@ -10,5 +10,4 @@ public class QueueModule extends AbstractModule {
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(QueueManager.class);
     }
-
 }

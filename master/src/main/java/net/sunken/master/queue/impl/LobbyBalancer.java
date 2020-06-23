@@ -38,13 +38,9 @@ public class LobbyBalancer extends AbstractBalancer {
         if (serverOptional.isPresent()) {
             Server server = serverOptional.get();
             ServerDetail serverDetail = server.toServerDetail();
-
             packetUtil.send(new PlayerSendToServerPacket(uuid, serverDetail));
-            log.info(String.format("Sending player to lobby. (%s, %s)", uuid, server.getId()));
             return true;
         }
-
         return false;
     }
-
 }

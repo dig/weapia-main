@@ -272,5 +272,4 @@ public class PartyManager implements Facet, Enableable, Disableable {
         private UUID target;
         private UUID party;
     }
-
 }

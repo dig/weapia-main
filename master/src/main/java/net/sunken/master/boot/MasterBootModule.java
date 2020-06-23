@@ -10,5 +10,4 @@ public class MasterBootModule extends AbstractModule {
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(MasterBootNotifier.class);
     }
-
 }

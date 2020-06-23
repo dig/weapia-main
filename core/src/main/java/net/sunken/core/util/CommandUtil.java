@@ -23,5 +23,4 @@ public final class CommandUtil {
 
         return Optional.empty();
     }
-
 }

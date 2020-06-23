@@ -33,5 +33,4 @@ public class TabList {
             connection.sendPacket(headerPacket);
         }
     }
-
 }

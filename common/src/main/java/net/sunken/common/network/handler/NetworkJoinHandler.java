@@ -6,7 +6,6 @@ import net.sunken.common.network.NetworkManager;
 import net.sunken.common.network.packet.NetworkJoinPacket;
 import net.sunken.common.packet.PacketHandler;
 
-@Log
 public class NetworkJoinHandler extends PacketHandler<NetworkJoinPacket> {
 
     @Inject

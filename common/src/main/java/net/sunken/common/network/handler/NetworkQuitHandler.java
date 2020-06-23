@@ -6,7 +6,6 @@ import net.sunken.common.network.NetworkManager;
 import net.sunken.common.network.packet.NetworkQuitPacket;
 import net.sunken.common.packet.PacketHandler;
 
-@Log
 public class NetworkQuitHandler extends PacketHandler<NetworkQuitPacket> {
 
     @Inject

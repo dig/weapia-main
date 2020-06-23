@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.util.logging.Level;
 
-@Log
 public abstract class Packet implements Serializable {
 
     @Nullable
@@ -17,7 +16,7 @@ public abstract class Packet implements Serializable {
             out.writeObject(this);
             return bos.toByteArray();
         } catch (IOException e) {
-            log.log(Level.SEVERE, "Unable to serialize packet", e);
+            e.printStackTrace();
         }
 
         return null;
@@ -35,7 +34,7 @@ public abstract class Packet implements Serializable {
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            log.log(Level.SEVERE, "Unable to parse packet", e);
+            e.printStackTrace();
         }
 
         return null;

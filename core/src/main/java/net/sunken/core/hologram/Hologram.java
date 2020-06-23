@@ -31,7 +31,6 @@ public class Hologram {
         this.lines = lines;
         this.plugin = plugin;
         this.livingEntities = new ArrayList<>();
-
         this.setup();
     }
 
@@ -83,5 +82,4 @@ public class Hologram {
         remove();
         setup();
     }
-
 }

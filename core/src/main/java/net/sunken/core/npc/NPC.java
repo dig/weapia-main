@@ -46,7 +46,6 @@ public class NPC extends EntityPlayer {
     public NPC(@NonNull List<String> displayName, @NonNull Location location, @NonNull String texture, @NonNull String signature, @NonNull BukkitSyncExecutor bukkitSyncExecutor, HologramFactory hologramFactory) {
         this(displayName.get(displayName.size() - 1), location, texture, signature, bukkitSyncExecutor);
         displayName.remove(displayName.size() - 1);
-
         this.hologram = hologramFactory.createHologram(location.clone().add(0, 0.82 + (displayName.size() * 0.28), 0), displayName);
     }
 
@@ -77,5 +76,4 @@ public class NPC extends EntityPlayer {
         getBukkitEntity().remove();
         if (hologram != null) hologram.remove();
     }
-
 }

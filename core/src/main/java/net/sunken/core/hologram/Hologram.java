@@ -36,7 +36,6 @@ public class Hologram {
 
     private void setup() {
         double y = 0;
-
         for (String line : lines) {
             ArmorStand entity = (ArmorStand) this.location.getWorld().spawnEntity(location.clone().add(0, y, 0), EntityType.ARMOR_STAND);
             entity.setVisible(false);
@@ -46,7 +45,6 @@ public class Hologram {
             entity.setGravity(false);
             entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
             entity.setMetadata("hologram", new FixedMetadataValue(plugin, true));
-
             livingEntities.add(entity.getUniqueId());
 
             y -= OFFSET_Y;
@@ -56,7 +54,8 @@ public class Hologram {
     public void update(int index, String line) {
         if (index >= 0 && index < lines.size()) {
             lines.set(index, line);
-            Bukkit.getEntity(livingEntities.get(index)).setCustomName(ChatColor.translateAlternateColorCodes('&', line));
+            Entity entity = Bukkit.getEntity(livingEntities.get(index));
+            entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
         }
     }
 
@@ -74,7 +73,6 @@ public class Hologram {
             Entity entity = Bukkit.getEntity(uuid);
             entity.remove();
         }
-
         livingEntities.clear();
     }
 

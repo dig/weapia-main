@@ -26,12 +26,16 @@ public class DatabaseHelper {
     public final static String INVENTORY_ARMOUR_CONTENTS_KEY = "armourcontents";
     public final static String INVENTORY_EXTRA_CONTENTS_KEY = "extracontents";
     public final static String INVENTORY_STORAGE_CONTENTS_KEY = "storagecontents";
+    public final static String INVENTORY_SIZE_KEY = "size";
 
     public final static String PLAYER_INVENTORY_KEY = "inventory";
-    public final static String PLAYER_HEALTH_LEVEL = "health";
-    public final static String PLAYER_FOOD_LEVEL = "food";
-    public final static String PLAYER_GAMEMODE = "gamemode";
-    public final static String PLAYER_LOCATION = "location";
+    public final static String PLAYER_LOCATION_KEY = "location";
+    public final static String PLAYER_HEALTH_LEVEL_KEY = "health";
+    public final static String PLAYER_FOOD_LEVEL_KEY = "food";
+    public final static String PLAYER_FIRE_TICK_KEY = "firetick";
+    public final static String PLAYER_GAMEMODE_KEY = "gamemode";
+    public final static String PLAYER_EXPERIENCE_KEY = "exp";
+    public final static String PLAYER_ENDERCHEST_KEY = "enderchest";
 
     public final static String PLAYER_SURVIVAL_REALMS_KEY = "survivalrealms";
 

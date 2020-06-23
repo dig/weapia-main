@@ -11,7 +11,7 @@ public class Constants {
     public static final String PLAYER_SEND_SERVER = ChatColor.GREEN + "Joined %s.";
 
     public static final String DEFAULT_PING_TOP_LINE = "&b&lWEAPIA &f✩ &6&lGAMES &81.8-1.15";
-    public static final String DEFAULT_PING_BOTTOM_LINE = "&fHome to &a&lSURVIVAL REALMS&f & soon!";
+    public static final String DEFAULT_PING_BOTTOM_LINE = "&fHome to &a&lSURVIVAL REALMS&f & more!";
 
     public static final String FAILED_LOAD_DATA = ChatColor.RED + "Failed to load data for your profile.";
     public static final String FAILED_FIND_SERVER = ChatColor.RED + "Failed to find a server for you to connect to.";

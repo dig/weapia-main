@@ -11,7 +11,7 @@ import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandler;
 import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.player.PlayerDetail;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 
 public class StaffMessageHandler extends PacketHandler<StaffMessagePacket> implements Facet, Enableable {
 

@@ -6,7 +6,7 @@ import lombok.*;
 import lombok.extern.java.*;
 import net.sunken.common.config.*;
 import net.sunken.common.inject.*;
-import net.sunken.common.player.module.*;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.core.engine.state.impl.BaseTeamState;
 import net.sunken.core.team.allocate.*;
 import net.sunken.core.team.config.*;

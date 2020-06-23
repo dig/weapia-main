@@ -1,7 +1,6 @@
 package net.sunken.core.command;
 
 import lombok.extern.java.Log;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.sunken.common.command.Command;
 import net.sunken.common.command.CommandResponse;
 import net.sunken.common.command.impl.BaseCommand;
@@ -9,9 +8,8 @@ import net.sunken.common.command.impl.BaseCommandRegistry;
 import net.sunken.common.command.impl.BasicCommand;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.util.cooldown.Cooldowns;
-import net.sunken.core.Constants;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;

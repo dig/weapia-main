@@ -5,7 +5,7 @@ import lombok.extern.java.Log;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.core.Constants;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

@@ -2,7 +2,7 @@ package net.sunken.bungeecord.command;
 
 import com.google.inject.Inject;
 import net.sunken.common.command.impl.BaseCommandRegistry;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.util.cooldown.Cooldowns;
 
 public class CommandHandlerFactory {

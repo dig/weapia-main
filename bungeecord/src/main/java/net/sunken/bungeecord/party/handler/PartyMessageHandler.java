@@ -12,7 +12,7 @@ import net.sunken.common.party.packet.PartyMessagePacket;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.PlayerDetail;
 import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 
 import java.util.Optional;
 import java.util.UUID;

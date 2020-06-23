@@ -6,7 +6,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.sunken.common.packet.PacketHandler;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.player.packet.PlayerProxyMessagePacket;
 
 import java.util.Optional;

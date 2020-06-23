@@ -2,15 +2,11 @@ package net.sunken.core.engine.state.impl;
 
 import com.google.common.reflect.TypeToken;
 import com.google.inject.*;
-import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.packet.PacketUtil;
-import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.core.PluginInform;
 import net.sunken.core.engine.*;
-import net.sunken.core.engine.state.PlayerSpectatorState;
-import net.sunken.core.player.CorePlayer;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -19,10 +15,6 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Log
 public abstract class BaseState {

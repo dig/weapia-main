@@ -2,7 +2,6 @@ package net.sunken.bungeecord.party.handler;
 
 import com.google.inject.Inject;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -11,10 +10,9 @@ import net.sunken.bungeecord.player.BungeePlayer;
 import net.sunken.common.packet.PacketHandler;
 import net.sunken.common.party.packet.PartyInviteResponsePacket;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public class PartyInviteResponseHandler extends PacketHandler<PartyInviteResponsePacket> {
 

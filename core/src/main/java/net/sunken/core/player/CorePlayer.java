@@ -1,8 +1,12 @@
 package net.sunken.core.player;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.UpdateOptions;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import net.sunken.common.database.DatabaseHelper;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.util.Symbol;
 import net.sunken.core.Constants;
@@ -12,6 +16,7 @@ import net.sunken.core.scoreboard.CustomScoreboard;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.util.ActionBar;
 import net.sunken.core.util.TabList;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,6 +24,8 @@ import org.bukkit.entity.Player;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public abstract class CorePlayer extends AbstractPlayer {
 
@@ -38,8 +45,6 @@ public abstract class CorePlayer extends AbstractPlayer {
         setTabList(player);
         setNametagAndTabList(player);
         setScoreboard(player);
-
-        // clear action bar
         ActionBar.sendMessage(player, "");
     }
 
@@ -75,6 +80,16 @@ public abstract class CorePlayer extends AbstractPlayer {
     }
 
     protected abstract boolean setupScoreboard(@NonNull CustomScoreboard scoreboard);
+
+    public void save(@NonNull MongoConnection mongoConnection, @NonNull Player player) {
+        MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+        collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, uuid.toString()),
+                new Document("$set", toDocument(player)), new UpdateOptions().upsert(true));
+    }
+
+    public Document toDocument(@NonNull Player player) {
+        return toDocument();
+    }
 
     public Optional<? extends Player> toPlayer() {
         return Optional.ofNullable(Bukkit.getPlayer(uuid));

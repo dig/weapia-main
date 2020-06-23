@@ -2,10 +2,9 @@ package net.sunken.core.engine.command;
 
 import com.google.inject.Inject;
 import net.sunken.common.command.Command;
-import net.sunken.common.config.InjectConfig;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.core.command.BukkitCommand;
 import net.sunken.core.engine.EngineManager;

@@ -1,36 +1,18 @@
-package net.sunken.common.player.module;
+package net.sunken.common.player;
 
 import com.google.common.collect.Maps;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.NonNull;
-import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
-import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.packet.PlayerSaveStatePacket;
 
 import java.util.*;
 
 @Singleton
-public class PlayerManager implements Facet, Enableable {
-
-    @Inject
-    private PacketHandlerRegistry packetHandlerRegistry;
-    @Inject
-    private PlayerSaveStateHandler playerSaveStateHandler;
+public class PlayerManager {
 
     private final Map<UUID, AbstractPlayer> playerCache = Maps.newConcurrentMap();
     private final Map<String, UUID> nameCache = Maps.newConcurrentMap();
-
-    @Override
-    public void enable() {
-        packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
-    }
-
-    @Override
-    public void disable() {
-    }
 
     public void add(@NonNull AbstractPlayer abstractPlayer) {
         playerCache.put(abstractPlayer.getUuid(), abstractPlayer);

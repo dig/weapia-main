@@ -5,7 +5,6 @@ import com.google.inject.AbstractModule;
 import net.sunken.common.CommonModule;
 import net.sunken.common.config.ConfigModule;
 import net.sunken.common.inject.PluginFacetBinder;
-import net.sunken.common.player.module.PlayerModule;
 import net.sunken.core.command.CommandModule;
 import net.sunken.core.config.InstanceConfiguration;
 import net.sunken.core.config.InstanceConfigurationSerializer;
@@ -35,7 +34,6 @@ public class CoreModule extends AbstractModule {
         configureTypeSerializers();
 
         install(new CommonModule());
-        install(new PlayerModule());
         install(new ConfigModule(new File("config/common.conf"), InstanceConfiguration.class));
         install(new CommandModule());
         install(new NetworkCommandModule());

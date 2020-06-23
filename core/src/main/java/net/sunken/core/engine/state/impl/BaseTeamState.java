@@ -2,8 +2,7 @@ package net.sunken.core.engine.state.impl;
 
 import com.google.inject.Inject;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.ScoreboardRegistry;
 import net.sunken.core.team.impl.Team;

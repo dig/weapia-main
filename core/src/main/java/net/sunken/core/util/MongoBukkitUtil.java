@@ -81,7 +81,7 @@ public class MongoBukkitUtil {
                 .append(DatabaseHelper.PLAYER_FOOD_LEVEL_KEY, player.getFoodLevel())
                 .append(DatabaseHelper.PLAYER_FIRE_TICK_KEY, player.getFireTicks())
                 .append(DatabaseHelper.PLAYER_GAMEMODE_KEY, player.getGameMode().toString())
-                .append(DatabaseHelper.PLAYER_EXPERIENCE_KEY, player.getExp())
+                .append(DatabaseHelper.PLAYER_EXPERIENCE_KEY, player.getTotalExperience())
                 .append(DatabaseHelper.PLAYER_INVENTORY_KEY, fromInventory(player.getInventory()))
                 .append(DatabaseHelper.PLAYER_ENDERCHEST_KEY, fromInventory(player.getEnderChest()));
 
@@ -96,7 +96,7 @@ public class MongoBukkitUtil {
         player.setFoodLevel(document.getInteger(DatabaseHelper.PLAYER_FOOD_LEVEL_KEY, 20));
         player.setFireTicks(document.getInteger(DatabaseHelper.PLAYER_FIRE_TICK_KEY, 0));
         player.setGameMode((GameMode) MongoUtil.getEnumOrDefault(document, GameMode.class, DatabaseHelper.PLAYER_GAMEMODE_KEY, GameMode.SURVIVAL));
-        player.setExp(document.getDouble(DatabaseHelper.PLAYER_EXPERIENCE_KEY).floatValue());
+        player.setTotalExperience(document.getInteger(DatabaseHelper.PLAYER_EXPERIENCE_KEY, 0));
 
         setInventory((Document) document.get(DatabaseHelper.PLAYER_INVENTORY_KEY), player.getInventory());
         setInventory((Document) document.get(DatabaseHelper.PLAYER_ENDERCHEST_KEY), player.getEnderChest());

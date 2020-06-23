@@ -79,7 +79,8 @@ public class LobbyState extends EventGameState {
                     npcInteraction = new QueueInteraction(Server.Type.valueOf(interactionConfiguration.getValues().get(0)),
                             Game.valueOf(interactionConfiguration.getValues().get(1)),
                             Boolean.valueOf(interactionConfiguration.getValues().get(2)),
-                            packetUtil);
+                            packetUtil,
+                            true);
                     break;
             }
             npc.setInteraction(npcInteraction);

@@ -94,15 +94,11 @@ public class NPCRegistry implements Facet, Enableable, Listener {
 
         npcMap.values().forEach(npc -> {
             CraftPlayer craftPlayer = npc.getBukkitEntity();
-
             if (craftPlayer.getWorld().getName().equals(event.getWorld().getName())
                     && craftPlayer.getLocation().getChunk().getX() == chunk.getX()
                     && craftPlayer.getLocation().getChunk().getZ() == chunk.getZ()) {
-
                 Bukkit.getOnlinePlayers().forEach(player -> npc.show(player));
-                log.info(String.format("onChunkLoad: showing to all. (%s)", npc.getDisplayName()));
             }
         });
     }
-
 }

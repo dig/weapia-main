@@ -46,5 +46,4 @@ public class NPCPacketAdapter extends PacketAdapter {
             }
         }
     }
-
 }

@@ -18,12 +18,13 @@ public class QueueInteraction implements NPCInteraction {
     private final Game game;
     private final boolean save;
     private final PacketUtil packetUtil;
+    private final boolean message;
 
     @Override
     public void onInteract(Player player, PacketPlayInUseEntity.EnumEntityUseAction enumEntityUseAction, EnumHand enumHand) {
         if ((enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.ATTACK || enumEntityUseAction == PacketPlayInUseEntity.EnumEntityUseAction.INTERACT)
                 && enumHand == EnumHand.MAIN_HAND) {
-            player.sendMessage(String.format(Constants.SEND_TO_GAME, game.getFriendlyName()));
+            if (message) player.sendMessage(String.format(Constants.SEND_TO_GAME, game.getFriendlyName()));
             AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), type, game, save)));
         }
     }

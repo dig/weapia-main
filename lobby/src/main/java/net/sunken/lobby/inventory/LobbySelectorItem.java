@@ -17,6 +17,7 @@ import net.sunken.common.server.module.event.ServerAddedEvent;
 import net.sunken.common.server.module.event.ServerRemovedEvent;
 import net.sunken.common.server.module.event.ServerUpdatedEvent;
 import net.sunken.common.util.AsyncHelper;
+import net.sunken.common.util.Tuple;
 import net.sunken.core.PluginInform;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.inventory.ItemBuilder;
@@ -121,11 +122,11 @@ public class LobbySelectorItem implements Facet, Enableable, Listener, SunkenLis
         if (event.getServer().getType() == Server.Type.LOBBY) {
             lobbyMainMenu.getElements().values().stream()
                     .filter(element -> element.getItem().getType() == Material.GRAY_BED)
-                    .map(element -> new NBTItem(element.getItem()))
-                    .filter(nbtItem -> nbtItem.hasKey("serverId"))
-                    .forEach(nbtItem -> {
-                        ItemStack item = nbtItem.getItem();
-                        String serverId = nbtItem.getString("serverId");
+                    .map(element -> new Tuple<>(element, new NBTItem(element.getItem())))
+                    .filter(itemTuple -> itemTuple.getY().hasKey("serverId"))
+                    .forEach(itemTuple -> {
+                        ItemStack item = itemTuple.getX().getItem();
+                        String serverId = itemTuple.getY().getString("serverId");
 
                         serverManager.findServerById(serverId)
                                 .ifPresent(server -> {

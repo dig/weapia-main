@@ -16,6 +16,7 @@ import net.sunken.common.server.module.event.ServerAddedEvent;
 import net.sunken.common.server.module.event.ServerRemovedEvent;
 import net.sunken.common.server.module.event.ServerUpdatedEvent;
 import net.sunken.common.util.AsyncHelper;
+import net.sunken.common.util.Tuple;
 import net.sunken.core.Constants;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.inventory.ItemBuilder;
@@ -157,12 +158,13 @@ public class GameSelectorItem implements Facet, Enableable, Listener, SunkenList
     private void update(Server server) {
         Page compassMainMenu = container.getPages().get("compass-main-menu");
         compassMainMenu.getElements().values().stream()
-                .map(element -> new NBTItem(element.getItem()))
-                .filter(nbtItem -> nbtItem.hasKey("type") && nbtItem.hasKey("game"))
-                .filter(nbtItem -> Server.Type.valueOf(nbtItem.getString("type")) == server.getType())
-                .filter(nbtItem -> Game.valueOf(nbtItem.getString("game")) == server.getGame())
-                .forEach(nbtItem -> {
-                    ItemStack item = nbtItem.getItem();
+                .map(element -> new Tuple<>(element, new NBTItem(element.getItem())))
+                .filter(itemTuple -> itemTuple.getY().hasKey("type") && itemTuple.getY().hasKey("game"))
+                .filter(itemTuple -> Server.Type.valueOf(itemTuple.getY().getString("type")) == server.getType())
+                .filter(itemTuple -> Game.valueOf(itemTuple.getY().getString("game")) == server.getGame())
+                .forEach(itemTuple -> {
+                    ItemStack item = itemTuple.getX().getItem();
+                    NBTItem nbtItem = itemTuple.getY();
 
                     Optional<SelectorItemConfiguration> selectorItemConfigurationOptional = uiConfiguration.getGameSelector().stream()
                             .filter(itemConfiguration -> itemConfiguration.getId().equals(nbtItem.getString("id")))

@@ -17,6 +17,7 @@ public class QueueConsumer extends Thread {
 
     @Override
     public void run() {
+        log.info("consumer run()");
         while (true) {
             lobbyBalancer.run();
             balancers.values().forEach(AbstractBalancer::run);

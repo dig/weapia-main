@@ -73,4 +73,10 @@ public class NPC extends EntityPlayer {
         getBukkitEntity().remove();
         if (hologram != null) hologram.remove();
     }
+
+    @Override
+    public void playerTick() {}
+    @Override
+    public void die(DamageSource damagesource) {}
+
 }

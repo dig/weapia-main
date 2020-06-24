@@ -58,8 +58,10 @@ public abstract class AbstractBalancer {
     }
 
     public void run() {
+        log.info("AbstractBalancer run()");
         while (!queue.isEmpty()) {
             QueueDetail queueDetail = queue.peek();
+            log.info(String.format("AbstractBalancer peak() %s", queueDetail.toString()));
             if (handle(queueDetail.getUuid(), serverManager.findAllAvailable(queueDetail.getType(), queueDetail.getGame()))) {
                 queue.poll();
             } else {

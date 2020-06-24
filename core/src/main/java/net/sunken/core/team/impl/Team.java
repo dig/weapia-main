@@ -49,5 +49,4 @@ public abstract class Team {
         newState.start(this, state);
         state = newState;
     }
-
 }

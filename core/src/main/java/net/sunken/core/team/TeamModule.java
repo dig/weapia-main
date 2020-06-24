@@ -18,5 +18,4 @@ public class TeamModule extends AbstractModule {
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
         pluginFacetBinder.addBinding(TeamManager.class);
     }
-
 }

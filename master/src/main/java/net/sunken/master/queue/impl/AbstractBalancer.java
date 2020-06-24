@@ -116,6 +116,7 @@ public abstract class AbstractBalancer {
             if (partyOptional.isPresent()) {
                 Party party = partyOptional.get();
                 party.getMembers().forEach(playerDetail -> packetUtil.send(new PlayerSendToServerPacket(playerDetail.getUuid(), serverDetail)));
+                log.info(String.format("Sending party %s to %s.", uuid, serverDetail));
             } else {
                 packetUtil.send(new PlayerSendToServerPacket(uuid, serverDetail));
                 log.info(String.format("Sending %s to %s.", uuid, serverDetail));

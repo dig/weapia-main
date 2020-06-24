@@ -73,5 +73,4 @@ public class CustomScoreboardEntry {
         if (score != null) scoreboard.resetScores(score.getEntry());
         if (team != null) team.unregister();
     }
-
 }

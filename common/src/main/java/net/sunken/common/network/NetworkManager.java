@@ -53,7 +53,7 @@ public class NetworkManager implements Facet, Enableable {
 
     public void remove(@NonNull PlayerDetail playerDetail, boolean local) {
         playerCache.remove(playerDetail.getUuid());
-        nameCache.remove(playerDetail.getDisplayName());
+        nameCache.remove(playerDetail.getDisplayName().toLowerCase());
         if (!local) {
             try (Jedis jedis = redisConnection.getConnection()) {
                 jedis.del(NetworkHelper.NETWORK_PLAYER_STORAGE_KEY + ":" + playerDetail.getUuid().toString());
@@ -83,7 +83,7 @@ public class NetworkManager implements Facet, Enableable {
                 try {
                     PlayerDetail playerDetail = NetworkHelper.from(kv);
                     playerCache.put(playerDetail.getUuid(), playerDetail);
-                    nameCache.put(playerDetail.getDisplayName(), playerDetail.getUuid());
+                    nameCache.put(playerDetail.getDisplayName().toLowerCase(), playerDetail.getUuid());
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "Unable to load network player", e);
                 }

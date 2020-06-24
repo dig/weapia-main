@@ -49,5 +49,4 @@ public class CustomScoreboard {
     public void add(Player player) {
         player.setScoreboard(this.scoreboard);
     }
-
 }

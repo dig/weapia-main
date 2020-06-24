@@ -2,8 +2,6 @@ package net.sunken.common.server;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-
-import java.security.SecureRandom;
 import java.util.*;
 
 @UtilityClass
@@ -55,8 +53,7 @@ public class ServerHelper {
     private static Random random = new Random();
     public static String generate(@NonNull Server.Type type) {
         StringBuilder sb = new StringBuilder(4);
-        for (int i = 0; i < 3; i++)
-            sb.append(random.nextInt(9));
+        for (int i = 0; i < 3; i++) sb.append(random.nextInt(9));
         sb.append(AB.charAt(random.nextInt(AB.length())));
         return type.getPrefix() + sb.toString();
     }

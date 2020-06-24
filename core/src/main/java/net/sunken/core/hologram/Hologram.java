@@ -1,6 +1,7 @@
 package net.sunken.core.hologram;
 
 import lombok.Getter;
+import net.sunken.core.Constants;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -44,7 +45,7 @@ public class Hologram {
             entity.setBasePlate(true);
             entity.setGravity(false);
             entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
-            entity.setMetadata("hologram", new FixedMetadataValue(plugin, true));
+            entity.setMetadata(Constants.HOLOGRAM_METADATA_KEY, new FixedMetadataValue(plugin, true));
             livingEntities.add(entity.getUniqueId());
 
             y -= OFFSET_Y;

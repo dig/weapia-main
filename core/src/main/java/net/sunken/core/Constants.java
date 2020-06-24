@@ -20,19 +20,12 @@ public class Constants {
             "mmoxpbar", "mmoinfo", "xprate", "mcmmo", "mctop", "mcrank", "addxp", "addlevels", "mcability", "mcrefresh", "mccooldown", "mcchatspy", "mcgod", "mcimport", "mcstats", "mcremove", "mmoedit", "inspect", "skillreset", "excavation", "herbalism", "mining", "woodcutting", "axes", "archery", "swords", "taming", "unarmed", "acrobatics", "repair", "fishing", "smelting", "alchemy", "salvage", "mcpurge", "hardcore", "vampirism", "mcnotify", "mhd", "mcmmoreloadlocale"
     );
 
-    public static final String DEFAULT_BOSS_BAR = "";
-
-    public static final String BAR_SUCCESS_CHANGE = ChatColor.GREEN + "Requested update to all servers.";
-    public static final String BAR_CLEARED = ChatColor.RED + "Cleared boss and action bar.";
-
     public static final String SEND_TO_GAME = ChatColor.YELLOW + "Finding a server for %s...";
 
     public static final String COUNTDOWN_LOBBY_SECONDS = ChatColor.YELLOW + "Game starting in %ds";
     public static final String COUNTDOWN_STARTING = ChatColor.YELLOW + "Game now starting.";
     public static final String COUNTDOWN_FAILED_REQUIRED = ChatColor.YELLOW + "Waiting for more players to join...";
     public static final String COUNTDOWN_FAILED_STATE_NULL = ChatColor.RED + "Appears this minigame is not setup correctly, please contact administrators with this message.";
-
-    public static final String GAME_ERROR = ChatColor.RED + "There was an error with the game you were in therefore you have been sent back to the lobby.";
 
     public static final String ELEMENT_NBT_KEY = "WeapiaElement";
     public static final String ITEM_NBT_KEY = "WeapiaItem";
@@ -47,5 +40,7 @@ public class Constants {
     public static final String COMMAND_GIVE_ITEM_SUCCESS = ChatColor.GREEN + "Added item to target player.";
 
     public static final String COMMAND_NAMETAG_SUCCESS = ChatColor.GREEN + "Changed nametag.";
+
+    public static final String HOLOGRAM_METADATA_KEY = "WeapiaHologram";
 
 }

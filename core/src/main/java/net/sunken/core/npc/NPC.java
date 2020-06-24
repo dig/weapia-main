@@ -20,7 +20,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-@Log
 public class NPC extends EntityPlayer {
 
     @Getter

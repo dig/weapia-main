@@ -38,6 +38,7 @@ public class PlayerRequestServerHandler extends PacketHandler<PlayerRequestServe
 
     @Override
     public void onReceive(PlayerRequestServerPacket packet) {
+        log.info("PlayerRequestServerPacket");
         if (packet.isSave()) {
             if (pendingSaveBeforeConnect.getIfPresent(packet.getUuid()) == null
                     && !serverManager.hasPendingConnection(packet.getUuid())) {

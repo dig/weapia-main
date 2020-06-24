@@ -69,6 +69,7 @@ public class QueueManager implements Facet, Enableable, Disableable {
 
     public boolean queue(@NonNull UUID uuid, @NonNull Server.Type type, @NonNull Game game) {
         if ((balancers.containsKey(game) || type == Server.Type.LOBBY) && !inQueue(uuid)) {
+            log.info("queued " + uuid.toString());
             AbstractBalancer balancer = type == Server.Type.LOBBY ? lobbyBalancer : balancers.get(game);
             return balancer.add(new QueueDetail(uuid, type, game));
         }

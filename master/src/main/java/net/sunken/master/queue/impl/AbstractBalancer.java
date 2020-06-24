@@ -14,10 +14,7 @@ import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
 import net.sunken.master.queue.QueueDetail;
 
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Log
 public abstract class AbstractBalancer {
@@ -27,7 +24,7 @@ public abstract class AbstractBalancer {
     protected final InstanceManager instanceManager;
     protected final PacketUtil packetUtil;
 
-    protected final Queue<QueueDetail> queue = Queues.newArrayDeque();
+    protected final Queue<QueueDetail> queue = new LinkedList<>();
 
     public AbstractBalancer(PartyManager partyManager, ServerManager serverManager, InstanceManager instanceManager, PacketUtil packetUtil) {
         this.partyManager = partyManager;
@@ -63,7 +60,6 @@ public abstract class AbstractBalancer {
     public void run() {
         while (!queue.isEmpty()) {
             QueueDetail queueDetail = queue.peek();
-            log.info(String.format("run() for %s", queueDetail.toString()));
             if (handle(queueDetail.getUuid(), serverManager.findAllAvailable(queueDetail.getType(), queueDetail.getGame()))) {
                 queue.poll();
             } else {

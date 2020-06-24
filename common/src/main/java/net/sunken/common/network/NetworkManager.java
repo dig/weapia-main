@@ -83,7 +83,7 @@ public class NetworkManager implements Facet, Enableable {
                 try {
                     PlayerDetail playerDetail = NetworkHelper.from(kv);
                     playerCache.put(playerDetail.getUuid(), playerDetail);
-                    nameCache.put(playerDetail.getDisplayName(), playerDetail.getUuid());
+                    nameCache.put(playerDetail.getDisplayName().toLowerCase(), playerDetail.getUuid());
                 } catch (Exception e) {
                     log.log(Level.SEVERE, "Unable to load network player", e);
                 }

@@ -52,7 +52,7 @@ public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
 
                                 eventManager.callEvent(new ServerUpdatedEvent(server));
                             } catch (Exception e) {
-                                log.log(Level.SEVERE, String.format("Unable to update server %s", kv.keySet().toString()), e);
+                                log.log(Level.SEVERE, String.format("Unable to update server %s %s", packet.getId(), kv.keySet().toString()), e);
                             }
                         }
                     })

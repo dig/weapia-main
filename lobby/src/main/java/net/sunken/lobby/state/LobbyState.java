@@ -62,7 +62,7 @@ public class LobbyState extends EventGameState {
             long count = serverManager.getPlayersOnline(serverConfiguration.getType(), serverConfiguration.getGame());
 
             List<String> displayNameFormatted = npcConfiguration.getDisplayName().stream()
-                    .map(line -> line.replaceAll("%players", String.valueOf(count)))
+                    .map(line -> line.replaceAll("%players", String.format("%,d", count)))
                     .collect(Collectors.toList());
 
             NPC npc = npcRegistry.register(
@@ -219,7 +219,7 @@ public class LobbyState extends EventGameState {
                         for (String line : npcConfiguration.getDisplayName()) {
                             Hologram hologram = npc.getHologram();
                             if (hologram != null && line.indexOf("%players") >= 0) {
-                                hologram.update(i, line.replaceAll("%players", String.valueOf(count)));
+                                hologram.update(i, line.replaceAll("%players", String.format("%,d", count)));
                             }
                             i++;
                         }

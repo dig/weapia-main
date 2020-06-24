@@ -132,7 +132,7 @@ public class LobbySelectorItem implements Facet, Enableable, Listener, SunkenLis
                                 .ifPresent(server -> {
                                     String metadataId = (server.getMetadata().containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? server.getMetadata().get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending");
                                     List<String> lore = uiConfiguration.getLobbySelectorTemplate().getLore().stream()
-                                            .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.valueOf(server.getPlayers()))))
+                                            .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.format("%,d", server.getPlayers()))))
                                             .collect(Collectors.toList());
 
                                     ItemMeta itemMeta = item.getItemMeta();
@@ -152,7 +152,7 @@ public class LobbySelectorItem implements Facet, Enableable, Listener, SunkenLis
         String metadataId = (server.getMetadata().containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? server.getMetadata().get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending");
 
         List<String> lore = lobbySelectorTemplate.getLore().stream()
-                .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.valueOf(server.getPlayers()))))
+                .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.format("%,d", server.getPlayers()))))
                 .collect(Collectors.toList());
 
         ItemBuilder serverItemBuilder = new ItemBuilder(lobbySelectorTemplate.getMaterial())

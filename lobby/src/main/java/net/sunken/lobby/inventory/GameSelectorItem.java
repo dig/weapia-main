@@ -89,7 +89,7 @@ public class GameSelectorItem implements Facet, Enableable, Listener, SunkenList
             int count = serverManager.getPlayersOnline(selectorItemConfiguration.getServer().getType(), selectorItemConfiguration.getServer().getGame());
 
             List<String> lore = selectorItemConfiguration.getLore().stream()
-                    .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.valueOf(count))))
+                    .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.format("%,d", count))))
                     .collect(Collectors.toList());
 
             ItemBuilder selectorItemBuilder = new ItemBuilder(selectorItemConfiguration.getMaterial())
@@ -175,7 +175,7 @@ public class GameSelectorItem implements Facet, Enableable, Listener, SunkenList
 
                         ItemMeta itemMeta = item.getItemMeta();
                         List<String> lore = selectorItemConfiguration.getLore().stream()
-                                .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.valueOf(count))))
+                                .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.format("%,d", count))))
                                 .collect(Collectors.toList());
 
                         itemMeta.setLore(lore);

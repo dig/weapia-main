@@ -24,7 +24,7 @@ public abstract class AbstractBalancer {
     protected final InstanceManager instanceManager;
     protected final PacketUtil packetUtil;
 
-    protected final Queue<QueueDetail> queue = new LinkedList<>();
+    protected final Queue<QueueDetail> queue = Queues.newConcurrentLinkedQueue();
 
     public AbstractBalancer(PartyManager partyManager, ServerManager serverManager, InstanceManager instanceManager, PacketUtil packetUtil) {
         this.partyManager = partyManager;

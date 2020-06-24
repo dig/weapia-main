@@ -8,7 +8,6 @@ import net.sunken.master.queue.impl.LobbyBalancer;
 
 import java.util.Map;
 
-@Log
 @AllArgsConstructor
 public class QueueConsumer extends Thread {
 
@@ -17,7 +16,6 @@ public class QueueConsumer extends Thread {
 
     @Override
     public void run() {
-        log.info("consumer run()");
         while (true) {
             lobbyBalancer.run();
             balancers.values().forEach(AbstractBalancer::run);

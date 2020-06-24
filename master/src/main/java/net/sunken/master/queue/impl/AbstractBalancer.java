@@ -63,6 +63,7 @@ public abstract class AbstractBalancer {
     public void run() {
         while (!queue.isEmpty()) {
             QueueDetail queueDetail = queue.peek();
+            log.info(String.format("run() for %s", queueDetail.toString()));
             if (handle(queueDetail.getUuid(), serverManager.findAllAvailable(queueDetail.getType(), queueDetail.getGame()))) {
                 queue.poll();
             } else {

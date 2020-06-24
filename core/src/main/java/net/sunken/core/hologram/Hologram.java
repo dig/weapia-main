@@ -44,6 +44,7 @@ public class Hologram {
             entity.setSmall(true);
             entity.setBasePlate(true);
             entity.setGravity(false);
+            entity.setInvulnerable(true);
             entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
             entity.setMetadata(Constants.HOLOGRAM_METADATA_KEY, new FixedMetadataValue(plugin, true));
             livingEntities.add(entity.getUniqueId());

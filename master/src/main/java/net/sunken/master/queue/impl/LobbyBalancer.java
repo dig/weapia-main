@@ -25,6 +25,7 @@ public class LobbyBalancer extends AbstractBalancer {
     @Override
     public boolean add(@NonNull QueueDetail queueDetail) {
         queue.add(queueDetail);
+        log.info("Adding to lobby queue " + queueDetail.getUuid().toString());
         return true;
     }
 

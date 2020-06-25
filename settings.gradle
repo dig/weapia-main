@@ -6,6 +6,6 @@ rootProject.name = 'weapia-main'
 
 include(':common')
 include(':core')
-include(':bungeecord')
+include(':bungee')
 include(':lobby')
 include(':master')

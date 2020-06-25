@@ -1,7 +1,7 @@
 package net.sunken.lobby;
 
 import net.sunken.common.config.ConfigModule;
-import net.sunken.common.inject.PluginFacetBinder;
+import net.sunken.common.inject.FacetBinder;
 import net.sunken.common.server.module.ServerModule;
 import net.sunken.core.CoreModule;
 import net.sunken.core.engine.EngineModule;
@@ -30,7 +30,7 @@ public class LobbyPluginModule extends PluginModule {
         install(new EngineModule());
         install(new InventoryModule());
 
-        final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(ServerUpdatedListener.class);
+        final FacetBinder facetBinder = new FacetBinder(binder());
+        facetBinder.addBinding(ServerUpdatedListener.class);
     }
 }

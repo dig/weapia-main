@@ -12,9 +12,9 @@ public class CommandModule extends AbstractModule {
     protected void configure() {
         bind(BaseCommandRegistry.class).toInstance(new CommandRegistry());
 
-        final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(CommandRegistry.class);
-        pluginFacetBinder.addBinding(ExampleCommand.class);
+        final FacetBinder facetBinder = new FacetBinder(binder());
+        facetBinder.addBinding(CommandRegistry.class);
+        facetBinder.addBinding(ExampleCommand.class);
 
         install(new NetworkCommandModule());
     }

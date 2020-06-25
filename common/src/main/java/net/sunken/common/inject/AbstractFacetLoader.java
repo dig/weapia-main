@@ -7,25 +7,25 @@ import java.util.stream.Stream;
 
 public abstract class AbstractFacetLoader {
 
-    protected final Set<Facet> pluginFacets;
+    protected final Set<Facet> facets;
 
     public AbstractFacetLoader(Set<Facet> pluginFacets) {
-        this.pluginFacets = pluginFacets;
+        this.facets = pluginFacets;
     }
 
     protected <T> Stream<? extends T> find(Class<T> type) {
-        return ((Stream<? extends T>) pluginFacets.stream().filter(type::isInstance));
+        return ((Stream<? extends T>) facets.stream().filter(type::isInstance));
     }
 
     protected Set<Enableable> getEnableableFacets() {
-        return pluginFacets.stream()
+        return facets.stream()
                 .filter(facet -> facet instanceof Enableable)
                 .map(Enableable.class::cast)
                 .collect(Collectors.toSet());
     }
 
     protected Set<Disableable> getDisableableFacets() {
-        return pluginFacets.stream()
+        return facets.stream()
                 .filter(facet -> facet instanceof Disableable)
                 .map(Disableable.class::cast)
                 .collect(Collectors.toSet());

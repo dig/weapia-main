@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import net.sunken.common.CommonModule;
 import net.sunken.common.config.ConfigModule;
-import net.sunken.common.inject.PluginFacetBinder;
+import net.sunken.common.inject.FacetBinder;
 import net.sunken.core.command.CommandModule;
 import net.sunken.core.config.InstanceConfiguration;
 import net.sunken.core.config.InstanceConfigurationSerializer;
@@ -40,25 +40,25 @@ public class CoreModule extends AbstractModule {
         install(new CommandModule());
         install(new NetworkCommandModule());
 
-        final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(ChatHandler.class);
-        pluginFacetBinder.addBinding(ConnectHandler.class);
-        pluginFacetBinder.addBinding(DisconnectHandler.class);
-        pluginFacetBinder.addBinding(HologramListener.class);
+        final FacetBinder facetBinder = new FacetBinder(binder());
+        facetBinder.addBinding(ChatHandler.class);
+        facetBinder.addBinding(ConnectHandler.class);
+        facetBinder.addBinding(DisconnectHandler.class);
+        facetBinder.addBinding(HologramListener.class);
 
-        pluginFacetBinder.addBinding(PluginInform.class);
-        pluginFacetBinder.addBinding(NPCRegistry.class);
-        pluginFacetBinder.addBinding(NPCPacketAdapter.class);
-        pluginFacetBinder.addBinding(ElementListener.class);
-        pluginFacetBinder.addBinding(ExampleInvCommand.class);
-        pluginFacetBinder.addBinding(NametagCommand.class);
+        facetBinder.addBinding(PluginInform.class);
+        facetBinder.addBinding(NPCRegistry.class);
+        facetBinder.addBinding(NPCPacketAdapter.class);
+        facetBinder.addBinding(ElementListener.class);
+        facetBinder.addBinding(ExampleInvCommand.class);
+        facetBinder.addBinding(NametagCommand.class);
 
-        pluginFacetBinder.addBinding(ItemRegistry.class);
-        pluginFacetBinder.addBinding(ItemListener.class);
-        pluginFacetBinder.addBinding(ItemCommand.class);
-        pluginFacetBinder.addBinding(GiveItemCommand.class);
+        facetBinder.addBinding(ItemRegistry.class);
+        facetBinder.addBinding(ItemListener.class);
+        facetBinder.addBinding(ItemCommand.class);
+        facetBinder.addBinding(GiveItemCommand.class);
 
-        pluginFacetBinder.addBinding(PlayerSaveStateHandler.class);
+        facetBinder.addBinding(PlayerSaveStateHandler.class);
     }
 
     private void configureTypeSerializers() {

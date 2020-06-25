@@ -15,8 +15,8 @@ public class MasterFacetLoader extends AbstractFacetLoader {
     private final BaseCommandRegistry baseCommandRegistry;
 
     @Inject
-    public MasterFacetLoader(BaseCommandRegistry baseCommandRegistry, Set<Facet> pluginFacets) {
-        super(pluginFacets);
+    public MasterFacetLoader(BaseCommandRegistry baseCommandRegistry, Set<Facet> facets) {
+        super(facets);
         this.baseCommandRegistry = baseCommandRegistry;
     }
 

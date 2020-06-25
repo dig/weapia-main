@@ -12,7 +12,6 @@ import net.sunken.bungeecord.party.PartyCommand;
 import net.sunken.bungeecord.party.PartyManager;
 import net.sunken.bungeecord.player.ConnectHandler;
 import net.sunken.bungeecord.player.DisconnectHandler;
-import net.sunken.bungeecord.proxy.module.ProxyModule;
 import net.sunken.common.CommonModule;
 import net.sunken.common.config.ConfigModule;
 import net.sunken.common.inject.PluginFacetBinder;
@@ -37,7 +36,6 @@ public class BungeePluginModule extends AbstractModule {
 
         install(new CommonModule());
         install(new ServerModule());
-        install(new ProxyModule());
         install(new CommandModule());
 
         final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
@@ -50,5 +48,4 @@ public class BungeePluginModule extends AbstractModule {
         pluginFacetBinder.addBinding(PartyCommand.class);
         pluginFacetBinder.addBinding(PartyChatCommand.class);
     }
-
 }

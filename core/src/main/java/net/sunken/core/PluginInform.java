@@ -32,7 +32,7 @@ public class PluginInform implements Facet, Enableable, Listener {
     @Inject
     private ServerManager serverManager;
     @Inject
-    private JavaPlugin javaPlugin;
+    private JavaPlugin plugin;
     @Inject
     private PacketHandlerRegistry packetHandlerRegistry;
     @Inject
@@ -51,8 +51,8 @@ public class PluginInform implements Facet, Enableable, Listener {
         server = Server.builder()
             .id(instanceConfiguration.getId())
             .type(instanceConfiguration.getType())
-            .host(javaPlugin.getServer().getIp())
-            .port(javaPlugin.getServer().getPort())
+            .host(plugin.getServer().getIp())
+            .port(plugin.getServer().getPort())
             .game(instanceConfiguration.getGame())
             .world(instanceConfiguration.getWorld())
             .players(Bukkit.getOnlinePlayers().size())
@@ -63,10 +63,6 @@ public class PluginInform implements Facet, Enableable, Listener {
 
         packetHandlerRegistry.registerHandler(ServerHeartbeatPacket.class, serverHeartbeatHandler);
         serverManager.add(server, false);
-    }
-
-    @Override
-    public void disable() {
     }
 
     @EventHandler
@@ -89,5 +85,4 @@ public class PluginInform implements Facet, Enableable, Listener {
     public void remove() {
         serverManager.remove(server.getId(), false);
     }
-
 }

@@ -11,11 +11,13 @@ import net.sunken.common.server.module.event.ServerUpdatedEvent;
 import net.sunken.core.engine.state.impl.BaseGameState;
 import net.sunken.core.engine.state.impl.EventGameState;
 import net.sunken.core.executor.BukkitSyncExecutor;
+import net.sunken.core.hologram.Hologram;
 import net.sunken.core.npc.NPC;
 import net.sunken.core.npc.NPCRegistry;
 import net.sunken.core.npc.config.InteractionConfiguration;
 import net.sunken.core.npc.config.NPCServerConfiguration;
 import net.sunken.core.npc.interact.MessageInteraction;
+import net.sunken.core.npc.interact.NPCInteraction;
 import net.sunken.core.npc.interact.QueueInteraction;
 import net.sunken.core.util.*;
 import net.sunken.lobby.config.*;
@@ -39,6 +41,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Log
 public class LobbyState extends EventGameState {
@@ -58,28 +61,29 @@ public class LobbyState extends EventGameState {
             NPCServerConfiguration serverConfiguration = npcConfiguration.getServerConfiguration();
             long count = serverManager.getPlayersOnline(serverConfiguration.getType(), serverConfiguration.getGame());
 
-            List<String> displayNameFormatted = new ArrayList<>();
-            for (String line : npcConfiguration.getDisplayName())
-                displayNameFormatted.add(line.replaceAll("%players", String.valueOf(count)));
+            List<String> displayNameFormatted = npcConfiguration.getDisplayName().stream()
+                    .map(line -> line.replaceAll("%players", String.format("%,d", count)))
+                    .collect(Collectors.toList());
 
             NPC npc = npcRegistry.register(
                     npcConfiguration.getId(), displayNameFormatted, npcConfiguration.getLocationConfiguration().toLocation(),
                     npcConfiguration.getSkinConfiguration().getTexture(), npcConfiguration.getSkinConfiguration().getSignature());
 
+            NPCInteraction npcInteraction = null;
             InteractionConfiguration interactionConfiguration = npcConfiguration.getInteractionConfiguration();
             switch (interactionConfiguration.getType()) {
                 case MESSAGE:
-                    npc.setInteraction(new MessageInteraction(interactionConfiguration.getValues()));
+                    npcInteraction = new MessageInteraction(interactionConfiguration.getValues());
                     break;
                 case QUEUE:
-                    npc.setInteraction(new QueueInteraction(
-                            Server.Type.valueOf(interactionConfiguration.getValues().get(0)),
+                    npcInteraction = new QueueInteraction(Server.Type.valueOf(interactionConfiguration.getValues().get(0)),
                             Game.valueOf(interactionConfiguration.getValues().get(1)),
                             Boolean.valueOf(interactionConfiguration.getValues().get(2)),
-                            packetUtil
-                    ));
+                            packetUtil,
+                            true);
                     break;
             }
+            npc.setInteraction(npcInteraction);
         });
     }
 
@@ -210,17 +214,18 @@ public class LobbyState extends EventGameState {
                     NPCServerConfiguration serverConfiguration = npcConfiguration.getServerConfiguration();
                     long count = serverManager.getPlayersOnline(serverConfiguration.getType(), serverConfiguration.getGame());
 
-                    int i = 0;
-                    for (String line : npcConfiguration.getDisplayName()) {
-                        if (line.indexOf("%players") >= 0) {
-                            npc.getHologram().update(i, line.replaceAll("%players", String.valueOf(count)));
+                    if (npcConfiguration.getDisplayName().size() > 1) {
+                        int i = 0;
+                        for (String line : npcConfiguration.getDisplayName()) {
+                            Hologram hologram = npc.getHologram();
+                            if (hologram != null && line.indexOf("%players") >= 0) {
+                                hologram.update(i, line.replaceAll("%players", String.format("%,d", count)));
+                            }
+                            i++;
                         }
-
-                        i++;
                     }
                 });
             });
         }
     }
-
 }

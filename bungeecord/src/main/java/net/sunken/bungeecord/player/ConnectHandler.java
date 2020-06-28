@@ -6,8 +6,6 @@ import com.google.inject.Inject;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.java.Log;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -25,8 +23,7 @@ import net.sunken.common.packet.PacketHandlerRegistry;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.packet.expectation.ExpectationFactory;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.player.packet.*;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
@@ -75,7 +72,7 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         BungeePlayer bungeePlayer = new BungeePlayer(pendingConnection.getUniqueId(), pendingConnection.getName());
 
         event.registerIntent(plugin);
-        AsyncHelper.executor().submit(() -> {
+        AsyncHelper.executor().execute(() -> {
             boolean loadState = true;
             try {
                 MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
@@ -220,38 +217,7 @@ public class ConnectHandler implements Facet, Listener, Enableable {
     @EventHandler
     public void onPlayerLogin(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
-
         Constants.PLAYER_WELCOME_MESSAGE.forEach(message -> player.sendMessage(TextComponent.fromLegacyText(message)));
-
-        TextComponent spaceBeforeLink = new TextComponent("      ");
-        TextComponent firstGameLink = new TextComponent("[Herobrine Escort]");
-        firstGameLink.setColor(ChatColor.YELLOW);
-        firstGameLink.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server herobrine_escort"));
-
-        TextComponent secondGameLink = new TextComponent("[Space Games]");
-        secondGameLink.setColor(ChatColor.DARK_PURPLE);
-        secondGameLink.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server space_games_solo"));
-
-        TextComponent spaceBeforeLink1 = new TextComponent("                            ");
-        TextComponent thirdGameLink = new TextComponent("[Base Invaders]");
-        thirdGameLink.setColor(ChatColor.AQUA);
-        thirdGameLink.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server base_invaders"));
-
-        TextComponent fourthGameLink = new TextComponent("[Natural Disaster]");
-        fourthGameLink.setColor(ChatColor.RED);
-        fourthGameLink.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/server natural_disaster"));
-
-        spaceBeforeLink.addExtra(firstGameLink);
-        spaceBeforeLink.addExtra(" ");
-        spaceBeforeLink.addExtra(secondGameLink);
-        spaceBeforeLink.addExtra(" ");
-        spaceBeforeLink.addExtra(thirdGameLink);
-
-        spaceBeforeLink1.addExtra(fourthGameLink);
-
-        player.sendMessage(spaceBeforeLink);
-        player.sendMessage(spaceBeforeLink1);
-        player.sendMessage(new TextComponent(" "));
     }
 
     @Override
@@ -263,9 +229,4 @@ public class ConnectHandler implements Facet, Listener, Enableable {
         packetHandlerRegistry.registerHandler(PlayerSendToServerPacket.class, playerSendToServerHandler);
         packetHandlerRegistry.registerHandler(PlayerProxyMessagePacket.class, playerProxyMessageHandler);
     }
-
-    @Override
-    public void disable() {
-    }
-
 }

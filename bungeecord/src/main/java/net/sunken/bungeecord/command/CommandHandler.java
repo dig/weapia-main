@@ -12,7 +12,7 @@ import net.sunken.common.command.impl.BaseCommandRegistry;
 import net.sunken.common.command.impl.BasicCommand;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.util.cooldown.Cooldowns;
 
 import java.lang.reflect.InvocationTargetException;

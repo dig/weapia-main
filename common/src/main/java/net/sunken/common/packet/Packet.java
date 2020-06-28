@@ -1,11 +1,15 @@
 package net.sunken.common.packet;
 
+import lombok.extern.java.Log;
+
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.logging.Level;
 
 public abstract class Packet implements Serializable {
 
-    @Nullable public byte[] toBytes() {
+    @Nullable
+    public byte[] toBytes() {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutput out = new ObjectOutputStream(bos)) {
 
@@ -18,7 +22,8 @@ public abstract class Packet implements Serializable {
         return null;
     }
 
-    @Nullable public static Packet fromBytes(byte[] bytes) {
+    @Nullable
+    public static Packet fromBytes(byte[] bytes) {
         try {
             try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
                  ObjectInput in = new ObjectInputStream(bis)) {
@@ -34,5 +39,4 @@ public abstract class Packet implements Serializable {
 
         return null;
     }
-
 }

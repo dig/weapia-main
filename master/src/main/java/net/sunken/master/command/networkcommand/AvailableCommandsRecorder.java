@@ -34,8 +34,4 @@ public class AvailableCommandsRecorder implements Facet, Enableable {
             }
         }
     }
-
-    @Override
-    public void disable() {
-    }
 }

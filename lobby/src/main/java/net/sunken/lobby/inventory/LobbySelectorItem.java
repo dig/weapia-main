@@ -17,6 +17,8 @@ import net.sunken.common.server.module.event.ServerAddedEvent;
 import net.sunken.common.server.module.event.ServerRemovedEvent;
 import net.sunken.common.server.module.event.ServerUpdatedEvent;
 import net.sunken.common.util.AsyncHelper;
+import net.sunken.common.util.Tuple;
+import net.sunken.core.PluginInform;
 import net.sunken.core.executor.BukkitSyncExecutor;
 import net.sunken.core.inventory.ItemBuilder;
 import net.sunken.core.inventory.Page;
@@ -24,6 +26,7 @@ import net.sunken.core.inventory.PageContainer;
 import net.sunken.core.inventory.element.Action;
 import net.sunken.core.inventory.element.Element;
 import net.sunken.core.inventory.element.ElementFactory;
+import net.sunken.lobby.Constants;
 import net.sunken.lobby.config.ItemConfiguration;
 import net.sunken.lobby.config.UIConfiguration;
 import org.bukkit.ChatColor;
@@ -38,8 +41,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class LobbySelectorHandler implements Facet, Enableable, Listener, SunkenListener {
+public class LobbySelectorItem implements Facet, Enableable, Listener, SunkenListener {
 
     @Inject @InjectConfig
     private UIConfiguration uiConfiguration;
@@ -51,6 +55,8 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
     private PacketUtil packetUtil;
     @Inject
     private BukkitSyncExecutor bukkitSyncExecutor;
+    @Inject
+    private PluginInform pluginInform;
 
     @Inject
     private PageContainer container;
@@ -84,12 +90,7 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
 
         container.add(lobbyMainMenu);
         container.setInitial(lobbyMainMenu);
-
         update(Server.Type.LOBBY);
-    }
-
-    @Override
-    public void disable() {
     }
 
     @EventHandler
@@ -101,7 +102,6 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
             container.launchFor(observer);
             return context;
         }).getItem();
-
         player.getInventory().setItem(5, lobbySelector);
     }
 
@@ -122,28 +122,25 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
         if (event.getServer().getType() == Server.Type.LOBBY) {
             lobbyMainMenu.getElements().values().stream()
                     .filter(element -> element.getItem().getType() == Material.GRAY_BED)
-                    .filter(element -> new NBTItem(element.getItem()).hasKey("serverId"))
-                    .forEach(element -> {
-                        ItemStack item = element.getItem();
+                    .map(element -> new Tuple<>(element, new NBTItem(element.getItem())))
+                    .filter(itemTuple -> itemTuple.getY().hasKey("serverId"))
+                    .forEach(itemTuple -> {
+                        ItemStack item = itemTuple.getX().getItem();
+                        String serverId = itemTuple.getY().getString("serverId");
 
-                        NBTItem nbtItem = new NBTItem(item);
-                        String serverId = nbtItem.getString("serverId");
-                        Optional<Server> serverOptional = serverManager.findServerById(serverId);
+                        serverManager.findServerById(serverId)
+                                .ifPresent(server -> {
+                                    String metadataId = (server.getMetadata().containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? server.getMetadata().get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending");
+                                    List<String> lore = uiConfiguration.getLobbySelectorTemplate().getLore().stream()
+                                            .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.format("%,d", server.getPlayers()))))
+                                            .collect(Collectors.toList());
 
-                        if (serverOptional.isPresent()) {
-                            Server server = serverOptional.get();
-                            String metadataId = (server.getMetadata().containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? server.getMetadata().get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending");
+                                    ItemMeta itemMeta = item.getItemMeta();
+                                    itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', uiConfiguration.getLobbySelectorTemplate().getDisplayName().replaceAll("%num", metadataId)));
+                                    itemMeta.setLore(lore);
 
-                            List<String> lore = new ArrayList<>();
-                            for (String line : uiConfiguration.getLobbySelectorTemplate().getLore())
-                                lore.add(ChatColor.translateAlternateColorCodes('&', line.replaceAll("%players", String.valueOf(server.getPlayers()))));
-
-                            ItemMeta itemMeta = item.getItemMeta();
-                            itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', uiConfiguration.getLobbySelectorTemplate().getDisplayName().replaceAll("%num", metadataId)));
-                            itemMeta.setLore(lore);
-
-                            item.setItemMeta(itemMeta);
-                        }
+                                    item.setItemMeta(itemMeta);
+                                });
                     });
 
             bukkitSyncExecutor.execute(() -> lobbyMainMenu.updateInventory());
@@ -154,9 +151,9 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
         ItemConfiguration lobbySelectorTemplate = uiConfiguration.getLobbySelectorTemplate();
         String metadataId = (server.getMetadata().containsKey(ServerHelper.SERVER_METADATA_ID_KEY) ? server.getMetadata().get(ServerHelper.SERVER_METADATA_ID_KEY) : "Pending");
 
-        List<String> lore = new ArrayList<>();
-        for (String line : lobbySelectorTemplate.getLore())
-            lore.add(ChatColor.translateAlternateColorCodes('&', line.replaceAll("%players", String.valueOf(server.getPlayers()))));
+        List<String> lore = lobbySelectorTemplate.getLore().stream()
+                .map(s -> ChatColor.translateAlternateColorCodes('&', s.replaceAll("%players", String.format("%,d", server.getPlayers()))))
+                .collect(Collectors.toList());
 
         ItemBuilder serverItemBuilder = new ItemBuilder(lobbySelectorTemplate.getMaterial())
                 .name(ChatColor.translateAlternateColorCodes('&', lobbySelectorTemplate.getDisplayName().replaceAll("%num", metadataId)))
@@ -180,14 +177,17 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
             for (Server server : serverManager.findAll(Server.Type.LOBBY, Game.NONE)) {
                 lobbyMainMenu.getElements().put((y > 6 ? 21 : 19) + y, elementFactory.createActionableElement(createLobbyItem(server), context -> {
                     Player observer = context.getObserver();
-
                     NBTItem nbtItem = new NBTItem(context.getItem());
                     String serverId = nbtItem.getString("serverId");
 
-                    Optional<Server> serverOptional = serverManager.findServerById(serverId);
-                    if (serverOptional.isPresent()) {
-                        AsyncHelper.executor().submit(() -> packetUtil.send(new PlayerSendToServerPacket(observer.getUniqueId(), serverOptional.get().toServerDetail())));
-                        observer.closeInventory();
+                    if (!pluginInform.getServer().getId().equals(serverId)) {
+                        serverManager.findServerById(serverId)
+                                .ifPresent(srv -> {
+                                    AsyncHelper.executor().execute(() -> packetUtil.send(new PlayerSendToServerPacket(observer.getUniqueId(), srv.toServerDetail())));
+                                    observer.closeInventory();
+                                });
+                    } else {
+                        observer.sendMessage(Constants.LOBBY_ITEM_ALREADY_CONNECTED);
                     }
 
                     return context;
@@ -199,5 +199,4 @@ public class LobbySelectorHandler implements Facet, Enableable, Listener, Sunken
             bukkitSyncExecutor.execute(() -> lobbyMainMenu.updateInventory());
         }
     }
-
 }

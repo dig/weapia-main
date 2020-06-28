@@ -7,8 +7,7 @@ public class MasterBootModule extends AbstractModule {
 
     @Override
     public void configure() {
-        final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(MasterBootNotifier.class);
+        final FacetBinder facetBinder = new FacetBinder(binder());
+        facetBinder.addBinding(MasterBootNotifier.class);
     }
-
 }

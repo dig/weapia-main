@@ -3,15 +3,12 @@ package net.sunken.common.packet;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import net.sunken.common.database.RedisConnection;
-import net.sunken.common.util.AsyncHelper;
 import redis.clients.jedis.Jedis;
-
-import java.util.function.Predicate;
 
 public class PacketUtil {
 
-    private String packetChannel;
-    private RedisConnection redisConnection;
+    private final String packetChannel;
+    private final RedisConnection redisConnection;
 
     @Inject
     public PacketUtil(
@@ -29,5 +26,4 @@ public class PacketUtil {
             jedis.close();
         }
     }
-
 }

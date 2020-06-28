@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import lombok.Getter;
 import lombok.extern.java.Log;
@@ -13,7 +12,8 @@ import net.sunken.common.database.MongoConnection;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
+import net.sunken.common.player.packet.PlayerProxyMessagePacket;
 import net.sunken.common.server.packet.ServerConnectedPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.common.util.Tuple;
@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -62,12 +63,12 @@ public class ConnectHandler implements Facet, Listener {
         Player player = event.getPlayer();
         event.setJoinMessage("");
 
-        AbstractPlayer abstractPlayer = pendingConnection.getIfPresent(player.getUniqueId());
-        if (abstractPlayer != null) {
-            playerManager.add(abstractPlayer);
+        CorePlayer corePlayer = (CorePlayer) pendingConnection.getIfPresent(player.getUniqueId());
+        if (corePlayer != null) {
+            playerManager.add(corePlayer);
             pendingConnection.invalidate(player.getUniqueId());
 
-            abstractPlayer.setup();
+            corePlayer.setup(player);
             AsyncHelper.executor().submit(() -> packetUtil.send(new ServerConnectedPacket(player.getUniqueId(), pluginInform.getServer().getId())));
         } else {
             player.kickPlayer(Constants.FAILED_LOAD_DATA);
@@ -85,7 +86,8 @@ public class ConnectHandler implements Facet, Listener {
             if (document != null) {
                 loadState = abstractPlayer.fromDocument(document);
             }
-        } catch (MongoException e) {
+        } catch (Exception e) {
+            log.log(Level.SEVERE, String.format("Failed to load player (%s)", abstractPlayer.getUuid()), e);
             loadState = false;
         }
 
@@ -93,6 +95,7 @@ public class ConnectHandler implements Facet, Listener {
             pendingConnection.put(abstractPlayer.getUuid(), abstractPlayer);
             event.allow();
         } else {
+            packetUtil.send(new PlayerProxyMessagePacket(event.getUniqueId(), Constants.FAILED_LOAD_DATA));
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Constants.FAILED_LOAD_DATA);
         }
     }

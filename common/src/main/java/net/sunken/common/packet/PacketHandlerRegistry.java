@@ -26,5 +26,4 @@ public final class PacketHandlerRegistry implements Facet {
         packetHandlers.add(handler);
         handlers.put(packetClass, packetHandlers);
     }
-
 }

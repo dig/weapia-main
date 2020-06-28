@@ -31,5 +31,4 @@ public class RedisConnection extends Database<Jedis> {
     public void disconnect() {
         jedisPool.destroy();
     }
-
 }

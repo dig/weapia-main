@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import lombok.extern.java.Log;
 import net.sunken.common.packet.PacketHandler;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.player.packet.PlayerSendToServerPacket;
 
 import java.util.Optional;

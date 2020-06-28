@@ -24,7 +24,7 @@ public class DiscordCommand extends BungeeCommand {
         ).forEach(message -> commandSender.sendMessage(TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message))));
 
         TextComponent clickableLink = new TextComponent(TextComponent.fromLegacyText(ChatColor.GOLD + "" + ChatColor.BOLD + " Click " + ChatColor.WHITE + "to open"));
-        clickableLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.com"));
+        clickableLink.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.weapia.com"));
         commandSender.sendMessage(clickableLink);
 
         commandSender.sendMessage(new TextComponent(" "));

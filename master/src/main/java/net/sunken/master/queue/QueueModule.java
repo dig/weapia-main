@@ -1,14 +1,13 @@
 package net.sunken.master.queue;
 
 import com.google.inject.AbstractModule;
-import net.sunken.common.inject.PluginFacetBinder;
+import net.sunken.common.inject.FacetBinder;
 
 public class QueueModule extends AbstractModule {
 
     @Override
     public void configure() {
-        final PluginFacetBinder pluginFacetBinder = new PluginFacetBinder(binder());
-        pluginFacetBinder.addBinding(QueueManager.class);
+        final FacetBinder facetBinder = new FacetBinder(binder());
+        facetBinder.addBinding(QueueManager.class);
     }
-
 }

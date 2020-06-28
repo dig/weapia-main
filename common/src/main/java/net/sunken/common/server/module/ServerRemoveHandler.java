@@ -21,11 +21,7 @@ public class ServerRemoveHandler extends PacketHandler<ServerRemovePacket> {
     @Override
     public void onReceive(ServerRemovePacket packet) {
         serverManager.remove(packet.getId(), true);
-
-        Optional<Server> serverOptional = serverManager.findServerById(packet.getId());
-        if (serverOptional.isPresent()) {
-            eventManager.callEvent(new ServerRemovedEvent(serverOptional.get()));
-        }
+        serverManager.findServerById(packet.getId())
+                .ifPresent(server -> eventManager.callEvent(new ServerRemovedEvent(server)));
     }
-
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MessageInteraction implements NPCInteraction {
 
-    private List<String> message;
+    private final List<String> message;
 
     @Override
     public void onInteract(Player player, PacketPlayInUseEntity.EnumEntityUseAction enumEntityUseAction, EnumHand enumHand) {
@@ -20,5 +20,4 @@ public class MessageInteraction implements NPCInteraction {
             message.forEach(message -> player.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
         }
     }
-
 }

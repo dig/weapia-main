@@ -70,5 +70,4 @@ public abstract class BaseCommandRegistry {
 
         return Optional.empty();
     }
-
 }

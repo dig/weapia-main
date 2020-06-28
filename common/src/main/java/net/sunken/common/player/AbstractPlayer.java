@@ -1,12 +1,17 @@
 package net.sunken.common.player;
 
-import lombok.Data;
-import lombok.ToString;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.UpdateOptions;
+import lombok.*;
 import net.sunken.common.database.DatabaseHelper;
+import net.sunken.common.database.MongoConnection;
 import net.sunken.common.database.MongoSerializable;
+import net.sunken.common.util.MongoUtil;
 import org.bson.Document;
 
 import java.util.UUID;
+
+import static com.mongodb.client.model.Filters.eq;
 
 @Data
 @ToString
@@ -28,10 +33,15 @@ public abstract class AbstractPlayer implements MongoSerializable {
         this.lastLoginMillis = System.currentTimeMillis();
     }
 
+    public void save(@NonNull MongoConnection mongoConnection) {
+        MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
+        collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, uuid.toString()),
+                new Document("$set", toDocument()), new UpdateOptions().upsert(true));
+    }
+
     public boolean fromDocument(Document document) {
-        rank = Rank.valueOf(document.getString(DatabaseHelper.PLAYER_RANK_KEY));
+        rank = (Rank) MongoUtil.getEnumOrDefault(document, Rank.class, DatabaseHelper.PLAYER_RANK_KEY, Rank.PLAYER);
         firstLoginMillis = document.getLong(DatabaseHelper.PLAYER_FIRSTLOGIN_KEY);
-        lastLoginMillis = document.getLong(DatabaseHelper.PLAYER_LASTLOGIN_KEY);
         return true;
     }
 
@@ -45,18 +55,7 @@ public abstract class AbstractPlayer implements MongoSerializable {
         return document;
     }
 
-    /**
-     * Called on successful join.
-     */
-    public abstract void setup();
-
-    /**
-     * Called on successful leave.
-     */
-    public abstract void destroy();
-
     public PlayerDetail toPlayerDetail() {
         return new PlayerDetail(uuid, username, rank);
     }
-
 }

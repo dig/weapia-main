@@ -14,10 +14,7 @@ import net.sunken.master.party.Party;
 import net.sunken.master.party.PartyManager;
 import net.sunken.master.queue.QueueDetail;
 
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Log
 public abstract class AbstractBalancer {
@@ -63,6 +60,7 @@ public abstract class AbstractBalancer {
     public void run() {
         while (!queue.isEmpty()) {
             QueueDetail queueDetail = queue.peek();
+            log.info(String.format("AbstractBalancer peak() %s", queueDetail.toString()));
             if (handle(queueDetail.getUuid(), serverManager.findAllAvailable(queueDetail.getType(), queueDetail.getGame()))) {
                 queue.poll();
             } else {
@@ -90,12 +88,7 @@ public abstract class AbstractBalancer {
         if (totalAmountOfSlotsAvailable < amountOfQueuedPlayers) {
             long amountOfInstancesNeeded = (long) Math.ceil(((double) amountOfQueuedPlayers - (double) totalAmountOfSlotsAvailable) / (double) game.getMaxPlayers());
             int created = instanceManager.create(type, game, (int) amountOfInstancesNeeded);
-
-            log.info(String.format("Starting instances. (%s, %s, %s, %s)", type.toString(), game.toString(), amountOfInstancesNeeded, created));
-            log.info(String.format("totalAmountOfSlotsAvailable = %s", totalAmountOfSlotsAvailable));
-            log.info(String.format("availableInstanceSlots = %s", availableInstanceSlots));
-            log.info(String.format("pendingInstancesCount = %s (%s slots)", pendingInstancesCount, pendingInstancesCount * game.getMaxPlayers()));
-            log.info(String.format("amountOfQueuedPlayers = %s", amountOfQueuedPlayers));
+            log.info(String.format("Created %d of %s %s", created, type.toString(), game.toString()));
         }
     }
 
@@ -121,15 +114,14 @@ public abstract class AbstractBalancer {
             if (partyOptional.isPresent()) {
                 Party party = partyOptional.get();
                 party.getMembers().forEach(playerDetail -> packetUtil.send(new PlayerSendToServerPacket(playerDetail.getUuid(), serverDetail)));
+                log.info(String.format("Sending party %s to %s.", uuid, serverDetail));
             } else {
                 packetUtil.send(new PlayerSendToServerPacket(uuid, serverDetail));
+                log.info(String.format("Sending %s to %s.", uuid, serverDetail));
             }
-
-            log.info(String.format("Sending player to instance. (%s, %s)", uuid, server.getId()));
             return true;
         }
 
         return false;
     }
-
 }

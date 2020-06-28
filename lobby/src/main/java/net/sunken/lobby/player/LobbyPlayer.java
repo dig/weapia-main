@@ -1,8 +1,10 @@
 package net.sunken.lobby.player;
 
+import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.sunken.common.player.Rank;
 import net.sunken.common.server.module.ServerManager;
+import net.sunken.common.util.Symbol;
 import net.sunken.core.PluginInform;
 import net.sunken.core.player.CorePlayer;
 import net.sunken.core.scoreboard.CustomScoreboard;
@@ -10,52 +12,35 @@ import net.sunken.core.scoreboard.ScoreboardRegistry;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Log
 public class LobbyPlayer extends CorePlayer {
 
     private ServerManager serverManager;
-    private PluginInform pluginInform;
 
     public LobbyPlayer(UUID uuid, String username, ServerManager serverManager, PluginInform pluginInform, ScoreboardRegistry scoreboardRegistry) {
-        super(uuid, username, scoreboardRegistry);
+        super(uuid, username, scoreboardRegistry, pluginInform);
         this.serverManager = serverManager;
-        this.pluginInform = pluginInform;
     }
 
     @Override
-    public void setup() {
-        super.setup();
-
-        Optional<? extends Player> playerOptional = toPlayer();
-        if (playerOptional.isPresent()) {
-            Player player = playerOptional.get();
-            player.getInventory().clear();
-
-            CustomScoreboard customScoreboard = new CustomScoreboard(ChatColor.AQUA + "" + ChatColor.BOLD + "WEAPIA");
-            customScoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
-
-            customScoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
-            customScoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
-            customScoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
-
-            customScoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
-            customScoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + serverManager.getTotalPlayersOnline(), 3);
-
-            customScoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
-            customScoreboard.createEntry("ServerID", ChatColor.GRAY + pluginInform.getServer().getId(), 1);
-            customScoreboard.createEntry("URL", ChatColor.LIGHT_PURPLE + "play.weapia.com", 0);
-
-            customScoreboard.add(player);
-            scoreboardRegistry.register(player.getUniqueId().toString(), customScoreboard);
-        }
+    public void setup(@NonNull Player player) {
+        super.setup(player);
+        player.getInventory().clear();
     }
 
     @Override
-    public void destroy() {
-        scoreboardRegistry.unregister(this.uuid.toString());
-    }
+    protected boolean setupScoreboard(@NonNull CustomScoreboard scoreboard) {
+        scoreboard.createEntry("Spacer1", ChatColor.WHITE + " ", 11);
 
+        scoreboard.createEntry("RankTitle", ChatColor.WHITE + "Rank", 10);
+        scoreboard.createEntry("RankValue", rank == Rank.PLAYER ? ChatColor.RED + "No Rank" : ChatColor.valueOf(rank.getColour()) + "" + rank.getFriendlyName(), 9);
+        scoreboard.createEntry("Spacer2", ChatColor.BLACK + " ", 8);
+
+        scoreboard.createEntry("PlayersTitle", ChatColor.WHITE + "Players", 4);
+        scoreboard.createEntry("PlayersValue", ChatColor.YELLOW + "" + String.format("%,d", serverManager.getTotalPlayersOnline()), 3);
+        scoreboard.createEntry("Spacer4", ChatColor.YELLOW + " ", 2);
+        return true;
+    }
 }

@@ -13,7 +13,7 @@ import net.sunken.bungeecord.player.BungeePlayer;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 
 import java.util.Optional;
 

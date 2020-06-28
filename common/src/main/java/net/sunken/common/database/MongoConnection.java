@@ -7,12 +7,11 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import lombok.NonNull;
 import net.sunken.common.config.InjectConfig;
 import net.sunken.common.database.config.MongoConfiguration;
 import org.bson.Document;
-
-import java.util.Arrays;
 
 @Singleton
 public class MongoConnection extends Database<MongoClient> {
@@ -22,14 +21,16 @@ public class MongoConnection extends Database<MongoClient> {
     @Inject
     public MongoConnection(@InjectConfig MongoConfiguration mongoConfiguration) {
         MongoCredential credential = MongoCredential.createCredential(mongoConfiguration.getUsername(), mongoConfiguration.getUserDatabase(), mongoConfiguration.getPassword().toCharArray());
-        MongoClientOptions options = MongoClientOptions.builder()
-                .build();
-
+        MongoClientOptions options = MongoClientOptions.builder().build();
         mongoClient = new MongoClient(new ServerAddress(mongoConfiguration.getHost(), mongoConfiguration.getPort()), credential, options);
     }
 
+    public MongoDatabase getDatabase(@NonNull String database) {
+        return mongoClient.getDatabase(database);
+    }
+
     public MongoCollection<Document> getCollection(@NonNull String database, @NonNull String collection) {
-        return mongoClient.getDatabase(DatabaseHelper.DATABASE_MAIN).getCollection(DatabaseHelper.COLLECTION_PLAYER);
+        return getDatabase(database).getCollection(collection);
     }
 
     @Override
@@ -41,5 +42,4 @@ public class MongoConnection extends Database<MongoClient> {
     public void disconnect() {
         mongoClient.close();
     }
-
 }

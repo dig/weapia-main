@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
 
 @Log
 @PreInit
@@ -84,7 +85,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
                 Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.invoke(commandMap);
                 cmds.remove(name);
             } catch (IllegalAccessException | IllegalArgumentException | SecurityException | NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
+                log.log(Level.SEVERE, "Unable to modify getKnownCommands", e);
             }
         } else {
             log.severe("Unable to find commandMap via reflection.");
@@ -104,7 +105,7 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
                 Map<String, org.bukkit.command.Command> cmds = (Map<String, org.bukkit.command.Command>) knownCommands.invoke(commandMap);
                 cmds.keySet().removeIf(label -> !Constants.WHITELISTED_DEFAULT_COMMANDS.contains(label));
             } catch (IllegalAccessException | IllegalArgumentException | SecurityException | NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
+                log.log(Level.SEVERE, "Unable to modify getKnownCommands", e);
             }
         } else {
             log.severe("Unable to find commandMap via reflection.");
@@ -115,9 +116,4 @@ public class CommandRegistry extends BaseCommandRegistry implements Facet, Enabl
     public void enable() {
         unregisterAllCommands();
     }
-
-    @Override
-    public void disable() {
-    }
-
 }

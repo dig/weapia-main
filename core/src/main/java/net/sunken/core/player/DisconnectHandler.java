@@ -1,26 +1,21 @@
 package net.sunken.core.player;
 
 import com.google.inject.Inject;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.UpdateOptions;
 import lombok.extern.java.Log;
-import net.sunken.common.database.DatabaseHelper;
 import net.sunken.common.database.MongoConnection;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketUtil;
-import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.server.packet.ServerDisconnectedPacket;
 import net.sunken.common.util.AsyncHelper;
 import net.sunken.core.PluginInform;
-import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Optional;
+import java.util.logging.Level;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -42,25 +37,22 @@ public class DisconnectHandler implements Facet, Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         event.setQuitMessage("");
+        playerManager.get(player.getUniqueId())
+                .map(CorePlayer.class::cast)
+                .ifPresent(corePlayer -> {
+                    corePlayer.destroy(player);
+                    connectHandler.getPendingConnection().invalidate(corePlayer.getUuid());
+                    playerManager.remove(player.getUniqueId());
 
-        Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(player.getUniqueId());
-        if (abstractPlayerOptional.isPresent()) {
-            AbstractPlayer abstractPlayer = abstractPlayerOptional.get();
-            abstractPlayer.destroy();
-
-            connectHandler.getPendingConnection().invalidate(abstractPlayer.getUuid());
-            playerManager.remove(player.getUniqueId());
-
-            AsyncHelper.executor().submit(() -> {
-                packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
-
-                MongoCollection<Document> collection = mongoConnection.getCollection(DatabaseHelper.DATABASE_MAIN, DatabaseHelper.COLLECTION_PLAYER);
-                collection.updateOne(eq(DatabaseHelper.PLAYER_UUID_KEY, abstractPlayer.getUuid().toString()),
-                        new Document("$set", abstractPlayer.toDocument()), new UpdateOptions().upsert(true));
-            });
-        } else {
-            log.severe(String.format("onPlayerQuit: Attempted to quit with no data loaded? (%s)", player.getUniqueId().toString()));
-        }
+                    AsyncHelper.executor().execute(() -> {
+                        try {
+                            corePlayer.save(mongoConnection, player);
+                        } catch (Exception e) {
+                            log.log(Level.SEVERE, "Failed to save player data.", e);
+                        }
+                        packetUtil.send(new ServerDisconnectedPacket(player.getUniqueId(), pluginInform.getServer().getId()));
+                    });
+                });
     }
 
 }

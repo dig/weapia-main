@@ -30,10 +30,10 @@ public class PlayerRequestServerPacket extends Packet {
         this.uuid = uuid;
         this.type = type;
         this.game = game;
+        this.save = save;
     }
 
     public PlayerRequestServerPacket(@NonNull UUID uuid, @NonNull Server.Type type, boolean save) {
         this(uuid, type, Game.NONE, save);
     }
-
 }

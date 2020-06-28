@@ -41,9 +41,4 @@ public class PartyManager implements Facet, Enableable {
         packetHandlerRegistry.registerHandler(PartySetLeaderResponsePacket.class, partySetLeaderResponseHandler);
         packetHandlerRegistry.registerHandler(PartyKickResponsePacket.class, partyKickResponseHandler);
     }
-
-    @Override
-    public void disable() {
-    }
-
 }

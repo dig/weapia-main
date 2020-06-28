@@ -1,6 +1,7 @@
 package net.sunken.core.hologram;
 
 import lombok.Getter;
+import net.sunken.core.Constants;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 public class Hologram {
 
-    private static double OFFSET_Y = 0.28;
+    private static final double OFFSET_Y = 0.28;
 
     @Getter
     private Location location;
@@ -31,13 +32,11 @@ public class Hologram {
         this.lines = lines;
         this.plugin = plugin;
         this.livingEntities = new ArrayList<>();
-
         this.setup();
     }
 
     private void setup() {
         double y = 0;
-
         for (String line : lines) {
             ArmorStand entity = (ArmorStand) this.location.getWorld().spawnEntity(location.clone().add(0, y, 0), EntityType.ARMOR_STAND);
             entity.setVisible(false);
@@ -45,9 +44,9 @@ public class Hologram {
             entity.setSmall(true);
             entity.setBasePlate(true);
             entity.setGravity(false);
+            entity.setInvulnerable(true);
             entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
-            entity.setMetadata("hologram", new FixedMetadataValue(plugin, true));
-
+            entity.setMetadata(Constants.HOLOGRAM_METADATA_KEY, new FixedMetadataValue(plugin, true));
             livingEntities.add(entity.getUniqueId());
 
             y -= OFFSET_Y;
@@ -57,7 +56,11 @@ public class Hologram {
     public void update(int index, String line) {
         if (index >= 0 && index < lines.size()) {
             lines.set(index, line);
-            Bukkit.getEntity(livingEntities.get(index)).setCustomName(ChatColor.translateAlternateColorCodes('&', line));
+
+            Entity entity = Bukkit.getEntity(livingEntities.get(index));
+            if (entity != null) {
+                entity.setCustomName(ChatColor.translateAlternateColorCodes('&', line));
+            }
         }
     }
 
@@ -75,7 +78,6 @@ public class Hologram {
             Entity entity = Bukkit.getEntity(uuid);
             entity.remove();
         }
-
         livingEntities.clear();
     }
 
@@ -83,5 +85,4 @@ public class Hologram {
         remove();
         setup();
     }
-
 }

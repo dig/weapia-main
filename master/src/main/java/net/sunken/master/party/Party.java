@@ -41,5 +41,4 @@ public class Party {
 
         return result;
     }
-
 }

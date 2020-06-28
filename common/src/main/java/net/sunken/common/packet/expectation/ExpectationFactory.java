@@ -4,18 +4,13 @@ import com.google.inject.Inject;
 import lombok.NonNull;
 import net.sunken.common.event.EventManager;
 import net.sunken.common.packet.Packet;
-import net.sunken.common.packet.PacketHandlerRegistry;
 
 import java.util.function.Predicate;
 
 public class ExpectationFactory {
 
-    private final EventManager eventManager;
-
     @Inject
-    public ExpectationFactory(EventManager eventManager) {
-        this.eventManager = eventManager;
-    }
+    private EventManager eventManager;
 
     public boolean waitFor(@NonNull Predicate<Packet> condition, int iterationsBeforeTimeout, int wait) {
         final Expectation expectation = new Expectation(condition);
@@ -40,5 +35,4 @@ public class ExpectationFactory {
         eventManager.unregister(expectation);
         return true;
     }
-
 }

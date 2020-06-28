@@ -42,10 +42,6 @@ public class HeartbeatManager implements Facet, Enableable {
         AsyncHelper.scheduledExecutor().scheduleAtFixedRate(heartbeatRunnable, 1L, 1L, TimeUnit.MINUTES);
     }
 
-    @Override
-    public void disable() {
-    }
-
     public void responded(String serverId) {
         heartbeatServerAttempt.remove(serverId);
     }

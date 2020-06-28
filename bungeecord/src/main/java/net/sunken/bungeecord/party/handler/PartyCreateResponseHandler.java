@@ -8,7 +8,7 @@ import net.sunken.bungeecord.player.BungeePlayer;
 import net.sunken.common.packet.PacketHandler;
 import net.sunken.common.party.packet.PartyCreateResponsePacket;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 
 import java.util.Optional;
 

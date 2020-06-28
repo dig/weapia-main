@@ -18,10 +18,10 @@ public class MasterModule extends AbstractModule {
 
     @Override
     public void configure() {
+        install(new ConfigModule(new File("config/common.conf"), KubeConfiguration.class));
+
         install(new CommonModule());
         install(new NetworkModule());
-
-        install(new ConfigModule(new File("config/common.conf"), KubeConfiguration.class));
 
         install(new InstanceModule());
         install(new QueueModule());
@@ -31,5 +31,4 @@ public class MasterModule extends AbstractModule {
         install(new MasterBootModule());
         install(new CommandModule());
     }
-
 }

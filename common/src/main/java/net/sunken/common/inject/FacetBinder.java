@@ -3,11 +3,11 @@ package net.sunken.common.inject;
 import com.google.inject.*;
 import com.google.inject.multibindings.*;
 
-public class PluginFacetBinder {
+public class FacetBinder {
 
     private final Multibinder<Facet> multibinder;
 
-    public PluginFacetBinder(Binder binder) {
+    public FacetBinder(Binder binder) {
         this.multibinder = Multibinder.newSetBinder(binder, Facet.class);
     }
 

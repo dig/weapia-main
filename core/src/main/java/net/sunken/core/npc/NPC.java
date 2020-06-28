@@ -20,7 +20,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-@Log
 public class NPC extends EntityPlayer {
 
     @Getter
@@ -46,25 +45,21 @@ public class NPC extends EntityPlayer {
     public NPC(@NonNull List<String> displayName, @NonNull Location location, @NonNull String texture, @NonNull String signature, @NonNull BukkitSyncExecutor bukkitSyncExecutor, HologramFactory hologramFactory) {
         this(displayName.get(displayName.size() - 1), location, texture, signature, bukkitSyncExecutor);
         displayName.remove(displayName.size() - 1);
-
         this.hologram = hologramFactory.createHologram(location.clone().add(0, 0.82 + (displayName.size() * 0.28), 0), displayName);
     }
 
     private void setup() {
         getBukkitEntity().setGameMode(GameMode.CREATIVE);
         getBukkitEntity().setRemoveWhenFarAway(false);
-
         getDataWatcher().set(new DataWatcherObject<>(16, DataWatcherRegistry.a), (byte) 127);
     }
 
     public void show(@NonNull Player player) {
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-
         connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, this));
         connection.sendPacket(new PacketPlayOutNamedEntitySpawn(this));
         connection.sendPacket(new PacketPlayOutEntityHeadRotation(this, (byte) ((this.yaw * 256.0F) / 360.0F)));
         connection.sendPacket(new PacketPlayOutEntityMetadata(getId(), getDataWatcher(), true));
-
         bukkitSyncExecutor.execute(() -> connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, this)), 6 * 20L);
     }
 
@@ -77,5 +72,10 @@ public class NPC extends EntityPlayer {
         getBukkitEntity().remove();
         if (hologram != null) hologram.remove();
     }
+
+    @Override
+    public void playerTick() {}
+    @Override
+    public void die(DamageSource damagesource) {}
 
 }

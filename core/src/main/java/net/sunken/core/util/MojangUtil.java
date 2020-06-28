@@ -30,5 +30,4 @@ public class MojangUtil {
 
         return new String[] {texture, signature};
     }
-
 }

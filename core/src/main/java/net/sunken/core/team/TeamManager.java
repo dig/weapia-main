@@ -6,7 +6,7 @@ import lombok.*;
 import lombok.extern.java.*;
 import net.sunken.common.config.*;
 import net.sunken.common.inject.*;
-import net.sunken.common.player.module.*;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.core.engine.state.impl.BaseTeamState;
 import net.sunken.core.team.allocate.*;
 import net.sunken.core.team.config.*;
@@ -21,7 +21,7 @@ import java.util.stream.*;
 
 @Log
 @Singleton
-public class TeamManager implements Facet, Enableable, Listener {
+public class TeamManager implements Facet, Listener {
 
     @Inject @InjectConfig
     private TeamConfiguration teamConfiguration;
@@ -32,19 +32,9 @@ public class TeamManager implements Facet, Enableable, Listener {
     private PlayerManager playerManager;
 
     @Setter
-    private AllocationStrategy allocationStrategy;
+    private AllocationStrategy allocationStrategy = new GreedyAllocationStrategy();
     @Getter
     private Set<Team> teamsList = Sets.newHashSet();
-
-    @Override
-    public void enable() {
-        allocationStrategy = new GreedyAllocationStrategy();
-    }
-
-    @Override
-    public void disable() {
-        teamsList.clear();
-    }
 
     public void allocateTeams() {
         if (allocationStrategy != null && teamConfigMapper != null) {
@@ -80,12 +70,7 @@ public class TeamManager implements Facet, Enableable, Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        Optional<Team> teamOptional = getByMemberUUID(player.getUniqueId());
-
-        if (teamOptional.isPresent()) {
-            Team team = teamOptional.get();
-            team.removeMember(player.getUniqueId());
-        }
+        getByMemberUUID(player.getUniqueId())
+                .ifPresent(team -> team.removeMember(player.getUniqueId()));
     }
-
 }

@@ -8,25 +8,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Set;
+import java.util.logging.Level;
 
 @Log
 @Singleton
 public class EventManager {
 
-    private Set<SunkenListener> allListeners;
-
-    public EventManager() {
-        allListeners = Sets.newLinkedHashSet();
-    }
+    private final Set<SunkenListener> listeners = Sets.newLinkedHashSet();
 
     public <T extends SunkenListener> void register(T listener) {
-        allListeners.add(listener);
+        listeners.add(listener);
     }
 
-    public <T extends SunkenListener> void unregister(T listener) { allListeners.remove(listener); }
+    public <T extends SunkenListener> void unregister(T listener) {
+        listeners.remove(listener);
+    }
 
     public <T extends SunkenEvent> void callEvent(T event) {
-        for (SunkenListener listener : allListeners) {
+        for (SunkenListener listener : listeners) {
             Class<? extends SunkenListener> clazz = listener.getClass();
             Method[] declaredMethods = clazz.getDeclaredMethods();
 
@@ -40,7 +39,7 @@ public class EventManager {
                                 try {
                                     method.invoke(listener, event);
                                 } catch (IllegalAccessException | InvocationTargetException e) {
-                                    e.printStackTrace();
+                                    log.log(Level.SEVERE, "Error while invoking event method", e);
                                 }
                             }
                         }

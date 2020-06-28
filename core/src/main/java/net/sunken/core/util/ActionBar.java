@@ -21,5 +21,4 @@ public class ActionBar {
         PacketPlayOutChat packetPlayOutChat = new PacketPlayOutChat(chatBaseComponent, ChatMessageType.GAME_INFO);
         player.getHandle().playerConnection.sendPacket(packetPlayOutChat);
     }
-
 }

@@ -30,7 +30,7 @@ public class ScoreboardRegistry {
                 registerCustomName(scoreboard, name, customNameDetail);
             }
         } else {
-            log.warning(String.format("ScoreboardRegistry: Trying to register scoreboard when one is already registered. (%)", key));
+            log.warning(String.format("ScoreboardRegistry: Trying to register scoreboard when one is already registered. (%s)", key));
         }
     }
 
@@ -75,5 +75,4 @@ public class ScoreboardRegistry {
 
         team.addEntry(playerName);
     }
-
 }

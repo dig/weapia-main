@@ -26,5 +26,4 @@ public class PlayerDetail implements Serializable, RedisSerializable {
                 .put(NetworkHelper.NETWORK_PLAYER_RANK_KEY, rank.toString());
         return builder.build();
     }
-
 }

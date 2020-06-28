@@ -25,6 +25,7 @@ public class LobbyBalancer extends AbstractBalancer {
     @Override
     public boolean add(@NonNull QueueDetail queueDetail) {
         queue.add(queueDetail);
+        log.info("Adding to lobby queue " + queueDetail.getUuid().toString());
         return true;
     }
 
@@ -38,13 +39,12 @@ public class LobbyBalancer extends AbstractBalancer {
         if (serverOptional.isPresent()) {
             Server server = serverOptional.get();
             ServerDetail serverDetail = server.toServerDetail();
-
             packetUtil.send(new PlayerSendToServerPacket(uuid, serverDetail));
-            log.info(String.format("Sending player to lobby. (%s, %s)", uuid, server.getId()));
+            log.info(String.format("Sending %s to %s.", uuid, serverDetail));
+
             return true;
         }
 
         return false;
     }
-
 }

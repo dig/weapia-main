@@ -5,7 +5,6 @@ import lombok.*;
 import net.sunken.common.database.RedisSerializable;
 
 import java.net.InetSocketAddress;
-import java.security.SecureRandom;
 import java.util.Map;
 
 @Builder
@@ -108,5 +107,4 @@ public class Server implements RedisSerializable {
         OPEN,
         CLOSED
     }
-
 }

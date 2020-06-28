@@ -6,7 +6,6 @@ import net.sunken.common.network.NetworkManager;
 import net.sunken.common.network.packet.NetworkJoinPacket;
 import net.sunken.common.packet.PacketHandler;
 
-@Log
 public class NetworkJoinHandler extends PacketHandler<NetworkJoinPacket> {
 
     @Inject
@@ -15,7 +14,5 @@ public class NetworkJoinHandler extends PacketHandler<NetworkJoinPacket> {
     @Override
     public void onReceive(NetworkJoinPacket packet) {
         networkManager.add(packet.getPlayer(), true);
-        log.info(String.format("NetworkJoinPacket %s", packet.getPlayer().toString()));
     }
-
 }

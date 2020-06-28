@@ -6,7 +6,6 @@ import net.sunken.common.network.NetworkManager;
 import net.sunken.common.network.packet.NetworkQuitPacket;
 import net.sunken.common.packet.PacketHandler;
 
-@Log
 public class NetworkQuitHandler extends PacketHandler<NetworkQuitPacket> {
 
     @Inject
@@ -15,7 +14,5 @@ public class NetworkQuitHandler extends PacketHandler<NetworkQuitPacket> {
     @Override
     public void onReceive(NetworkQuitPacket packet) {
         networkManager.remove(packet.getPlayer(), true);
-        log.info(String.format("NetworkQuitPacket %s", packet.getPlayer().toString()));
     }
-
 }

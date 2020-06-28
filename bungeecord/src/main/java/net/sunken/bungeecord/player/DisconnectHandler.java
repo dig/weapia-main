@@ -13,7 +13,7 @@ import net.sunken.common.database.MongoConnection;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.network.NetworkManager;
 import net.sunken.common.player.AbstractPlayer;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.util.AsyncHelper;
 import org.bson.Document;
 

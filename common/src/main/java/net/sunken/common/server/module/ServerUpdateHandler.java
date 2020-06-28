@@ -14,6 +14,7 @@ import redis.clients.jedis.Jedis;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
 
 @Log
 public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
@@ -27,36 +28,34 @@ public class ServerUpdateHandler extends PacketHandler<ServerUpdatePacket> {
 
     @Override
     public void onReceive(ServerUpdatePacket packet) {
-        AsyncHelper.executor().submit(() -> {
-            Optional<Server> serverToUpdateOptional = serverManager.findServerById(packet.getId());
+        AsyncHelper.executor().execute(() ->
+            serverManager.findServerById(packet.getId())
+                    .ifPresent(server -> {
+                        try (Jedis jedis = redisConnection.getConnection()) {
+                            Map<String, String> kv = jedis.hgetAll(ServerHelper.SERVER_STORAGE_KEY + ":" + packet.getId());
 
-            if (serverToUpdateOptional.isPresent()) {
-                Server serverToUpdate = serverToUpdateOptional.get();
-
-                try (Jedis jedis = redisConnection.getConnection()) {
-                    Map<String, String> kv = jedis.hgetAll(ServerHelper.SERVER_STORAGE_KEY + ":" + packet.getId());
-
-                    switch (packet.getType()) {
-                        case SERVER:
-                            serverToUpdate.setPlayers(Integer.parseInt(kv.get(ServerHelper.SERVER_PLAYERS_KEY)));
-                            serverToUpdate.setMaxPlayers(Integer.parseInt(kv.get(ServerHelper.SERVER_MAXPLAYERS_KEY)));
-                            serverToUpdate.setState(Server.State.valueOf(kv.get(ServerHelper.SERVER_STATE_KEY)));
-                            break;
-                        case METADATA:
-                            for (String key : ServerHelper.SERVER_METADATA_KEYS) {
-                                if (kv.containsKey(key)) {
-                                    serverToUpdate.getMetadata().put(key, kv.get(key));
+                            try {
+                                switch (packet.getType()) {
+                                    case SERVER:
+                                        server.setPlayers(Integer.parseInt(kv.get(ServerHelper.SERVER_PLAYERS_KEY)));
+                                        server.setMaxPlayers(Integer.parseInt(kv.get(ServerHelper.SERVER_MAXPLAYERS_KEY)));
+                                        server.setState(Server.State.valueOf(kv.get(ServerHelper.SERVER_STATE_KEY)));
+                                        break;
+                                    case METADATA:
+                                        for (String key : ServerHelper.SERVER_METADATA_KEYS) {
+                                            if (kv.containsKey(key)) {
+                                                server.getMetadata().put(key, kv.get(key));
+                                            }
+                                        }
+                                        break;
                                 }
+
+                                eventManager.callEvent(new ServerUpdatedEvent(server));
+                            } catch (Exception e) {
+                                log.log(Level.SEVERE, String.format("Unable to update server %s %s", packet.getId(), kv.keySet().toString()), e);
                             }
-                            break;
-                    }
-
-                    eventManager.callEvent(new ServerUpdatedEvent(serverToUpdate));
-                }
-
-                log.info(String.format("ServerUpdatePacket (%s, %s)", packet.getId(), packet.getType().toString()));
-            }
-        });
+                        }
+                    })
+        );
     }
-
 }

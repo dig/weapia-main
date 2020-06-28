@@ -2,10 +2,9 @@ package net.sunken.core.engine.command;
 
 import com.google.inject.Inject;
 import net.sunken.common.command.Command;
-import net.sunken.common.config.InjectConfig;
 import net.sunken.common.player.AbstractPlayer;
 import net.sunken.common.player.Rank;
-import net.sunken.common.player.module.PlayerManager;
+import net.sunken.common.player.PlayerManager;
 import net.sunken.common.server.module.ServerManager;
 import net.sunken.core.command.BukkitCommand;
 import net.sunken.core.engine.EngineManager;
@@ -32,6 +31,10 @@ public class DebugCommand extends BukkitCommand {
         commandSender.sendMessage("---- PLAYER MANAGER ----");
         commandSender.sendMessage(String.format("onlinePlayers count: %s", playerManager.getOnlinePlayers().size()));
         commandSender.sendMessage(String.format("onlinePlayers: %s", playerManager.getOnlinePlayers().toString()));
+
+        commandSender.sendMessage("---- SERVER MANAGER ----");
+        commandSender.sendMessage(String.format("servers count: %s", serverManager.findAll().size()));
+        commandSender.sendMessage(String.format("servers: %s", serverManager.findAll().toString()));
         return true;
     }
 

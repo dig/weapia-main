@@ -50,10 +50,8 @@ public abstract class Core extends JavaPlugin {
         }
 
         Bukkit.getOnlinePlayers().forEach(player -> packetUtil.send(new PlayerRequestServerPacket(player.getUniqueId(), Server.Type.LOBBY, true)));
-
         pluginInform.remove();
         redisConnection.disconnect();
         mongoConnection.disconnect();
     }
-
 }

@@ -22,5 +22,4 @@ public class NetworkHelper {
         Rank rank = Rank.valueOf(kv.get(NETWORK_PLAYER_RANK_KEY));
         return new PlayerDetail(uuid, displayName, rank);
     }
-
 }

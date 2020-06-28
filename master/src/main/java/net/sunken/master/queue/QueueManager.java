@@ -6,20 +6,18 @@ import com.google.inject.Singleton;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.sunken.common.inject.Disableable;
 import net.sunken.common.inject.Enableable;
 import net.sunken.common.inject.Facet;
 import net.sunken.common.packet.PacketHandlerRegistry;
-import net.sunken.common.packet.PacketUtil;
 import net.sunken.common.player.packet.PlayerRequestServerPacket;
 import net.sunken.common.player.packet.PlayerSaveStatePacket;
 import net.sunken.common.server.Game;
 import net.sunken.common.server.Server;
-import net.sunken.common.server.module.ServerManager;
-import net.sunken.master.instance.InstanceManager;
-import net.sunken.master.party.PartyManager;
 import net.sunken.master.queue.handler.PlayerRequestServerHandler;
 import net.sunken.master.queue.handler.PlayerSaveStateHandler;
 import net.sunken.master.queue.impl.AbstractBalancer;
+import net.sunken.master.queue.impl.BalancerFactory;
 import net.sunken.master.queue.impl.LobbyBalancer;
 import net.sunken.master.queue.impl.SimpleBalancer;
 
@@ -28,18 +26,7 @@ import java.util.UUID;
 
 @Log
 @Singleton
-public class QueueManager implements Facet, Enableable {
-
-    @Inject
-    private QueueThread queueThread;
-    @Inject
-    private PartyManager partyManager;
-    @Inject
-    private ServerManager serverManager;
-    @Inject
-    private InstanceManager instanceManager;
-    @Inject
-    private PacketUtil packetUtil;
+public class QueueManager implements Facet, Enableable, Disableable {
 
     @Inject
     private PacketHandlerRegistry packetHandlerRegistry;
@@ -48,59 +35,54 @@ public class QueueManager implements Facet, Enableable {
     @Inject
     private PlayerSaveStateHandler playerSaveStateHandler;
 
+    @Inject
+    private BalancerFactory balancerFactory;
     @Getter
-    private final Map<Game, AbstractBalancer> gameBalancers = Maps.newHashMap();
+    private final Map<Game, AbstractBalancer> balancers = Maps.newHashMap();
     @Getter
-    private LobbyBalancer lobbyBalancer;
+    private AbstractBalancer lobbyBalancer;
+
+    private QueueConsumer consumer;
 
     @Override
     public void enable() {
-        lobbyBalancer = new LobbyBalancer(partyManager, serverManager, instanceManager, packetUtil);
-        gameBalancers.put(Game.ICE_RUNNER_SOLO, new SimpleBalancer(partyManager, serverManager, instanceManager, packetUtil));
+        lobbyBalancer = balancerFactory.create(LobbyBalancer.class);
+        balancers.put(Game.ICE_RUNNER_SOLO, balancerFactory.create(SimpleBalancer.class));
+
+        balancers.put(Game.SURVIVAL_REALMS, balancerFactory.create(LobbyBalancer.class));
+        balancers.put(Game.SURVIVAL_REALMS_ADVENTURE, balancerFactory.create(LobbyBalancer.class));
+
+        // start consumer
+        consumer = new QueueConsumer(balancers, lobbyBalancer);
+        consumer.start();
+
+        log.info("consumer started");
 
         packetHandlerRegistry.registerHandler(PlayerRequestServerPacket.class, playerRequestServerHandler);
         packetHandlerRegistry.registerHandler(PlayerSaveStatePacket.class, playerSaveStateHandler);
-
-        queueThread.start();
     }
 
     @Override
     public void disable() {
-        queueThread.interrupt();
+        consumer.interrupt();
     }
 
     public boolean queue(@NonNull UUID uuid, @NonNull Server.Type type, @NonNull Game game) {
-        if ((gameBalancers.containsKey(game) || type == Server.Type.LOBBY) && !inQueue(uuid)) {
-            AbstractBalancer balancer = type == Server.Type.LOBBY ? lobbyBalancer : gameBalancers.get(game);
+        if ((balancers.containsKey(game) || type == Server.Type.LOBBY) && !inQueue(uuid)) {
+            log.info("queued " + uuid.toString());
+            AbstractBalancer balancer = type == Server.Type.LOBBY ? lobbyBalancer : balancers.get(game);
             return balancer.add(new QueueDetail(uuid, type, game));
         }
-
         return false;
     }
 
     public boolean inQueue(@NonNull UUID uuid) {
         boolean queued = false;
-        for (AbstractBalancer balancer : gameBalancers.values()) {
+        for (AbstractBalancer balancer : balancers.values()) {
             if (balancer.inQueue(uuid)) {
                 queued = true;
             }
         }
-
         return queued;
     }
-
-    private static class QueueThread extends Thread {
-
-        @Inject
-        private QueueManager queueManager;
-
-        public void run() {
-            while (true) {
-                queueManager.getLobbyBalancer().run();
-                queueManager.getGameBalancers().values().forEach(AbstractBalancer::run);
-            }
-        }
-
-    }
-
 }

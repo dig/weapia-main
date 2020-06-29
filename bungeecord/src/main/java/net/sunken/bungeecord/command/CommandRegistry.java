@@ -34,7 +34,7 @@ public class CommandRegistry extends BaseCommandRegistry {
     public void unregister(BaseCommand baseCommand) {
         registeredCommands.remove(baseCommand);
 
-        //--- TODO: unregister from bungeecord
+        // TODO: unregister from bungeecord
     }
 
 }

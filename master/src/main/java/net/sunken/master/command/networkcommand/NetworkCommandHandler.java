@@ -41,8 +41,7 @@ public class NetworkCommandHandler extends PacketHandler<NetworkCommandPacket> i
             Command commandAnnotation = clazz.getAnnotation(Command.class);
 
             UUID uuid = packet.getSender().getUuid();
-
-            //--- Cooldown
+            
             String cooldownKey = "cmd:" + name;
             if (!cooldowns.canProceed(cooldownKey, uuid)) {
                 packetUtil.send(new PlayerProxyMessagePacket(uuid, "&c" + commandAnnotation.errorCooldown()));

@@ -18,13 +18,9 @@ public abstract class BaseTeamState {
     @Inject
     private PlayerManager playerManager;
 
-    //--- Called on state start.
     public abstract void start(Team team, BaseTeamState previous);
-
-    //--- Called on state stop, before switching.
     public abstract void stop(Team team, BaseTeamState next);
 
-    //--- Called when a player joins the team.
     public void onJoin(Team team, UUID uuid) {
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
         if (abstractPlayerOptional.isPresent()) {
@@ -40,7 +36,6 @@ public abstract class BaseTeamState {
         }
     }
 
-    //--- Called when a player leaves the team.
     public void onQuit(Team team, UUID uuid) {
         Optional<AbstractPlayer> abstractPlayerOptional = playerManager.get(uuid);
         if (abstractPlayerOptional.isPresent()) {
@@ -48,5 +43,4 @@ public abstract class BaseTeamState {
             corePlayer.setNametagAndTabList(corePlayer.toPlayer().get());
         }
     }
-
 }

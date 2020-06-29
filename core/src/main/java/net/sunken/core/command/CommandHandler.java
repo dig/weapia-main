@@ -46,10 +46,10 @@ public class CommandHandler extends org.bukkit.command.defaults.BukkitCommand {
             Command commandAnnotation = clazz.getAnnotation(Command.class);
 
             Optional<AbstractPlayer> abstractPlayerOptional = Optional.empty();
-            if (commandSender instanceof Player)
+            if (commandSender instanceof Player) {
                 abstractPlayerOptional = playerManager.get(((Player) commandSender).getUniqueId());
+            }
 
-            //--- Cooldown
             if (abstractPlayerOptional.isPresent()) {
                 AbstractPlayer abstractPlayer = abstractPlayerOptional.get();
                 String cooldownKey = "cmd:" + getName();

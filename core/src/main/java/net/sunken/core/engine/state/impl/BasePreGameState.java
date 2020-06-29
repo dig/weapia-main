@@ -149,7 +149,6 @@ public abstract class BasePreGameState extends EventGameState {
 
     @Override
     public void tick(int tickCount) {
-        //--- Teleport players back to spawn
         if (tickCount % (10 * 20) == 0) {
             Location spawnPoint = waitingConfiguration.getLocationConfiguration().toLocation();
             long spawnTeleportBackRadiusSquared = (waitingConfiguration.getSpawnTeleportBackRadius() * waitingConfiguration.getSpawnTeleportBackRadius());
@@ -163,12 +162,10 @@ public abstract class BasePreGameState extends EventGameState {
             });
         }
 
-        //--- Always day
         if (tickCount % (30 * 20) == 0) {
             Bukkit.getWorlds().forEach(world -> world.setTime(0L));
         }
 
-        //--- Check if game should start
         if (tickCount % 10 == 0) {
             long timeDiff = startTimeMillis - System.currentTimeMillis();
 
@@ -191,14 +188,13 @@ public abstract class BasePreGameState extends EventGameState {
                     startTimeMillis = System.currentTimeMillis() + waitingConfiguration.getCountdown();
                     Bukkit.broadcastMessage(Constants.COUNTDOWN_FAILED_REQUIRED);
 
-                    //--- Reopen server
-                    if (pluginInform.getServer().getState() != net.sunken.common.server.Server.State.OPEN)
+                    if (pluginInform.getServer().getState() != net.sunken.common.server.Server.State.OPEN) {
                         pluginInform.setState(net.sunken.common.server.Server.State.OPEN);
+                    }
                 }
             }
         }
 
-        //--- Countdown
         if (tickCount % 20 == 0) {
             long timeDiff = startTimeMillis - System.currentTimeMillis();
 
@@ -223,7 +219,6 @@ public abstract class BasePreGameState extends EventGameState {
             }
         }
 
-        //--- Scoreboard
         if (tickCount % 20 == 0) {
             long timeDiff = startTimeMillis - System.currentTimeMillis();
             String timeFormat = String.format("%02d:%02d", TimeUnit.MILLISECONDS.toMinutes(timeDiff), TimeUnit.MILLISECONDS.toSeconds(timeDiff) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff)));

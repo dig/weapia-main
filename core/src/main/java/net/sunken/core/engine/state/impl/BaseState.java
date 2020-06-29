@@ -28,10 +28,7 @@ public abstract class BaseState {
     @Inject
     protected PacketUtil packetUtil;
 
-    //--- Called on state start.
     public abstract void start(BaseGameState previous);
-
-    //--- Called on state stop, before switching.
     public abstract void stop(BaseGameState next);
 
     public <T> T loadConfig(String filePath, Class<T> type) {
